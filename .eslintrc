@@ -1,0 +1,12 @@
+{
+  "extends": "eslint-config-airbnb",
+  "rules": {
+    "comma-dangle": [2, "never"],
+    "new-cap": 0,
+    "spaced-comment": 0,
+    "no-else-return": 0,
+    "func-names": 0,
+    "dot-notation": 0,
+    "react/sort-comp": 0
+  }
+}

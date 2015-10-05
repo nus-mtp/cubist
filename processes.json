@@ -1,0 +1,20 @@
+{
+  "apps": [
+    {
+      "name": "cubist-webapp",
+      "script": "webapp-server.js",
+      "env": {
+        "NODE_ENV": "production",
+        "BROWSER": false
+      }
+    },
+    {
+      "name": "cubist-api",
+      "script": "api-server.js",
+      "env": {
+        "NODE_ENV": "production",
+        "BROWSER": false
+      }
+    }
+  ]
+}
