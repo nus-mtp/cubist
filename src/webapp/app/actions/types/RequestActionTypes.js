@@ -6,7 +6,7 @@ const normalTypes = {
 };
 
 const promiseTypes = {
-  
+
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

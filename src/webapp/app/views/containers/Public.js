@@ -1,12 +1,9 @@
 import React from 'react';
+import {Navbar} from 'react-bootstrap';
 
-if (process.env.BROWSER) {
-  require('webapp/app/styles/containers/Root.scss');
-}
+const CLASS_NAME = 'cb-public';
 
-const CLASS_NAME = 'cb-root';
-
-class Root extends React.Component {
+class Public extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.node
@@ -17,10 +14,11 @@ class Root extends React.Component {
 
     return (
       <div className={CLASS_NAME}>
+        <Navbar brand="Cubist 3D" />
         {children}
       </div>
     );
   }
 }
 
-export default Root;
+export default Public;

@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import Helmet from 'react-helmet';
+// import Helmet from 'react-helmet';
 import {match} from 'react-router';
 import createLocation from 'history/lib/createLocation';
 import Promise from 'bluebird';
-import _ from 'lodash';
 
-import {Constants, Logger} from 'common';
+import {Logger} from 'common';
 import routes from 'webapp/app/config/routes';
 import appRender from 'webapp/app/config/render';
 import ApiClient from 'webapp/app/config/api';
@@ -38,9 +37,9 @@ const render = function(req, res, next) {
           }
           if (redirectLocation) {
             res.redirect(redirectLocation.pathname + redirectLocation.search);
-            return;
+          } else {
+            resolve(renderProps);
           }
-          resolve(renderProps);
         });
       });
     })
@@ -56,14 +55,13 @@ const render = function(req, res, next) {
         return;
       }
 
-      const head = Helmet.rewind();
       if (process.env.NODE_ENV === 'development') {
         assets = require('../webpack-stats.json');
         delete require.cache[require.resolve('../webpack-stats.json')];
       }
       const html = ReactDOMServer.renderToStaticMarkup(
         <HtmlDocument
-          title={head.title}
+          title="Xfers Prototype"
           markup={componentMarkup}
           store={JSON.stringify(store.getState())}
           script={assets.script}

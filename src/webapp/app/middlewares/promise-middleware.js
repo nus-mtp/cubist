@@ -13,7 +13,7 @@ export default (apiClient) => {
     if (!promise) {
       return next(action);
     }
-    // If this is in browser and in the initial rendering phase, ignore the action 
+    // If this is in browser and in the initial rendering phase, ignore the action
     if (process.env.BROWSER) {
       if (store.getState().RequestStore.get('firstTime')) {
         return null;

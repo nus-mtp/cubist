@@ -28,4 +28,4 @@ node_modules
 
 # Build files
 /public
-src/server/webpack-stats.json
+src/webapp/server/webpack-stats.json

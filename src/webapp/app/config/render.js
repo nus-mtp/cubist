@@ -5,7 +5,6 @@ import {RoutingContext} from 'react-router';
 import {Provider} from 'react-redux';
 
 import {Logger} from 'common';
-import routes from './routes';
 
 const DEBUG_ENV = 'app-render';
 

@@ -1,4 +1,5 @@
 export default {
   Root: require('./Root'),
-  Home: require('./Home')
+  Home: require('./Home'),
+  Public: require('./Public')
 };

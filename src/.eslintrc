@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "strict": [2, "never"],
+    "no-var": 2,
+    "prefer-const": 2,
+  }
+}

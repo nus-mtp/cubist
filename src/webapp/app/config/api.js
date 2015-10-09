@@ -36,7 +36,7 @@ class ApiClient {
   }
 
   formatUrl(path) {
-    // If this is server side, the request URL needs to be specified explicitly 
+    // If this is server side, the request URL needs to be specified explicitly
     if (!process.env.BROWSER) {
       return 'http://localhost:' + Settings.API_PORT + path;
     }

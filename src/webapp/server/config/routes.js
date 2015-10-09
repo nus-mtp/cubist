@@ -10,4 +10,4 @@ export default function(app) {
   app.use('/api', (req, res) => {
     apiProxy.web(req, res);
   });
-};
+}
