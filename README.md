@@ -7,11 +7,28 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 ## Technology Stacks
 `To be edited`
 
+## Requirements
+* Install `NodeJS`
+* Install `MongoDB`
+
+
 ## Setup Instruction
-`To be edited`
+`git clone git@github.com:nus-mtp/cubist.git`  
+`npm install`  
+
+###For develoment
+`npm run api-dev`  
+`npm run webapp-dev`
+
+###For production
+`npm run api-prod`  
+`npm run webapp-prod`
+
 
 ## Commit Instruction
-`To be edited`
+* Run command `npm run lint` before every commit
+* If you have modified stylesheets, run command `npm run scsslint`
+* For every commit, specify the purpose of the commit in this format `[purpose] commit message`
 
 ## Bug Reports
 `To be edited`
