@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-// import Helmet from 'react-helmet';
-import {match} from 'react-router';
+import {match} from 'redux-router/server';
 import createLocation from 'history/lib/createLocation';
 import Promise from 'bluebird';
 
-import {Logger} from 'common';
+import {Logger, ClientError} from 'common';
 import routes from 'webapp/app/config/routes';
 import appRender from 'webapp/app/config/render';
 import ApiClient from 'webapp/app/config/api';
@@ -28,55 +27,55 @@ const render = function(req, res, next) {
   // Get location from the page request
   const location = createLocation(req.path, req.query);
 
-  Promise.resolve()
-    .then(() => {
-      return new Promise((resolve, reject) => {
-        match({routes, location}, (error, redirectLocation, renderProps) => {
-          if (error) {
-            return reject(error);
-          }
-          if (redirectLocation) {
-            res.redirect(redirectLocation.pathname + redirectLocation.search);
-          } else {
-            resolve(renderProps);
-          }
-        });
-      });
-    })
-    .then((renderProps) => {
-      return appRender(renderProps, store);
-    })
-    .then((component) => {
-      const componentMarkup = ReactDOMServer.renderToString(component);
-      const redirectPath = store.getState().RequestStore.get('redirect');
-      if (redirectPath) {
-        Logger.info('Redirect on server: ' + redirectPath, DEBUG_ENV);
-        res.redirect(redirectPath);
-        return;
-      }
+  return new Promise((resolve, reject) => {
+    store.dispatch(
+      match(req.originalUrl, (error, redirectLocation, routerState) => {
+        if (error) {
+          return reject(error);
+        } else if (!routerState) {
+          return reject(new ClientError('Router state is null'));
+        } else if (redirectLocation) {
+          res.redirect(redirectLocation.pathname + redirectLocation.search);
+        } else {
+          resolve(routerState);
+        }
+      })
+    );
+  })
+  .then((routerState) => {
+    return appRender(routerState, store);
+  })
+  .then((component) => {
+    const componentMarkup = ReactDOMServer.renderToString(component);
+    const redirectPath = store.getState().RequestStore.get('redirect');
+    if (redirectPath) {
+      Logger.info('Redirect on server: ' + redirectPath, DEBUG_ENV);
+      res.redirect(redirectPath);
+      return;
+    }
 
-      if (process.env.NODE_ENV === 'development') {
-        assets = require('../webpack-stats.json');
-        delete require.cache[require.resolve('../webpack-stats.json')];
-      }
-      const html = ReactDOMServer.renderToStaticMarkup(
-        <HtmlDocument
-          title="Xfers Prototype"
-          markup={componentMarkup}
-          store={JSON.stringify(store.getState())}
-          script={assets.script}
-          css={assets.css}
-        />
-      );
-      const doctype = '<!DOCTYPE html>';
-      res.send(doctype + html);
-    })
-    .catch((err) => {
-      if (err) {
-        Logger.error(err, DEBUG_ENV);
-      }
-      next(err);
-    });
+    if (process.env.NODE_ENV === 'development') {
+      assets = require('../webpack-stats.json');
+      delete require.cache[require.resolve('../webpack-stats.json')];
+    }
+    const html = ReactDOMServer.renderToStaticMarkup(
+      <HtmlDocument
+        title="Xfers Prototype"
+        markup={componentMarkup}
+        store={JSON.stringify(store.getState())}
+        script={assets.script}
+        css={assets.css}
+      />
+    );
+    const doctype = '<!DOCTYPE html>';
+    res.send(doctype + html);
+  })
+  .catch((err) => {
+    if (err) {
+      Logger.error(err, DEBUG_ENV);
+    }
+    next(err);
+  });
 };
 
 export default (app) => {

@@ -6,6 +6,9 @@ import {ClientError, Logger} from 'common';
 
 const DEBUG_ENV = 'mongodb';
 
+/**
+ * Database Initialization
+ */
 export default (app) => {
   return new Promise((resolve, reject) => {
     mongoose.connect(settings.DATABASE_URL, (err) => {

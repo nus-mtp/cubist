@@ -1,6 +1,5 @@
 /**
  * Settings for api server in development mode
- * @type {Object}
  */
 const settings = {
   PORT: 6000,

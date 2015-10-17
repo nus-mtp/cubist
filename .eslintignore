@@ -1,2 +1,3 @@
 gulp/*.js
 webpack/*.js
+gulpfile.js

@@ -1,8 +1,9 @@
 import React from 'react';
+import PureComponent from 'react-pure-render/component';
 
 const CLASS_NAME = 'cb-home';
 
-class Home extends React.Component {
+class Home extends PureComponent {
 
   render() {
     return (

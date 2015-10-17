@@ -1,7 +1,16 @@
-import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
+let createHistory, reduxReactRouter;
+if (process.env.BROWSER) {
+  createHistory = require('history/lib/createBrowserHistory');
+  reduxReactRouter = require('redux-router').reduxReactRouter;
+} else {
+  createHistory = require('history/lib/createMemoryHistory');
+  reduxReactRouter = require('redux-router/server').reduxReactRouter;
+}
 
-import {logger, createPromiseMiddleware} from 'webapp/app/middlewares';
+import {logMiddleware, createPromiseMiddleware, transitionMiddleware} from 'webapp/app/middlewares';
+import routes from './routes';
 import reducers from 'webapp/app/reducers';
 
 const reducer = combineReducers(reducers);
@@ -16,8 +25,15 @@ export default (apiClient, initialData = {}) => {
   const middlewares = [thunk, createPromiseMiddleware(apiClient)];
   // If this is in client side, add logger middleware
   if (process.env.BROWSER) {
-    middlewares.push(logger);
+    middlewares.push(transitionMiddleware);
+    middlewares.push(logMiddleware);
   }
 
-  return applyMiddleware(...middlewares)(createStore)(reducer, initialData);
+  return compose(
+    applyMiddleware(...middlewares),
+    reduxReactRouter({
+      routes,
+      createHistory
+    })
+  )(createStore)(reducer, initialData);
 };

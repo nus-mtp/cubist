@@ -1,4 +1,5 @@
 export default {
-  logger: require('./log-middleware'),
-  createPromiseMiddleware: require('./promise-middleware')
+  logMiddleware: require('./logMiddleware'),
+  createPromiseMiddleware: require('./createPromiseMiddleware'),
+  transitionMiddleware: require('./transitionMiddleware')
 };

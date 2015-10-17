@@ -1,9 +1,10 @@
 import React from 'react';
-import {Navbar} from 'react-bootstrap';
+import PureComponent from 'react-pure-render/component';
+import {Navbar, NavBrand} from 'react-bootstrap';
 
 const CLASS_NAME = 'cb-public';
 
-class Public extends React.Component {
+class Public extends PureComponent {
 
   static propTypes = {
     children: React.PropTypes.node
@@ -14,7 +15,9 @@ class Public extends React.Component {
 
     return (
       <div className={CLASS_NAME}>
-        <Navbar brand="Cubist 3D" />
+        <Navbar>
+          <NavBrand>Cubist</NavBrand>
+        </Navbar>
         {children}
       </div>
     );

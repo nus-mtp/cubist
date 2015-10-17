@@ -5,30 +5,43 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 `To be edited`
 
 ## Technology Stacks
-`To be edited`
+* React
+* Redux
+* Webpack
+* Gulp
+* NodeJS
+* Express
+* MongoDB
+* SASS
 
 ## Requirements
 * Install `NodeJS`
 * Install `MongoDB`
-
+* Install `Sublime Text` with the following packages:
+  * Babel
+  * SublimeLinter
+  * SublimeLinter ESLint
+  * SublimeLinter SCSSLint
 
 ## Setup Instruction
-`git clone git@github.com:nus-mtp/cubist.git`  
-`npm install`  
+`git clone git@github.com:nus-mtp/cubist.git`
+`npm install`
 
-###For develoment
-`npm run api-dev`  
+###For develoment environment
+`npm run api-dev`
 `npm run webapp-dev`
 
-###For production
-`npm run api-prod`  
+###For production environment
+`npm run api-prod`
 `npm run webapp-prod`
 
 
-## Commit Instruction
+## Development Instruction
+* For every issue, work on a separate branch
 * Run command `npm run lint` before every commit
 * If you have modified stylesheets, run command `npm run scsslint`
-* For every commit, specify the purpose of the commit in this format `[purpose] commit message`
+* For every commit, specify clearly the purpose of the commit in this format `[purpose] commit message`
+* When merge into master, squash your commit and merge
 
 ## Bug Reports
-`To be edited`
+For bug reporting, please create issues in Github

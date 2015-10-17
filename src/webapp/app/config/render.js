@@ -1,34 +1,24 @@
 import Qs from 'qs';
 import Promise from 'bluebird';
 import React from 'react';
-import {RoutingContext} from 'react-router';
+import {ReduxRouter} from 'redux-router';
 import {Provider} from 'react-redux';
 
 import {Logger} from 'common';
+import {getDataDependencies} from 'webapp/app/utils';
 
 const DEBUG_ENV = 'app-render';
 
-const getFetchDataFunction = (component) => {
-  return component.WrappedComponent ?
-    getFetchDataFunction(component.WrappedComponent) :
-    component.fetchData;
-};
-
-export default (renderProps, store) => {
-  const {components, location, params} = renderProps;
+export default (routerState, store) => {
+  const {components, location, params} = routerState;
   const query = Qs.parse(location.search);
   const dispatch = store.dispatch;
 
-  const promises = components
-    .filter((component) => getFetchDataFunction(component))
-    .map((component) => getFetchDataFunction(component))
-    .map((fetchFunction) => fetchFunction({dispatch, params, query}));
-
-  return Promise.all(promises)
+  return Promise.all(getDataDependencies(components, {dispatch, params, query}))
     .then(() => {
       return (
         <Provider store={store} key="provider">
-          <RoutingContext {...renderProps}/>
+          <ReduxRouter />
         </Provider>
       );
     })
