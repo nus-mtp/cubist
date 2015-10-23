@@ -1,6 +1,10 @@
+// Import fonts
+@import '../constants/fonts';
+// Import normalize
 @import '../vendors/normalize';
+// Import bootstrap
 @import '../vendors/bootstrap';
 
 .cb-root {
-  font-family: 'Lato', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Circular', 'Helvetica', 'Arial', sans-serif;
 }

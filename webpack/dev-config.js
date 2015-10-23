@@ -30,7 +30,7 @@ module.exports = {
     loaders: [
       {
         loader: 'url-loader?limit=100000',
-        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|svg)$/
+        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/
       },
       {
         exclude: /node_modules/,

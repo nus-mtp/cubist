@@ -31,9 +31,6 @@ class HtmlDocument extends React.Component {
           {
             css.map((href, k) => <link key={k} rel="stylesheet" type="text/css" href={href} />)
           }
-          <link href="https://fonts.googleapis.com/css?family=Lato:400,400italic,300,300italic,700,700italic"
-            rel="stylesheet"
-            type="text/css" />
         </head>
         <body>
           <div id="root" dangerouslySetInnerHTML={{__html: markup}} />
