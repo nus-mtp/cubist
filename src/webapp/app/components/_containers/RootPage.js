@@ -7,7 +7,7 @@ if (process.env.BROWSER) {
 
 const CLASS_NAME = 'cb-root';
 
-class Root extends PureComponent {
+class RootPage extends PureComponent {
 
   static propTypes = {
     children: React.PropTypes.node
@@ -24,4 +24,4 @@ class Root extends PureComponent {
   }
 }
 
-export default Root;
+export default RootPage;

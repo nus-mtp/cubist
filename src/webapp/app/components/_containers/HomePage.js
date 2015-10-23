@@ -3,7 +3,7 @@ import PureComponent from 'react-pure-render/component';
 
 const CLASS_NAME = 'cb-home';
 
-class Home extends PureComponent {
+class HomePage extends PureComponent {
 
   render() {
     return (
@@ -14,4 +14,4 @@ class Home extends PureComponent {
   }
 }
 
-export default Home;
+export default HomePage;

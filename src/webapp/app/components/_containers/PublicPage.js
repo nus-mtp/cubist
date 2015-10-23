@@ -4,7 +4,7 @@ import {Navbar, NavBrand} from 'react-bootstrap';
 
 const CLASS_NAME = 'cb-public';
 
-class Public extends PureComponent {
+class PublicPage extends PureComponent {
 
   static propTypes = {
     children: React.PropTypes.node
@@ -24,4 +24,4 @@ class Public extends PureComponent {
   }
 }
 
-export default Public;
+export default PublicPage;

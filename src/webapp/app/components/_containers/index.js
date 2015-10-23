@@ -1,5 +1,6 @@
 export default {
-  Root: require('./Root'),
-  Home: require('./Home'),
-  Public: require('./Public')
+  RootPage: require('./RootPage'),
+  HomePage: require('./HomePage'),
+  PublicPage: require('./PublicPage'),
+  ModelPage: require('./ModelPage')
 };
