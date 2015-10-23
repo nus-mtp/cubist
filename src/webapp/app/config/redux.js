@@ -1,6 +1,7 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
-let createHistory, reduxReactRouter;
+let createHistory;
+let reduxReactRouter;
 if (process.env.BROWSER) {
   createHistory = require('history/lib/createBrowserHistory');
   reduxReactRouter = require('redux-router').reduxReactRouter;

@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "gulp eslint",
     "scsslint": "gulp scsslint",
+    "test": "gulp eslint",
     "webapp-dev": "NODE_PATH=src gulp webapp-dev",
     "webpapp-prod": "NODE_PATH=src gulp webapp-prod",
     "api-dev": "NODE_PATH=src gulp api-dev",

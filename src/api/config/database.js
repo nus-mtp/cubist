@@ -9,7 +9,7 @@ const DEBUG_ENV = 'mongodb';
 /**
  * Database Initialization
  */
-export default (app) => {
+export default () => {
   return new Promise((resolve, reject) => {
     mongoose.connect(settings.DATABASE_URL, (err) => {
       const {host, port} = mongoose.connection;

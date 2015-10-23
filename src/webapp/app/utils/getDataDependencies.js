@@ -9,4 +9,4 @@ export default function getDataDependencies(components, {dispatch, params, query
     .filter(component => getFetchDataFunctions(component))
     .map(component => getFetchDataFunctions(component))
     .map(fetchDataFunction => fetchDataFunction({dispatch, params, query}));
-};
+}

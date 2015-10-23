@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import {match} from 'redux-router/server';
-import createLocation from 'history/lib/createLocation';
 import Promise from 'bluebird';
 
 import {Logger, ClientError} from 'common';
-import routes from 'webapp/app/config/routes';
 import appRender from 'webapp/app/config/render';
 import ApiClient from 'webapp/app/config/api';
 import redux from 'webapp/app/config/redux';
@@ -24,8 +22,6 @@ const render = function(req, res, next) {
   const apiClient = new ApiClient(req);
   // Initialize Redux Store
   const store = redux(apiClient);
-  // Get location from the page request
-  const location = createLocation(req.path, req.query);
 
   return new Promise((resolve, reject) => {
     store.dispatch(
@@ -60,7 +56,7 @@ const render = function(req, res, next) {
     }
     const html = ReactDOMServer.renderToStaticMarkup(
       <HtmlDocument
-        title="Xfers Prototype"
+        title="Cubist 3D"
         markup={componentMarkup}
         store={JSON.stringify(store.getState())}
         script={assets.script}
