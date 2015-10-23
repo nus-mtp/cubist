@@ -7,7 +7,7 @@ import {Logger, ClientError} from 'common';
 import appRender from 'webapp/app/config/render';
 import ApiClient from 'webapp/app/config/api';
 import redux from 'webapp/app/config/redux';
-import HtmlDocument from 'webapp/app/views/HtmlDocument';
+import HtmlDocument from 'webapp/app/components/HtmlDocument';
 
 const DEBUG_ENV = 'server-render';
 

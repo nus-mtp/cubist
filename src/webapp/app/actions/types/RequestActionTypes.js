@@ -1,7 +1,7 @@
 import TypeHelper from './TypeHelper';
 
 const normalTypes = {
-  REQUEST_REDIRECT: null,
+  REDIRECT: null,
   REQUEST_FIRST_TIME: null
 };
 

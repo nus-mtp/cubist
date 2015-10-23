@@ -61,6 +61,7 @@
     "react-pure-render": "1.0.2",
     "react-redux": "4.0.0",
     "react-router": "1.0.0-rc3",
+    "react-three": "0.7.2",
     "redux": "3.0.2",
     "redux-logger": "2.0.4",
     "redux-router": "1.0.0-beta3",
@@ -69,6 +70,7 @@
     "split": "1.0.0",
     "superagent": "1.4.0",
     "superagent-bluebird-promise": "2.1.0",
+    "three": "0.72.0",
     "winston": "1.1.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Route, IndexRoute} from 'react-router';
 
-import {Root, Home, Public} from 'webapp/app/views';
+import {Root, Home, Public} from 'webapp/app/components';
 
 export default (
   <Route component={Root}>

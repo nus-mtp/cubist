@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 
 import ReducerHelper from './ReducerHelper';
 import {
-  REQUEST_REDIRECT,
+  REDIRECT,
   REQUEST_FIRST_TIME
 } from 'webapp/app/actions/types';
 
@@ -11,7 +11,7 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [REQUEST_REDIRECT]: (state, {redirect}) => {
+  [REDIRECT]: (state, {redirect}) => {
     return state.merge({
       redirect
     });
