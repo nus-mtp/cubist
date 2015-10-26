@@ -1,99 +1,100 @@
+// All URLs are relative to the `main.scss' file
 @font-face {
     font-family: 'Circular';
-    src: url('../../assets/fonts/Circular/lineto-circular-book.eot');
-    src: url('../../assets/fonts/Circular/lineto-circular-book.eot?#iefix') format('embedded-opentype'),
-         url('../../assets/fonts/Circular/lineto-circular-book.woff') format('woff'),
-         url('../../assets/fonts/Circular/lineto-circular-book.ttf') format('truetype'),
-         url('../../assets/fonts/Circular/lineto-circular-book.svg#lineto-circular-book') format('svg');
+    src: url('../assets/fonts/Circular/lineto-circular-book.eot');
+    src: url('../assets/fonts/Circular/lineto-circular-book.eot?#iefix') format('embedded-opentype'),
+         url('../assets/fonts/Circular/lineto-circular-book.woff') format('woff'),
+         url('../assets/fonts/Circular/lineto-circular-book.ttf') format('truetype'),
+         url('../assets/fonts/Circular/lineto-circular-book.svg#lineto-circular-book') format('svg');
     font-weight: 200;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Circular';
-    src: url('../../assets/fonts/Circular/lineto-circular-medium.eot');
-    src: url('../../assets/fonts/Circular/lineto-circular-medium.eot?#iefix') format('embedded-opentype'),
-         url('../../assets/fonts/Circular/lineto-circular-medium.woff') format('woff'),
-         url('../../assets/fonts/Circular/lineto-circular-medium.ttf') format('truetype'),
-         url('../../assets/fonts/Circular/lineto-circular-medium.svg#lineto-circular-medium') format('svg');
+    src: url('../assets/fonts/Circular/lineto-circular-medium.eot');
+    src: url('../assets/fonts/Circular/lineto-circular-medium.eot?#iefix') format('embedded-opentype'),
+         url('../assets/fonts/Circular/lineto-circular-medium.woff') format('woff'),
+         url('../assets/fonts/Circular/lineto-circular-medium.ttf') format('truetype'),
+         url('../assets/fonts/Circular/lineto-circular-medium.svg#lineto-circular-medium') format('svg');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Circular';
-    src: url('../../assets/fonts/Circular/lineto-circular-bold.eot');
-    src: url('../../assets/fonts/Circular/lineto-circular-bold.eot?#iefix') format('embedded-opentype'),
-         url('../../assets/fonts/Circular/lineto-circular-bold.woff') format('woff'),
-         url('../../assets/fonts/Circular/lineto-circular-bold.ttf') format('truetype'),
-         url('../../assets/fonts/Circular/lineto-circular-bold.svg#lineto-circular-bold') format('svg');
+    src: url('../assets/fonts/Circular/lineto-circular-bold.eot');
+    src: url('../assets/fonts/Circular/lineto-circular-bold.eot?#iefix') format('embedded-opentype'),
+         url('../assets/fonts/Circular/lineto-circular-bold.woff') format('woff'),
+         url('../assets/fonts/Circular/lineto-circular-bold.ttf') format('truetype'),
+         url('../assets/fonts/Circular/lineto-circular-bold.svg#lineto-circular-bold') format('svg');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Circular';
-    src: url('../../assets/fonts/Circular/lineto-circular-black.eot');
-    src: url('../../assets/fonts/Circular/lineto-circular-black.eot?#iefix') format('embedded-opentype'),
-         url('../../assets/fonts/Circular/lineto-circular-black.woff') format('woff'),
-         url('../../assets/fonts/Circular/lineto-circular-black.ttf') format('truetype'),
-         url('../../assets/fonts/Circular/lineto-circular-black.svg#lineto-circular-black') format('svg');
+    src: url('../assets/fonts/Circular/lineto-circular-black.eot');
+    src: url('../assets/fonts/Circular/lineto-circular-black.eot?#iefix') format('embedded-opentype'),
+         url('../assets/fonts/Circular/lineto-circular-black.woff') format('woff'),
+         url('../assets/fonts/Circular/lineto-circular-black.ttf') format('truetype'),
+         url('../assets/fonts/Circular/lineto-circular-black.svg#lineto-circular-black') format('svg');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Thin.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Thin.otf');
   font-weight: 100;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-XLight.otf');
+  src: url('../assets/fonts/Gotham/Gotham-XLight.otf');
   font-weight: 200;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Light.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Light.otf');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Book.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Book.otf');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Medium.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Medium.otf');
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Bold.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Bold.otf');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Black.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Black.otf');
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Gotham';
-  src: url('../../assets/fonts/Gotham/Gotham-Ultra.otf');
+  src: url('../assets/fonts/Gotham/Gotham-Ultra.otf');
   font-weight: 800;
   font-style: normal;
 }

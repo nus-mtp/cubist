@@ -2,17 +2,19 @@ import React from 'react';
 import {Route, IndexRoute} from 'react-router';
 
 import {
-  RootPage,
-  HomePage,
-  PublicPage,
-  ModelPage
+  AppContainer,
+  HomeContainer,
+  ModelContainer,
+  RootContainer,
+  ErrorContainer
 } from 'webapp/app/components';
 
 export default (
-  <Route component={RootPage}>
-    <Route path="/" component={PublicPage} >
-      <IndexRoute component={HomePage} />
-      <Route path="/model/:modelId" component={ModelPage} />
+  <Route component={RootContainer}>
+    <Route path="/" component={AppContainer}>
+      <IndexRoute component={HomeContainer} />
+      <Route path="model/:modelId" component={ModelContainer} />
     </Route>
+    <Route path="*" component={ErrorContainer} />
   </Route>
 );

@@ -1,6 +1,7 @@
 export default {
-  RootPage: require('./RootPage'),
-  HomePage: require('./HomePage'),
-  PublicPage: require('./PublicPage'),
-  ModelPage: require('./ModelPage')
+  AppContainer: require('./AppContainer'),
+  HomeContainer: require('./HomeContainer'),
+  ModelContainer: require('./ModelContainer'),
+  RootContainer: require('./RootContainer'),
+  ErrorContainer: require('./ErrorContainer')
 };

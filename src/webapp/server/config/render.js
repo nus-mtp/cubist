@@ -60,8 +60,7 @@ const render = function(req, res, next) {
         markup={componentMarkup}
         store={JSON.stringify(store.getState())}
         script={assets.script}
-        css={assets.css}
-      />
+        css={assets.css} />
     );
     const doctype = '<!DOCTYPE html>';
     res.send(doctype + html);

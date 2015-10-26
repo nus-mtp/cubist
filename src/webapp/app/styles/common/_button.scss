@@ -1,0 +1,26 @@
+/*
+  Bootstrap Button Override
+ */
+.btn {
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.btn-success {
+  @include button-variant(#fff, #F64747, rgba(0, 0, 0, 0));
+}
+
+.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
+  outline: 0;
+}
+
+/*
+  Custom Button Classes
+ */
+.btn-transparent {
+  @include button-variant(#000, rgba(0,0,0,0), rgba(0, 0, 0, 0));
+
+  &:hover, &:active, &:focus {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

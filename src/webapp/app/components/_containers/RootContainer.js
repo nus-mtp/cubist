@@ -1,14 +1,12 @@
 import React from 'react';
-import PureComponent from 'react-pure-render/component';
 
 if (process.env.BROWSER) {
-  require('webapp/app/styles/containers/Root.scss');
+  require('webapp/app/styles/main.scss');
 }
 
-const CLASS_NAME = 'cb-root';
+const CLASS_NAME = 'cb-ctn-root';
 
-class RootPage extends PureComponent {
-
+class RootContainer extends React.Component {
   static propTypes = {
     children: React.PropTypes.node
   }
@@ -24,4 +22,4 @@ class RootPage extends PureComponent {
   }
 }
 
-export default RootPage;
+export default RootContainer;
