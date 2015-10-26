@@ -1,7 +1,9 @@
-// Import fonts
-@import 'constants/fonts';
 // Import bootstrap
 @import 'vendors/bootstrap';
+// Import Variables
+@import 'constants/variables';
+// Import fonts
+@import 'constants/fonts';
 
 // Import common
 @import 'common/button';

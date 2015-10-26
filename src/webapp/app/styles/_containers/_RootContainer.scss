@@ -1,10 +1,13 @@
-#root, body, html, .cb-ctn-root {
+#root, 
+body, 
+html, 
+.cb-ctn-root {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
 }
 
 .cb-ctn-root {
-  font-family: 'Circular', 'Helvetica', 'Arial', sans-serif;
   color: #646464;
+  font-family: 'Circular', 'Helvetica', 'Arial', sans-serif;
 }

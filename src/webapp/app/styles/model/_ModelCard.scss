@@ -1,13 +1,14 @@
 .cb-model-card {
-  background-color: white;
+  background-color: $white;
   border-radius: 6px;
   overflow: hidden;
 }
 
 .cb-model-card-thumbnail {
-  height: 300px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, .1);
+  height: 300px;  
 }
+
 .cb-model-card-caption {
   height: 100px;
 }

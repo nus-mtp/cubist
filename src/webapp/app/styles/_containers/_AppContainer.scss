@@ -1,27 +1,28 @@
 .cb-ctn-app {
-  position: relative;
   height: 100%;
+  position: relative;
 }
 
 .cb-ctn-app-navbar {
-  background-color: #fff;
+  background-color: $white;
 }
 
 .cb-ctn-app-navbar-home {
-  transition: background-color 0.3s ease;
+  transition: background-color .3s ease;
 }
 
 .cb-ctn-app-navbar-home-top {
   background-color: transparent;
-  border: none;
+  border: 0;
+
   * {
-    color: #fff !important;
+    color: $white;
   }
 }
 
 .cb-ctn-app-navbar-login {
-  margin-right: 10px;
   margin-left: 10px;
+  margin-right: 10px;
 }
 
 .cb-ctn-app-content {

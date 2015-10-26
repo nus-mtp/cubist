@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var _ = require('lodash');
 var spawn = require('child_process').spawn;
 require('./gulp/task-eslint');
-require('./gulp/task-scsslint');
+require('./gulp/task-sasslint');
 require('./gulp/task-build-webpack-dev');
 require('./gulp/task-build-webpack-prod');
 
