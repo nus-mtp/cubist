@@ -12,7 +12,8 @@ class AppContainer extends PureComponent {
   }
 
   state = {
-    isAtTop: true
+    isAtTop: true,
+    isMenuOpened: false
   }
 
   _onTopPageEnter = () => {
@@ -29,6 +30,12 @@ class AppContainer extends PureComponent {
         isAtTop: false
       });
     }
+  }
+
+  _onMenuToggle = () => {
+    this.setState({
+      isMenuOpened: !this.state.isMenuOpened
+    });
   }
 
   render() {
@@ -73,7 +80,6 @@ class AppContainer extends PureComponent {
     const isHomePage = location.pathname === '/';
     const navClasses = [
       'navbar',
-      'navbar-default',
       'navbar-fixed-top',
       `${CLASS_NAME}-navbar`,
       {
@@ -81,22 +87,52 @@ class AppContainer extends PureComponent {
         [`${CLASS_NAME}-navbar-home-top`]: isHomePage && isAtTop
       }
     ];
+    const navBrandClasses = [
+      'navbar-brand',
+      `${CLASS_NAME}-navbar-brand`,
+      {
+        [`${CLASS_NAME}-navbar-brand-home`]: isHomePage && isAtTop,
+        [`${CLASS_NAME}-navbar-brand-home-top`]: isHomePage && isAtTop
+      }
+    ];
+    const collapseClasses = [
+      'collapse',
+      'navbar-collapse',
+      {
+        in: this.state.isMenuOpened
+      }
+    ];
+
+    const signUpClasses = [
+      'btn',
+      'navbar-btn',
+      `${CLASS_NAME}-navbar-register`,
+      {
+        'btn-transparent': !(isHomePage && isAtTop),
+        'btn-transparent-alt': isHomePage & isAtTop
+      }
+    ];
 
     return (
       <nav className={classnames(navClasses)}>
         <div className="container">
           <div className="navbar-header">
-            <a href="/" className="navbar-brand">
+            <button type="button" className="navbar-toggle collapsed" onClick={this._onMenuToggle}>
+              MENU
+            </button>
+            <a href="/" className={classnames(navBrandClasses)}>
               Cubist
             </a>
           </div>
-          <div className="navbar-right">
-            <button className={`${CLASS_NAME}-navbar-register btn btn-transparent navbar-btn`}>
-              SIGN UP
-            </button>
-            <button className={`${CLASS_NAME}-navbar-login btn btn-success navbar-btn`} >
-              LOG IN
-            </button>
+          <div className={classnames(collapseClasses)}>
+            <div className="navbar-right">
+              <button className={classnames(signUpClasses)}>
+                SIGN UP
+              </button>
+              <button className={`${CLASS_NAME}-navbar-login btn btn-success navbar-btn`} >
+                LOG IN
+              </button>
+            </div>
           </div>
         </div>
       </nav>

@@ -3,8 +3,9 @@
   position: relative;
 }
 
+// NavBar
 .cb-ctn-app-navbar {
-  background-color: $white;
+  background-color: $cb-white;
 }
 
 .cb-ctn-app-navbar-home {
@@ -14,22 +15,29 @@
 .cb-ctn-app-navbar-home-top {
   background-color: transparent;
   border: 0;
-
-  * {
-    color: $white;
-  }
 }
 
+// NavBar Brand
+.cb-ctn-app-navbar-brand {
+  color: $cb-default;
+}
+
+.cb-ctn-app-navbar-brand-home-top {
+  color: $cb-white;
+}
+
+// NavBar Button
 .cb-ctn-app-navbar-login {
   margin-left: 10px;
   margin-right: 10px;
 }
 
+// App Content
 .cb-ctn-app-content {
-  margin-top: 50px;
+  height: 100%;
+  padding: 50px 0 0;
 }
 
 .cb-ctn-app-content-home {
-  margin-top: 0;
-  padding: 0;
+  padding-top: 0;
 }

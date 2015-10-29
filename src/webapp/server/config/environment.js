@@ -12,6 +12,9 @@ export default (app) => {
   app.use(favIcon(path.resolve(__dirname, '../../app/assets/favicon.png')));
   // Only serve static files when in production mode
   if (process.env.NODE_ENV !== 'development') {
-    app.use(express.static(path.resolve(__dirname, '../../../public')));
+    app.use(express.static(path.resolve(__dirname, '../../../../public')));
+  } else {
+    // This is only for testing. Removed after finishing test
+    app.use('/modelAssets', express.static(path.resolve(__dirname, '../../../../public')));
   }
 };
