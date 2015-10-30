@@ -2,7 +2,7 @@ import TypeHelper from './TypeHelper';
 
 // Normal Action Types
 const normalTypes = {
-  WIREFRAME_TOGGLE: null,
+  WIREFRAME_TOGGLE: null
 
 };
 

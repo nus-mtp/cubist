@@ -6,8 +6,6 @@ export default {
   toggleWireframe: function() {
     return {
       type: WIREFRAME_TOGGLE
-
     };
   }
-  
 };
