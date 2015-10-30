@@ -1,7 +1,5 @@
-import RequestActionTypes from './RequestActionTypes';
-import RenderActionTypes from './RenderActionTypes';
-
 export default {
-  ...RequestActionTypes,
-  ...RenderActionTypes
+  ...require('./RequestActionTypes'),
+  ...require('./RenderActionTypes'),
+  ...require('./CameraActionTypes')
 };

@@ -2,18 +2,30 @@ import Immutable from 'immutable';
 
 import ReducerHelper from './ReducerHelper';
 import {
-  WIREFRAME_TOGGLE
+  CAMERA_PAN,
+  CAMERA_ROTATE,
+  CAMERA_ZOOM
 } from 'webapp/app/actions/types';
 
 const initialState = Immutable.fromJS({
-  showWireframe: false
+  posX: 0,
+  posY: 0,
+  posZ: 300,
+  lookX: 0,
+  lookY: 0,
+  lookZ: 0
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [WIREFRAME_TOGGLE]: (state) => {
-    let nextState = state;
-    nextState = nextState.set('showWireframe', !nextState.get('showWireframe'));
+  [CAMERA_PAN]: function() {
 
-    return nextState;
+  },
+
+  [CAMERA_ROTATE]: function() {
+
+  },
+
+  [CAMERA_ZOOM]: function() {
+
   }
 });

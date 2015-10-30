@@ -1,3 +1,4 @@
 export default {
-  ModelCard: require('./ModelCard')
+  ModelCard: require('./ModelCard'),
+  ModelViewer: require('./ModelViewer')
 };
