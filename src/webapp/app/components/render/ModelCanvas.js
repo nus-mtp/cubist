@@ -1,12 +1,12 @@
 import React from 'react';
 import Dimensions from 'react-dimensions';
-import {Vector3, BoxGeometry, MeshPhongMaterial, Color, JSONLoader} from 'three';
+import {Vector3, BoxGeometry, MeshFaceMaterial, MeshPhongMaterial, Color, JSONLoader} from 'three';
 import {
   Scene,
   PerspectiveCamera,
   Mesh,
   AmbientLight,
-  PointLight
+  DirectionalLight
 } from 'react-three';
 
 const CLASS_NAME = 'cb-model-canvas';
@@ -26,27 +26,20 @@ class ModelCanvas extends React.Component {
 
   state = {
     geometry: new BoxGeometry(200, 200, 200),
-    material: new MeshPhongMaterial({color: '#00ff00'})
+    material: new MeshPhongMaterial({color: '#00ff00'}),
+    wireframeMaterial: this.getWireFrameMaterial()
   }
 
   // This is only for testing
   // Currently we are loading the model JSON data from the rendering server instead of storage service
   componentDidMount() {
     const loader = new JSONLoader();
-    loader.load('/modelAssets/android.js', (geometry) => {
-      geometry.computeFaceNormals();
-      geometry.computeVertexNormals();
+    loader.load('/modelAssets/android.js', (geometry, materials) => {
+      const material = new MeshFaceMaterial(materials);
       this.setState({
-        geometry
+        geometry,
+        material
       });
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const material = this.state.material;
-    material.wireframe = nextProps.showWireframe;
-    this.setState({
-      material
     });
   }
 
@@ -62,7 +55,7 @@ class ModelCanvas extends React.Component {
   }
 
   renderContent() {
-    const {containerWidth} = this.props;
+    const {containerWidth, showWireframe} = this.props;
 
     const cameraProps = {
       name: 'maincamera',
@@ -70,21 +63,35 @@ class ModelCanvas extends React.Component {
       aspect: aspectRatio,
       near: 1,
       far: 5000,
-      position: new Vector3(0, 0, 300),
+      position: new Vector3(50, 0, 200),
       lookat: new Vector3(0, 0, 0)
     };
 
     return (
-      <Scene width={containerWidth} height={containerWidth / aspectRatio} camera="maincamera">
+      <Scene width={containerWidth} height={containerWidth / aspectRatio} camera="maincamera" antialias>
         <PerspectiveCamera {...cameraProps} />
         <Mesh position={new Vector3(0, 0, 0)}
-          scale={new Vector3(10, 10, 10)}
+          scale={new Vector3(20, 20, 20)}
           geometry={this.state.geometry}
           material={this.state.material} />
-        <AmbientLight color={new Color(0x444444)} intensity={0.5} target={new Vector3(0, 0, 0)} />
-        <PointLight color={new Color(0xFFFFFF)} intensity={2.5} position={new Vector3(0, 60, 60)} />
+        {
+          showWireframe &&
+          <Mesh position={new Vector3(0, 0, 0)}
+            scale={new Vector3(20, 20, 20)}
+            geometry={this.state.geometry}
+            material={this.state.wireframeMaterial} />
+        }
+        <AmbientLight color={new Color(0x777777)} intensity={0.5} target={new Vector3(0, 0, 0)} />
+        <DirectionalLight color={new Color(0xFFFFFF)} intensity={0.75} position={new Vector3(0, 50, 100)} />
       </Scene>
     );
+  }
+
+  getWireFrameMaterial() {
+    const material = new MeshPhongMaterial({color: '#00ff00'});
+    material.wireframe = true;
+
+    return material;
   }
 }
 
