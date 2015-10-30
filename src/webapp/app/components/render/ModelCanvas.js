@@ -1,6 +1,6 @@
 import React from 'react';
 import Dimensions from 'react-dimensions';
-import {Vector3, BoxGeometry, MeshBasicMaterial, MeshFaceMaterial, Color, JSONLoader} from 'three';
+import {Vector3, BoxGeometry, MeshPhongMaterial, Color, JSONLoader} from 'three';
 import {
   Scene,
   PerspectiveCamera,
@@ -19,23 +19,34 @@ const aspectRatio = 16.0 / 9;
 class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
-    containerWidth: React.PropTypes.number
+    containerWidth: React.PropTypes.number,
+    // Indicator whether wireframe is shown
+    showWireframe: React.PropTypes.bool
   }
 
   state = {
     geometry: new BoxGeometry(200, 200, 200),
-    material: new MeshBasicMaterial({color: '#fff'})
+    material: new MeshPhongMaterial({color: '#00ff00'})
   }
 
   // This is only for testing
   // Currently we are loading the model JSON data from the rendering server instead of storage service
   componentDidMount() {
     const loader = new JSONLoader();
-    loader.load('/modelAssets/android.js', (geometry, materials) => {
+    loader.load('/modelAssets/android.js', (geometry) => {
+      geometry.computeFaceNormals();
+      geometry.computeVertexNormals();
       this.setState({
-        geometry,
-        material: new MeshFaceMaterial(materials)
+        geometry
       });
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const material = this.state.material;
+    material.wireframe = nextProps.showWireframe;
+    this.setState({
+      material
     });
   }
 
@@ -70,8 +81,8 @@ class ModelCanvas extends React.Component {
           scale={new Vector3(10, 10, 10)}
           geometry={this.state.geometry}
           material={this.state.material} />
-        <AmbientLight color={new Color(0xFFFFFF)} intensity={0.5} target={new Vector3(0, 0, 0)} />
-        <PointLight color={new Color(0xFFFFFF)} intensity={2.5} position={new Vector3(0, 50, 60)} />
+        <AmbientLight color={new Color(0x444444)} intensity={0.5} target={new Vector3(0, 0, 0)} />
+        <PointLight color={new Color(0xFFFFFF)} intensity={2.5} position={new Vector3(0, 60, 60)} />
       </Scene>
     );
   }

@@ -1,3 +1,4 @@
 export default {
-  RequestActions: require('./RequestActions')
+  RequestActions: require('./RequestActions'),
+  RenderActions: require('./RenderActions')
 };
