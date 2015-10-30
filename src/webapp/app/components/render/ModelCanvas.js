@@ -1,49 +1,57 @@
 import React from 'react';
 import Dimensions from 'react-dimensions';
-import {Vector3, Quaternion, BoxGeometry, MeshBasicMaterial, JSONLoader} from 'three';
+import {Vector3, BoxGeometry, MeshBasicMaterial, MeshFaceMaterial, Color, JSONLoader} from 'three';
 import {
   Scene,
   PerspectiveCamera,
-  Object3D,
-  Mesh
+  Mesh,
+  AmbientLight,
+  PointLight
 } from 'react-three';
 
 const CLASS_NAME = 'cb-model-canvas';
 const aspectRatio = 16.0 / 9;
 
+/**
+ * Model Canvas Component
+ * This is the core component for rendering the model using ThreeJS
+ */
 class ModelCanvas extends React.Component {
   static propTypes = {
+    // Current width of the container
     containerWidth: React.PropTypes.number
   }
 
   state = {
-    quaternion: new Quaternion(),
-    position: new Vector3(0, 0, 0),
     geometry: new BoxGeometry(200, 200, 200),
     material: new MeshBasicMaterial({color: '#fff'})
   }
 
   // This is only for testing
+  // Currently we are loading the model JSON data from the rendering server instead of storage service
   componentDidMount() {
     const loader = new JSONLoader();
-    loader.load('/modelAssets/android.js', (geometry) => {
+    loader.load('/modelAssets/android.js', (geometry, materials) => {
       this.setState({
-        geometry
+        geometry,
+        material: new MeshFaceMaterial(materials)
       });
     });
   }
 
   render() {
+    // Canvas content is empty on the server side
+    const canvasContent = process.env.BROWSER ? this.renderContent() : <canvas />;
+
     return (
       <div className={CLASS_NAME}>
-        {process.env.BROWSER ? this.renderContent() : <canvas />}
+        {canvasContent}
       </div>
     );
   }
 
   renderContent() {
     const {containerWidth} = this.props;
-    const {position, quaternion} = this.state;
 
     const cameraProps = {
       name: 'maincamera',
@@ -58,15 +66,16 @@ class ModelCanvas extends React.Component {
     return (
       <Scene width={containerWidth} height={containerWidth / aspectRatio} camera="maincamera">
         <PerspectiveCamera {...cameraProps} />
-        <Object3D quaternion={quaternion} position={position || new Vector3(0, 0, 0)}>
-          <Mesh position={new Vector3(0, 0, 0)}
-            scale={new Vector3(10, 10, 10)}
-            geometry={this.state.geometry}
-            material={this.state.material} />
-        </Object3D>
+        <Mesh position={new Vector3(0, 0, 0)}
+          scale={new Vector3(10, 10, 10)}
+          geometry={this.state.geometry}
+          material={this.state.material} />
+        <AmbientLight color={new Color(0xFFFFFF)} intensity={0.5} target={new Vector3(0, 0, 0)} />
+        <PointLight color={new Color(0xFFFFFF)} intensity={2.5} position={new Vector3(0, 50, 60)} />
       </Scene>
     );
   }
 }
 
+// HOC with dimensions listener to make the rendering canvas responsive
 export default Dimensions()(ModelCanvas);
