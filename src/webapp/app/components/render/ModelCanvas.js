@@ -63,7 +63,7 @@ class ModelCanvas extends React.Component {
       aspect: aspectRatio,
       near: 1,
       far: 5000,
-      position: new Vector3(50, 0, 200),
+      position: new Vector3(0, 0, 300),
       lookat: new Vector3(0, 0, 0)
     };
 

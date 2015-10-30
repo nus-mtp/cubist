@@ -1,4 +1,5 @@
 export default {
   RequestActions: require('./RequestActions'),
-  RenderActions: require('./RenderActions')
+  RenderActions: require('./RenderActions'),
+  CameraActions: require('./CameraActions')
 };
