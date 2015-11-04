@@ -21,27 +21,28 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
   * Babel
   * SublimeLinter
   * SublimeLinter ESLint
-  * SublimeLinter SCSSLint
+  * SublimeLinter SassLint
 
 ## Setup Instruction
-`git clone git@github.com:nus-mtp/cubist.git`
+`git clone git@github.com:nus-mtp/cubist.git`   
 `npm install`
 
 ###For develoment environment
-`npm run api-dev`
+`npm run api-dev`   
 `npm run webapp-dev`
 
 ###For production environment
-`npm run api-prod`
+`npm run api-prod`   
 `npm run webapp-prod`
 
 
 ## Development Instruction
 * For every issue, work on a separate branch
-* Run command `npm run lint` before every commit
-* If you have modified stylesheets, run command `npm run scsslint`
 * For every commit, specify clearly the purpose of the commit in this format `[purpose] commit message`
-* When merge into master, squash your commit and merge
+* Run command `npm run lint` before every commit. If you have modified stylesheets, run command `npm run sasslint`
+* When there are new commits in `master` branch, please keep up with it by merging into your branch using command: `git merge master --no-commit`
+* When your branch is ready, create a pull request through GitHub and assign one of the collaborators to review your work
+* After review, you can merge into `master` branch through GitHub or using command: `git merge [your-branch-name] --no-ff --no-commit`
 
 ## Bug Reports
 For bug reporting, please create issues in Github
