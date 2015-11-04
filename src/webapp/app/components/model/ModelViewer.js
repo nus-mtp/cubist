@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {JSONLoader} from 'three';
 
 import {ModelCanvas} from '../render';
 import {RenderActions} from 'webapp/app/actions';
@@ -15,6 +16,17 @@ class ModelViewer extends React.Component {
     dispatch: React.PropTypes.func.isRequired
   }
 
+  // This is only for testing
+  // Currently we are loading the model JSON data from the rendering server instead of storage service
+  componentDidMount() {
+    const loader = new JSONLoader();
+    loader.load('/modelAssets/android.js', (geometry) => {
+      this.setState({
+        geometry
+      });
+    });
+  }
+
   _onToggleWireframeButtonClick = () => {
     const {dispatch} = this.props;
     dispatch(RenderActions.toggleWireframe());
@@ -25,7 +37,7 @@ class ModelViewer extends React.Component {
 
     return (
       <div className={CLASS_NAME}>
-        <ModelCanvas showWireframe={showWireframe} />
+        <ModelCanvas />
         <button type="button"
           className="btn btn-success"
           onClick={this._onToggleWireframeButtonClick}>
