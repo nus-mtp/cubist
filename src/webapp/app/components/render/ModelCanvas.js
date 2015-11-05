@@ -13,13 +13,16 @@ const CLASS_NAME = 'cb-model-canvas';
 class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
+    showWireframe: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
-    aspectRatio: React.PropTypes.number
+    aspectRatio: React.PropTypes.number,
+    modelData: React.PropTypes.object
   }
 
   static defaultProps = {
     containerWidth: 500,
-    aspectRatio: 16.0 / 9
+    aspectRatio: 16.0 / 9,
+    modelData: {}
   }
 
   componentDidMount() {
@@ -35,11 +38,19 @@ class ModelCanvas extends React.Component {
     // Update container width
     if (nextProps.containerWidth !== this.props.containerWidth) {
       const {containerWidth, aspectRatio} = nextProps;
-      this.modelScene.resize({
+      this.modelScene.onResize({
         width: containerWidth,
         height: Math.floor(containerWidth / aspectRatio),
         aspectRatio
       });
+    }
+    // Update model
+    if (nextProps.modelData !== this.props.modelData) {
+      this.modelScene.updateModelData(nextProps.modelData);
+    }
+    // Update rendering state
+    if (nextProps.showWireframe !== this.props.showWireframe) {
+      this.modelScene.updateRenderingState({wireframe: nextProps.showWireframe});
     }
   }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {JSONLoader} from 'three';
 
 import {ModelViewer} from '../model';
 
@@ -10,7 +11,26 @@ class ModelContainer extends React.Component {
 
   }
 
+  state = {
+    geometry: undefined,
+    materials: undefined
+  }
+
+  // This is only for testing
+  // Currently we are loading the model JSON data from the rendering server instead of storage service
+  componentDidMount() {
+    const loader = new JSONLoader();
+    loader.load('/modelAssets/android.js', (geometry, materials) => {
+      this.setState({
+        geometry,
+        materials
+      });
+    });
+  }
+
   render() {
+    const {geometry, materials} = this.state;
+
     return (
       <div className={CLASS_NAME}>
         <h2 className={`${CLASS_NAME}-title`}>
@@ -18,7 +38,7 @@ class ModelContainer extends React.Component {
         </h2>
         <div className="row">
           <div className="col-md-8">
-            <ModelViewer />
+            <ModelViewer modelData={{geometry, materials}} />
           </div>
           <div className="col-md-4">
             <div className={`${CLASS_NAME}-info-bar`}>

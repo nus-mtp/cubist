@@ -70,7 +70,7 @@
     "split": "1.0.0",
     "superagent": "1.4.0",
     "superagent-bluebird-promise": "2.1.0",
-    "three": "0.73.0",
+    "three": "0.72.0",
     "trianglify": "github:imouto1994/trianglify",
     "winston": "2.0.1"
   },
