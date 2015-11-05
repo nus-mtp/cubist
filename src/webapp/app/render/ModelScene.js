@@ -20,67 +20,90 @@ class ModelScene {
     shading: Three.SmoothShading
   }
 
+  /**
+   * Constructor function of the scene
+   * @param  {DOMElement} sceneCanvas [the dom element for the canvas containing the scene]
+   * @param  {Object} dimensions  [dimensions data of the canvas]
+   */
   constructor(sceneCanvas, dimensions) {
-    this.init(sceneCanvas, dimensions);
+    this._init(sceneCanvas, dimensions);
   }
 
-  init(sceneCanvas, dimensions) {
-    this.initRenderer(sceneCanvas, dimensions);
-    this.initScene();
-    this.initCamera(dimensions);
-    this.initLight();
+  _init(sceneCanvas, dimensions) {
+    this._initRenderer(sceneCanvas, dimensions);
+    this._initScene();
+    this._initCamera(dimensions);
+    this._initLight();
 
-    this.animate();
+    this._animate();
   }
 
-  initRenderer(sceneCanvas, dimensions) {
+  _initRenderer(sceneCanvas, dimensions) {
     this.renderer = new Three.WebGLRenderer({canvas: sceneCanvas, antialias: true});
     this.renderer.setSize(dimensions.width, dimensions.height);
     this.renderer.setClearColor(0x212121);
   }
 
-  initScene() {
+  _initScene() {
     this.scene = new Three.Scene();
   }
 
-  initCamera(dimensions) {
+  _initCamera(dimensions) {
     this.camera = new Three.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
     this.scene.add(this.camera);
     this.camera.position.set(0, 450, 500);
     this.camera.lookAt(this.scene.position);
   }
 
-  initLight() {
+  _initLight() {
     const light = new Three.PointLight(0xffffff);
     light.position.set(-100, 250, 200);
     this.scene.add(light);
   }
 
-  animate = () => {
-    requestAnimationFrame(this.animate);
-    this.render();
+  /**
+   * Frame updater function
+   */
+  _animate = () => {
+    requestAnimationFrame(this._animate);
+    this._render();
   }
 
-  render() {
+  /**
+   * Render function which will be called for every fame
+   */
+  _render() {
     this.renderer.render(this.scene, this.camera);
   }
 
+  /**
+   * Update the model data of the model
+   * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
+   */
   updateModelData(modelData) {
     this.modelData = modelData;
-    this.updateModel();
+    this._updateModel();
   }
 
+  /**
+   * Update the rendering state of the model
+   * @param  {Object} state [the new state which will be merged with the existing state]
+   */
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
-    this.updateModel();
+    this._updateModel();
   }
 
-  updateModel() {
+  /**
+   * Reinitialize the current model (WARN: This function should try to be called as few as possible)
+   * @return {[type]} [description]
+   */
+  _updateModel() {
     const {geometry} = this.modelData;
     if (this.model) {
       this.scene.remove(this.model);
     }
-    const materials = this.getMaterials();
+    const materials = this._getMaterials();
     if (materials.length === 1) {
       this.model = new Three.Mesh(geometry, materials[0]);
     } else {
@@ -90,7 +113,11 @@ class ModelScene {
     this.scene.add(this.model);
   }
 
-  getMaterials() {
+  /**
+   * Get the materials based on the current model data and rendering state
+   * @return {[Object]} [an array of material object]
+   */
+  _getMaterials() {
     const materials = [];
     const {wireframe, shading} = this.renderingState;
     if (this.modelData.materials) {
@@ -112,6 +139,10 @@ class ModelScene {
     return materials;
   }
 
+  /**
+   * Handler function for the scene when the scene dimensions are modified
+   * @param  {Object} dimensions [data of the scene dimensions]
+   */
   onResize(dimensions) {
     this.camera.aspect = dimensions.aspectRatio;
     this.camera.updateProjectionMatrix();
