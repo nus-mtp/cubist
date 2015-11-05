@@ -12,6 +12,7 @@ const CLASS_NAME = 'cb-model-viewer';
 class ModelViewer extends React.Component {
   static propTypes = {
     showWireframe: React.PropTypes.bool,
+    modelData: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   }
 
@@ -21,11 +22,9 @@ class ModelViewer extends React.Component {
   }
 
   render() {
-    const {showWireframe} = this.props;
-
     return (
       <div className={CLASS_NAME}>
-        <ModelCanvas showWireframe={showWireframe} />
+        <ModelCanvas {...this.props} />
         <button type="button"
           className="btn btn-success"
           onClick={this._onToggleWireframeButtonClick}>
