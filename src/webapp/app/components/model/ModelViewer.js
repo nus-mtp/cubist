@@ -27,6 +27,11 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleShading());
   }
 
+  _onToggleAutoRotateButtonClick = () => {
+    const {dispatch} = this.props;
+    dispatch(RenderActions.toggleAutoRotate());
+  }
+
   render() {
     return (
       <div className={CLASS_NAME}>
@@ -41,6 +46,11 @@ class ModelViewer extends React.Component {
           onClick={this._onToggleShadingButtonClick}>
           Toggle Shading
         </button>
+        <button type="button"
+          className="btn btn-success"
+          onClick={this._onToggleAutoRotateButtonClick}>
+          Toggle Auto-Rotate
+        </button>
       </div>
     );
   }
@@ -49,6 +59,7 @@ class ModelViewer extends React.Component {
 export default connect((state) => {
   return {
     showWireframe: state.RenderStore.get('showWireframe'),
-    showShading: state.RenderStore.get('showShading')
+    showShading: state.RenderStore.get('showShading'),
+    isAutoRotate: state.RenderStore.get('isAutoRotate')
   };
 })(ModelViewer);

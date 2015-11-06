@@ -15,6 +15,7 @@ class ModelCanvas extends React.Component {
     // Current width of the container
     showWireframe: React.PropTypes.bool,
     showShading: React.PropTypes.number,
+    isAutoRotate: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     modelData: React.PropTypes.object
@@ -55,6 +56,9 @@ class ModelCanvas extends React.Component {
     }
     if (nextProps.showShading !== this.props.showShading && this.modelScene) {
       this.modelScene.updateRenderingState({shadingMode: nextProps.showShading});
+    }
+    if (nextProps.isAutoRotate !== this.props.isAutoRotate && this.modelScene) {
+      this.modelScene.updateCameraState({isAutoRotate: nextProps.isAutoRotate});
     }
   }
 

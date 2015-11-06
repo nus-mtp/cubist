@@ -3,12 +3,14 @@ import Immutable from 'immutable';
 import ReducerHelper from './ReducerHelper';
 import {
   WIREFRAME_TOGGLE,
-  SHADING_TOGGLE
+  SHADING_TOGGLE,
+  AUTO_ROTATE_TOGGLE
 } from 'webapp/app/actions/types';
 
 const initialState = Immutable.fromJS({
   showWireframe: false,
-  showShading: 0
+  showShading: 0,
+  isAutoRotate: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -22,6 +24,13 @@ export default ReducerHelper.createReducer(initialState, {
   [SHADING_TOGGLE]: (state) => {
     let nextState = state;
     nextState = nextState.set('showShading', (nextState.get('showShading') + 1) % 3);
+
+    return nextState;
+  },
+
+  [AUTO_ROTATE_TOGGLE]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('isAutoRotate', !nextState.get('isAutoRotate'));
 
     return nextState;
   }
