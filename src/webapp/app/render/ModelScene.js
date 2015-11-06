@@ -17,11 +17,15 @@ class ModelScene {
     geometry: undefined,
     materials: undefined
   }
-  // Current rendering state
+  // Current Rendering State
   renderingState = {
     wireframe: false,
     shadingMode: 0,
     shading: Three.SmoothShading
+  }
+  // Camera State
+  cameraState = {
+    isAutoRotate: false
   }
 
   /**
@@ -90,6 +94,7 @@ class ModelScene {
    */
   _animate = () => {
     requestAnimationFrame(this._animate);
+    this.controls.update();
     this._render();
   }
 
@@ -116,6 +121,11 @@ class ModelScene {
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
     this._updateModel();
+  }
+
+  updateCameraState(state) {
+    Object.assign(this.cameraState, state);
+    this.controls.autoRotate = this.cameraState.isAutoRotate;
   }
 
   /**

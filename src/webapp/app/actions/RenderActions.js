@@ -1,6 +1,7 @@
 import {
   WIREFRAME_TOGGLE,
-  SHADING_TOGGLE
+  SHADING_TOGGLE,
+  AUTO_ROTATE_TOGGLE
 } from './types';
 
 export default {
@@ -13,6 +14,12 @@ export default {
   toggleShading: function() {
     return {
       type: SHADING_TOGGLE
+    };
+  },
+
+  toggleAutoRotate: function() {
+    return {
+      type: AUTO_ROTATE_TOGGLE
     };
   }
 };
