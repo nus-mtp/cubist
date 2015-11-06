@@ -1,4 +1,5 @@
 import Three from 'three';
+import OrbitControls from './OrbitControls';
 
 class ModelScene {
   // Renderer of the Scene
@@ -9,6 +10,8 @@ class ModelScene {
   camera = undefined
   // The Model
   model = undefined
+  // Orbit Controls
+  controls = undefined
   // Data of the model
   modelData = {
     geometry: undefined,
@@ -34,6 +37,7 @@ class ModelScene {
     this._initScene();
     this._initCamera(dimensions);
     this._initLight();
+    this._initControls(dimensions);
 
     this._animate();
   }
@@ -59,6 +63,10 @@ class ModelScene {
     const light = new Three.PointLight(0xffffff);
     light.position.set(-100, 250, 200);
     this.scene.add(light);
+  }
+
+  _initControls(dimensions) {
+    this.controls = new OrbitControls(this.camera, dimensions);
   }
 
   /**
@@ -147,6 +155,7 @@ class ModelScene {
     this.camera.aspect = dimensions.aspectRatio;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(dimensions.width, dimensions.height);
+    this.controls.setDimensions(dimensions.width, dimensions.height);
   }
 
   /**
