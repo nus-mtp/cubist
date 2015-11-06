@@ -45,17 +45,45 @@ class ModelCanvas extends React.Component {
       });
     }
     // Update model
-    if (nextProps.modelData !== this.props.modelData) {
+    if (nextProps.modelData !== this.props.modelData && this.modelScene) {
       this.modelScene.updateModelData(nextProps.modelData);
     }
     // Update rendering state
-    if (nextProps.showWireframe !== this.props.showWireframe) {
+    if (nextProps.showWireframe !== this.props.showWireframe && this.modelScene) {
       this.modelScene.updateRenderingState({wireframe: nextProps.showWireframe});
     }
   }
 
   componentWillUnmount() {
     this.modelScene.dispose();
+  }
+
+  _onMouseDown = (event) => {
+    if (this.modelScene) {
+      this.modelScene.onMouseDown(event);
+    }
+  }
+
+  _onMouseMove = (event) => {
+    if (this.modelScene) {
+      this.modelScene.onMouseMove(event);
+    }
+  }
+
+  _onMouseUp = (event) => {
+    if (this.modelScene) {
+      this.modelScene.onMouseUp(event);
+    }
+  }
+
+  _onWheel = (event) => {
+    if (this.modelScene) {
+      this.modelScene.onWheel(event);
+    }
+  }
+
+  _onContextMenu = (event) => {
+    event.preventDefault();
   }
 
   render() {
@@ -67,7 +95,14 @@ class ModelCanvas extends React.Component {
 
     return (
       <div className={CLASS_NAME}>
-        <canvas className={`${CLASS_NAME}-content`} style={canvasStyle} ref="sceneCanvas" />
+        <canvas className={`${CLASS_NAME}-content`}
+          style={canvasStyle}
+          onMouseDown={this._onMouseDown}
+          onMouseMove={this._onMouseMove}
+          onMouseUp={this._onMouseUp}
+          onWheel={this._onWheel}
+          onContextMenu={this._onContextMenu}
+          ref="sceneCanvas" />
       </div>
     );
   }

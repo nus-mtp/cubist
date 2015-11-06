@@ -35,6 +35,9 @@ class OrbitConstraint {
   _panOffset = new Three.Vector3()
   _zoomChanged = false
 
+  _lastPosition = new Three.Vector3();
+  _lastQuaternion = new Three.Quaternion();
+
   constructor(camera) {
     this.camera = camera;
   }
@@ -109,86 +112,81 @@ class OrbitConstraint {
     }
   }
 
-  update = (function() {
+  update = function() {
     const offset = new Three.Vector3();
     // so camera.up is the orbit axis
     const quat = new Three.Quaternion().setFromUnitVectors(this.camera.up, new Three.Vector3(0, 1, 0));
     const quatInverse = quat.clone().inverse();
 
-    const lastPosition = new Three.Vector3();
-    const lastQuaternion = new Three.Quaternion();
+    const position = this.camera.position;
 
-    return function() {
-      const position = this.camera.position;
+    offset.copy(position).sub(this.target);
 
-      offset.copy(position).sub(this.target);
+    // rotate offset to "y-axis-is-up" space
+    offset.applyQuaternion(quat);
 
-      // rotate offset to "y-axis-is-up" space
-      offset.applyQuaternion(quat);
+    // angle from z-axis around y-axis
+    this._theta = Math.atan2(offset.x, offset.z);
 
-      // angle from z-axis around y-axis
-      this._theta = Math.atan2(offset.x, offset.z);
+    // angle from y-axis
+    this._phi = Math.atan2(Math.sqrt(offset.x * offset.x + offset.z * offset.z), offset.y);
 
-      // angle from y-axis
-      this._phi = Math.atan2(Math.sqrt(offset.x * offset.x + offset.z * offset.z), offset.y);
+    this._theta += this._thetaDelta;
+    this._phi += this._phiDelta;
 
-      this._theta += this._thetaDelta;
-      this._phi += this._phiDelta;
+    // restrict theta to be between desired limits
+    this._theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this._theta));
 
-      // restrict theta to be between desired limits
-      this._theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this._theta));
+    // restrict phi to be between desired limits
+    this._phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this._phi));
 
-      // restrict phi to be between desired limits
-      this._phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this._phi));
+    // restrict phi to be betwee EPS and PI-EPS
+    this._phi = Math.max(this._epsilon, Math.min(Math.PI - this._epsilon, this._phi));
 
-      // restrict phi to be betwee EPS and PI-EPS
-      this._phi = Math.max(this._epsilon, Math.min(Math.PI - this._epsilon, this._phi));
+    let radius = offset.length() * this._scale;
 
-      let radius = offset.length() * this._scale;
+    // restrict radius to be between desired limits
+    radius = Math.max(this.minDistance, Math.min(this.maxDistance, radius));
 
-      // restrict radius to be between desired limits
-      radius = Math.max(this.minDistance, Math.min(this.maxDistance, radius));
+    // move target to panned location
+    this.target.add(this._panOffset);
 
-      // move target to panned location
-      this.target.add(this._panOffset);
+    offset.x = radius * Math.sin(this._phi) * Math.sin(this._theta);
+    offset.y = radius * Math.cos(this._phi);
+    offset.z = radius * Math.sin(this._phi) * Math.cos(this._theta);
 
-      offset.x = radius * Math.sin(this._phi) * Math.sin(this._theta);
-      offset.y = radius * Math.cos(this._phi);
-      offset.z = radius * Math.sin(this._phi) * Math.cos(this._theta);
+    // rotate offset back to "camera-up-vector-is-up" space
+    offset.applyQuaternion(quatInverse);
 
-      // rotate offset back to "camera-up-vector-is-up" space
-      offset.applyQuaternion(quatInverse);
+    position.copy(this.target).add(offset);
 
-      position.copy(this.target).add(offset);
+    this.camera.lookAt( this.target );
 
-      this.camera.lookAt( this.target );
+    if (this.enableDamping === true) {
+      this._thetaDelta *= ( 1 - this.dampingFactor );
+      this._phiDelta *= ( 1 - this.dampingFactor );
+    } else {
+      this._thetaDelta = 0;
+      this._phiDelta = 0;
+    }
 
-      if (this.enableDamping === true) {
-        this._thetaDelta *= ( 1 - this.dampingFactor );
-        this._phiDelta *= ( 1 - this.dampingFactor );
-      } else {
-        this._thetaDelta = 0;
-        this._phiDelta = 0;
-      }
+    this._scale = 1;
+    this._panOffset.set( 0, 0, 0 );
 
-      this._scale = 1;
-      this._panOffset.set( 0, 0, 0 );
+    // Update condition is:
+    // min(camera displacement, camera rotation in radians)^2 > EPS
+    // using small-angle approximation cos(x/2) = 1 - x^2 / 8
+    if (this._zoomChanged
+      || this._lastPosition.distanceToSquared(this.camera.position) > this._epsilon
+      || 8 * (1 - this._lastQuaternion.dot(this.camera.quaternion)) > this._epsilon) {
+      this._lastPosition.copy(this.camera.position);
+      this._lastQuaternion.copy(this.camera.quaternion);
+      this._zoomChanged = false;
+      return true;
+    }
 
-      // Update condition is:
-      // min(camera displacement, camera rotation in radians)^2 > EPS
-      // using small-angle approximation cos(x/2) = 1 - x^2 / 8
-      if (this._zoomChanged
-        || lastPosition.distanceToSquared(this.camera.position) > this._epsilon
-        || 8 * (1 - lastQuaternion.dot(this.camera.quaternion)) > this._epsilon) {
-        lastPosition.copy(this.camera.position);
-        lastQuaternion.copy(this.camera.quaternion);
-        this._zoomChanged = false;
-        return true;
-      }
-
-      return false;
-    };
-  })();
+    return false;
+  }
 }
 
 export default OrbitConstraint;

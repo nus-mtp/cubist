@@ -158,6 +158,22 @@ class ModelScene {
     this.controls.setDimensions(dimensions.width, dimensions.height);
   }
 
+  onMouseDown = (event) => {
+    this.controls.onMouseDown(event);
+  }
+
+  onMouseMove = (event) => {
+    this.controls.onMouseMove(event);
+  }
+
+  onMouseUp = (event) => {
+    this.controls.onMouseUp(event);
+  }
+
+  onWheel = (event) => {
+    this.controls.onMouseWheel(event);
+  }
+
   /**
    * Dispose all entities in scene
    */

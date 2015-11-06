@@ -54,11 +54,6 @@ class OrbitControl extends Three.EventDispatcher {
 
   _state = this._STATE.NONE
 
-  // Attributes for reset
-  _target0 = this.target.clone()
-  _position0 = this.camera.position.clone()
-  _zoom0 = this.camera.zoom
-
   // Event Signal
   _changeEvent = {type: 'change'}
   _startEvent = {type: 'start'}
@@ -69,6 +64,11 @@ class OrbitControl extends Three.EventDispatcher {
     this.constraint = new OrbitConstraint(camera);
     this.dimensions = dimensions;
     this.update();
+
+    // Attributes for reset
+    this._target0 = this.target.clone();
+    this._position0 = this.camera.position.clone();
+    this._zoom0 = this.camera.zoom;
   }
 
   getPolarAngle() {
@@ -218,15 +218,7 @@ class OrbitControl extends Three.EventDispatcher {
     event.preventDefault();
     event.stopPropagation();
 
-    let delta = 0;
-    if (event.wheelDelta !== undefined) {
-      // WebKit / Opera / Explorer 9
-      delta = event.wheelDelta;
-    } else if (event.detail !== undefined) {
-      // Firefox
-      delta = - event.detail;
-    }
-
+    const delta = event.deltaY;
     if (delta > 0) {
       this.constraint.dollyOut(this.getZoomScale());
     } else if (delta < 0) {
@@ -399,10 +391,6 @@ class OrbitControl extends Three.EventDispatcher {
 
     this.dispatchEvent(this._endEvent);
     this._state = this._STATE.NONE;
-  }
-
-  onContextMenu = (event) => {
-    event.preventDefault();
   }
 
   dispose() {
