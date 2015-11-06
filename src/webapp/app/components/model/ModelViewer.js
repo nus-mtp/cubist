@@ -12,6 +12,7 @@ const CLASS_NAME = 'cb-model-viewer';
 class ModelViewer extends React.Component {
   static propTypes = {
     showWireframe: React.PropTypes.bool,
+    showShading: React.PropTypes.number,
     modelData: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   }
@@ -19,6 +20,11 @@ class ModelViewer extends React.Component {
   _onToggleWireframeButtonClick = () => {
     const {dispatch} = this.props;
     dispatch(RenderActions.toggleWireframe());
+  }
+
+  _onToggleShadingButtonClick = () => {
+    const {dispatch} = this.props;
+    dispatch(RenderActions.toggleShading());
   }
 
   render() {
@@ -30,6 +36,11 @@ class ModelViewer extends React.Component {
           onClick={this._onToggleWireframeButtonClick}>
           Toggle Wireframe
         </button>
+        <button type="button"
+          className="btn btn-success"
+          onClick={this._onToggleShadingButtonClick}>
+          Toggle Shading
+        </button>
       </div>
     );
   }
@@ -37,6 +48,7 @@ class ModelViewer extends React.Component {
 
 export default connect((state) => {
   return {
-    showWireframe: state.RenderStore.get('showWireframe')
+    showWireframe: state.RenderStore.get('showWireframe'),
+    showShading: state.RenderStore.get('showShading')
   };
 })(ModelViewer);

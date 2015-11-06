@@ -14,6 +14,7 @@ class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
     showWireframe: React.PropTypes.bool,
+    showShading: React.PropTypes.number,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     modelData: React.PropTypes.object
@@ -51,6 +52,9 @@ class ModelCanvas extends React.Component {
     // Update rendering state
     if (nextProps.showWireframe !== this.props.showWireframe && this.modelScene) {
       this.modelScene.updateRenderingState({wireframe: nextProps.showWireframe});
+    }
+    if (nextProps.showShading !== this.props.showShading && this.modelScene) {
+      this.modelScene.updateRenderingState({shadingMode: nextProps.showShading});
     }
   }
 

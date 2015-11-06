@@ -20,6 +20,7 @@ class ModelScene {
   // Current rendering state
   renderingState = {
     wireframe: false,
+    shadingMode: 0,
     shading: Three.SmoothShading
   }
 
@@ -60,9 +61,24 @@ class ModelScene {
   }
 
   _initLight() {
-    const light = new Three.PointLight(0xffffff);
+    //main front light
+    const light = new Three.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
     this.scene.add(light);
+
+    //fill light
+    const light2 = new Three.PointLight(0x777777);
+    light2.position.set(100, 100, 200);
+    this.scene.add(light2);
+
+    //back light
+    const light3 = new Three.PointLight(0x777777);
+    light3.position.set(0, 100, -200);
+    this.scene.add(light3);
+
+    //ambient light
+    const ambientLight = new Three.AmbientLight(0x333333);
+    this.scene.add(ambientLight);
   }
 
   _initControls(dimensions) {
@@ -127,7 +143,7 @@ class ModelScene {
    */
   _getMaterials() {
     const materials = [];
-    const {wireframe, shading} = this.renderingState;
+    const {wireframe, shading, shadingMode} = this.renderingState;
     if (this.modelData.materials) {
       materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
         m.shading = shading;
@@ -135,9 +151,28 @@ class ModelScene {
       })));
     }
 
+    //Flat shading
+    if (shadingMode === 1) {
+      materials.push(new Three.MeshPhongMaterial({
+        color: 0xc0c0c0,
+        shading: Three.FlatShading,
+        wireframe: false,
+        transparent: true
+      }));
+    }
+    //Smooth shading
+    if (shadingMode === 2) {
+      materials.push(new Three.MeshPhongMaterial({
+        color: 0xc0c0c0,
+        shading: Three.SmoothShading,
+        wireframe: false,
+        transparent: true
+      }));
+    }
+
     if (wireframe) {
       materials.push(new Three.MeshBasicMaterial({
-        color: 0x000000,
+        color: 0x00c0c0,
         shading: Three.FlatShading,
         wireframe: true,
         transparent: true
