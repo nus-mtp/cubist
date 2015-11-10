@@ -10,9 +10,9 @@ if (process.env.BROWSER) {
   reduxReactRouter = require('redux-router/server').reduxReactRouter;
 }
 
-import {logMiddleware, createPromiseMiddleware, transitionMiddleware} from 'webapp/app/middlewares';
+import {logMiddleware, createPromiseMiddleware, transitionMiddleware} from 'webapp/middlewares';
 import routes from './routes';
-import reducers from 'webapp/app/reducers';
+import reducers from 'webapp/reducers';
 
 const reducer = combineReducers(reducers);
 

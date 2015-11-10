@@ -1,7 +1,7 @@
 import {ROUTER_DID_CHANGE} from 'redux-router/lib/constants';
 import Qs from 'qs';
 
-import {getDataDependencies, compareLocations} from 'webapp/app/utils';
+import {getDataDependencies, compareLocations} from 'webapp/utils';
 
 export default ({getState, dispatch}) => next => action => {
   if (action.type !== ROUTER_DID_CHANGE) {

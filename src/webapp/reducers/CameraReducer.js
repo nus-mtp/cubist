@@ -5,7 +5,7 @@ import {
   CAMERA_PAN,
   CAMERA_ROTATE,
   CAMERA_ZOOM
-} from 'webapp/app/actions/types';
+} from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
   posX: 0,

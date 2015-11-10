@@ -5,7 +5,7 @@ import {
   WIREFRAME_TOGGLE,
   SHADING_TOGGLE,
   AUTO_ROTATE_TOGGLE
-} from 'webapp/app/actions/types';
+} from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
   showWireframe: false,

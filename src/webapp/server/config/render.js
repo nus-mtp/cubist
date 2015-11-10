@@ -4,10 +4,10 @@ import {match} from 'redux-router/server';
 import Promise from 'bluebird';
 
 import {Logger, ClientError} from 'common';
-import appRender from 'webapp/app/config/render';
-import ApiClient from 'webapp/app/config/api';
-import redux from 'webapp/app/config/redux';
-import HtmlDocument from 'webapp/app/components/HtmlDocument';
+import appRender from 'webapp/config/render';
+import ApiClient from 'webapp/config/api';
+import redux from 'webapp/config/redux';
+import HtmlDocument from 'webapp/components/HtmlDocument';
 
 const DEBUG_ENV = 'server-render';
 

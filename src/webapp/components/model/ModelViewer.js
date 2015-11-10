@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {ModelCanvas} from '../render';
-import {RenderActions} from 'webapp/app/actions';
+import {RenderActions} from 'webapp/actions';
 
 const CLASS_NAME = 'cb-model-viewer';
 
