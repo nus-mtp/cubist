@@ -25,10 +25,14 @@
     "react/no-multi-comp": 2,
     "react/no-did-mount-set-state": 0
   },
-
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
-  }
+    "es6": true,
+    "mongo": true,
+    "mocha": true
+  },
+  "plugins": [
+    "mocha"
+  ]
 }
