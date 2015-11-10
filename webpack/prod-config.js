@@ -11,7 +11,7 @@ module.exports = {
   progress: true,
   devtool: 'source-map',
   entry: {
-    'main': './src/webapp/app/index.js'
+    'main': './src/webapp/index.js'
   },
   output: {
     path: assetsPath,

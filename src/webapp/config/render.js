@@ -5,7 +5,7 @@ import {ReduxRouter} from 'redux-router';
 import {Provider} from 'react-redux';
 
 import {Logger} from 'common';
-import {getDataDependencies} from 'webapp/app/utils';
+import {getDataDependencies} from 'webapp/utils';
 
 const DEBUG_ENV = 'app-render';
 

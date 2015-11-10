@@ -4,7 +4,7 @@ import ReducerHelper from './ReducerHelper';
 import {
   REDIRECT,
   REQUEST_FIRST_TIME
-} from 'webapp/app/actions/types';
+} from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
   firstTime: true

@@ -7,7 +7,7 @@ import {
   ModelContainer,
   RootContainer,
   ErrorContainer
-} from 'webapp/app/components';
+} from 'webapp/components';
 
 export default (
   <Route component={RootContainer}>

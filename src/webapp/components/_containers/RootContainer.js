@@ -1,7 +1,7 @@
 import React from 'react';
 
 if (process.env.BROWSER) {
-  require('webapp/app/styles/main.scss');
+  require('webapp/styles/main.scss');
 }
 
 const CLASS_NAME = 'cb-ctn-root';
