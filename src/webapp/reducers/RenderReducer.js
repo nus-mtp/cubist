@@ -8,29 +8,29 @@ import {
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
-  showWireframe: false,
-  showShading: 0,
-  isAutoRotate: false
+  wireframe: false,
+  shadingMode: 0,
+  autoRotate: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
   [WIREFRAME_TOGGLE]: (state) => {
     let nextState = state;
-    nextState = nextState.set('showWireframe', !nextState.get('showWireframe'));
+    nextState = nextState.set('wireframe', !nextState.get('wireframe'));
 
     return nextState;
   },
 
   [SHADING_TOGGLE]: (state) => {
     let nextState = state;
-    nextState = nextState.set('showShading', (nextState.get('showShading') + 1) % 3);
+    nextState = nextState.set('shadingMode', (nextState.get('shadingMode') + 1) % 3);
 
     return nextState;
   },
 
   [AUTO_ROTATE_TOGGLE]: (state) => {
     let nextState = state;
-    nextState = nextState.set('isAutoRotate', !nextState.get('isAutoRotate'));
+    nextState = nextState.set('autoRotate', !nextState.get('autoRotate'));
 
     return nextState;
   }

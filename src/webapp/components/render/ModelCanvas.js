@@ -13,9 +13,9 @@ const CLASS_NAME = 'cb-model-canvas';
 class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
-    showWireframe: React.PropTypes.bool,
-    showShading: React.PropTypes.number,
-    isAutoRotate: React.PropTypes.bool,
+    wireframe: React.PropTypes.bool,
+    shadingMode: React.PropTypes.number,
+    autoRotate: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     modelData: React.PropTypes.object
@@ -28,7 +28,7 @@ class ModelCanvas extends React.Component {
   }
 
   componentDidMount() {
-    const {containerWidth, aspectRatio} = this.props;
+    const { containerWidth, aspectRatio } = this.props;
     this.modelScene = new ModelScene(ReactDOM.findDOMNode(this.refs.sceneCanvas), {
       width: containerWidth,
       height: Math.floor(containerWidth / aspectRatio),
@@ -39,7 +39,7 @@ class ModelCanvas extends React.Component {
   componentWillReceiveProps(nextProps) {
     // Update container width
     if (nextProps.containerWidth !== this.props.containerWidth) {
-      const {containerWidth, aspectRatio} = nextProps;
+      const { containerWidth, aspectRatio } = nextProps;
       this.modelScene.onResize({
         width: containerWidth,
         height: Math.floor(containerWidth / aspectRatio),
@@ -51,14 +51,14 @@ class ModelCanvas extends React.Component {
       this.modelScene.updateModelData(nextProps.modelData);
     }
     // Update rendering state
-    if (nextProps.showWireframe !== this.props.showWireframe && this.modelScene) {
-      this.modelScene.updateRenderingState({wireframe: nextProps.showWireframe});
+    if (nextProps.wireframe !== this.props.wireframe && this.modelScene) {
+      this.modelScene.updateRenderingState({ wireframe: nextProps.wireframe });
     }
-    if (nextProps.showShading !== this.props.showShading && this.modelScene) {
-      this.modelScene.updateRenderingState({shadingMode: nextProps.showShading});
+    if (nextProps.shadingMode !== this.props.shadingMode && this.modelScene) {
+      this.modelScene.updateRenderingState({ shadingMode: nextProps.shadingMode });
     }
-    if (nextProps.isAutoRotate !== this.props.isAutoRotate && this.modelScene) {
-      this.modelScene.updateCameraState({isAutoRotate: nextProps.isAutoRotate});
+    if (nextProps.autoRotate !== this.props.autoRotate && this.modelScene) {
+      this.modelScene.updateCameraState({ autoRotate: nextProps.autoRotate });
     }
   }
 
@@ -95,21 +95,21 @@ class ModelCanvas extends React.Component {
   }
 
   render() {
-    const {containerWidth, aspectRatio} = this.props;
+    const { containerWidth, aspectRatio } = this.props;
     const canvasStyle = {
       width: `${containerWidth}px`,
       height: `${Math.floor(containerWidth / aspectRatio)}px`
     };
 
     return (
-      <div className={CLASS_NAME}>
-        <canvas className={`${CLASS_NAME}-content`}
-          style={canvasStyle}
-          onMouseDown={this._onMouseDown}
-          onMouseMove={this._onMouseMove}
-          onMouseUp={this._onMouseUp}
-          onWheel={this._onWheel}
-          onContextMenu={this._onContextMenu}
+      <div className={ CLASS_NAME }>
+        <canvas className={ `${CLASS_NAME}-content` }
+          style={ canvasStyle }
+          onMouseDown={ this._onMouseDown }
+          onMouseMove={ this._onMouseMove }
+          onMouseUp={ this._onMouseUp }
+          onWheel={ this._onWheel }
+          onContextMenu={ this._onContextMenu }
           ref="sceneCanvas" />
       </div>
     );

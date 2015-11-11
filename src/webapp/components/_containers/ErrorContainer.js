@@ -5,7 +5,7 @@ const CLASS_NAME = 'cb-ctn-error';
 class ErrorContainer extends React.Component {
   render() {
     return (
-      <div className={CLASS_NAME}>
+      <div className={ CLASS_NAME }>
         Error
       </div>
     );

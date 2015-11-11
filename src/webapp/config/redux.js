@@ -1,4 +1,4 @@
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 let createHistory;
 let reduxReactRouter;
@@ -10,7 +10,7 @@ if (process.env.BROWSER) {
   reduxReactRouter = require('redux-router/server').reduxReactRouter;
 }
 
-import {logMiddleware, createPromiseMiddleware, transitionMiddleware} from 'webapp/middlewares';
+import { logMiddleware, createPromiseMiddleware, transitionMiddleware } from 'webapp/middlewares';
 import routes from './routes';
 import reducers from 'webapp/reducers';
 

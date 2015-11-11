@@ -1,4 +1,4 @@
-import Immutable, {Map, List} from 'immutable';
+import Immutable, { Map, List } from 'immutable';
 
 export default {
   createReducer: (initialState = {}, handlers) => {

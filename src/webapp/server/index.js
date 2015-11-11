@@ -1,7 +1,7 @@
 import express from 'express';
 import Promise from 'bluebird';
 
-import {Logger} from 'common';
+import { Logger } from 'common';
 import environment from './config/environment';
 import routes from './config/routes';
 import render from './config/render';

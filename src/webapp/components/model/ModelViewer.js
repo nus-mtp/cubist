@@ -1,8 +1,8 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {ModelCanvas} from '../render';
-import {RenderActions} from 'webapp/actions';
+import { ModelCanvas } from '../render';
+import { RenderActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -11,44 +11,45 @@ const CLASS_NAME = 'cb-model-viewer';
  */
 class ModelViewer extends React.Component {
   static propTypes = {
-    showWireframe: React.PropTypes.bool,
-    showShading: React.PropTypes.number,
+    wireframe: React.PropTypes.bool,
+    shadingMode: React.PropTypes.number,
+    autoRotate: React.PropTypes.bool,
     modelData: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   }
 
   _onToggleWireframeButtonClick = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(RenderActions.toggleWireframe());
   }
 
   _onToggleShadingButtonClick = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(RenderActions.toggleShading());
   }
 
   _onToggleAutoRotateButtonClick = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(RenderActions.toggleAutoRotate());
   }
 
   render() {
     return (
-      <div className={CLASS_NAME}>
-        <ModelCanvas {...this.props} />
+      <div className={ CLASS_NAME }>
+        <ModelCanvas { ...this.props } />
         <button type="button"
           className="btn btn-success"
-          onClick={this._onToggleWireframeButtonClick}>
+          onClick={ this._onToggleWireframeButtonClick }>
           Toggle Wireframe
         </button>
         <button type="button"
           className="btn btn-success"
-          onClick={this._onToggleShadingButtonClick}>
+          onClick={ this._onToggleShadingButtonClick }>
           Toggle Shading
         </button>
         <button type="button"
           className="btn btn-success"
-          onClick={this._onToggleAutoRotateButtonClick}>
+          onClick={ this._onToggleAutoRotateButtonClick }>
           Toggle Auto-Rotate
         </button>
       </div>
@@ -58,8 +59,8 @@ class ModelViewer extends React.Component {
 
 export default connect((state) => {
   return {
-    showWireframe: state.RenderStore.get('showWireframe'),
-    showShading: state.RenderStore.get('showShading'),
-    isAutoRotate: state.RenderStore.get('isAutoRotate')
+    wireframe: state.RenderStore.get('wireframe'),
+    shadingMode: state.RenderStore.get('shadingMode'),
+    autoRotate: state.RenderStore.get('autoRotate')
   };
 })(ModelViewer);

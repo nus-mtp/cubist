@@ -41,8 +41,8 @@ var StatsHelper = {
       .map(function(image) {
         var i = image.source.indexOf('"');
         var imageSource = image.source.slice(i + 1, -1);
-        imageSource = imageSource.lastIndexOf('data:image', 0) === 0 
-          ? imageSource 
+        imageSource = imageSource.lastIndexOf('data:image', 0) === 0
+          ? imageSource
           : publicPath + imageSource;
         return {
           original: image.name,

@@ -4,9 +4,9 @@ function getFetchDataFunctions(component) {
     : component.fetchData;
 }
 
-export default function getDataDependencies(components, {dispatch, params, query}) {
+export default function getDataDependencies(components, { dispatch, params, query }) {
   return components
     .filter(component => getFetchDataFunctions(component))
     .map(component => getFetchDataFunctions(component))
-    .map(fetchDataFunction => fetchDataFunction({dispatch, params, query}));
+    .map(fetchDataFunction => fetchDataFunction({ dispatch, params, query }));
 }

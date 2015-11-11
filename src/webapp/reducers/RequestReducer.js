@@ -11,7 +11,7 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [REDIRECT]: (state, {redirect}) => {
+  [REDIRECT]: (state, { redirect }) => {
     return state.merge({
       redirect
     });

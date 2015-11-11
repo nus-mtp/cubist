@@ -25,10 +25,10 @@ class OrbitControl extends Three.EventDispatcher {
   enableKeys = true
 
   // The four arrow keys
-  keys = {LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40}
+  keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 }
 
   // Mouse buttons
-  mouseButtons = {ORBIT: Three.MOUSE.LEFT, ZOOM: Three.MOUSE.MIDDLE, PAN: Three.MOUSE.RIGHT}
+  mouseButtons = { ORBIT: Three.MOUSE.LEFT, ZOOM: Three.MOUSE.MIDDLE, PAN: Three.MOUSE.RIGHT }
 
   _rotateStart = new Three.Vector2()
   _rotateEnd = new Three.Vector2()
@@ -55,9 +55,9 @@ class OrbitControl extends Three.EventDispatcher {
   _state = this._STATE.NONE
 
   // Event Signal
-  _changeEvent = {type: 'change'}
-  _startEvent = {type: 'start'}
-  _endEvent = {type: 'end'}
+  _changeEvent = { type: 'change' }
+  _startEvent = { type: 'start' }
+  _endEvent = { type: 'end' }
 
   constructor(camera, dimensions) {
     super();

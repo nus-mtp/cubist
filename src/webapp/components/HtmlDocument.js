@@ -20,23 +20,23 @@ class HtmlDocument extends React.Component {
   }
 
   render() {
-    const {title, markup, store, script, css} = this.props;
+    const { title, markup, store, script, css } = this.props;
     return (
       <html lang="en">
         <head>
           <meta charSet="utf-8" />
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-          <title>{title}</title>
+          <title>{ title }</title>
           {
-            css.map((href, k) => <link key={k} rel="stylesheet" type="text/css" href={href} />)
+            css.map((href, k) => <link key={ k } rel="stylesheet" type="text/css" href={ href } />)
           }
         </head>
         <body>
-          <div id="root" dangerouslySetInnerHTML={{__html: markup}} />
-          <script dangerouslySetInnerHTML={{__html: `window.__data=${store};`}}/>
+          <div id="root" dangerouslySetInnerHTML={ { __html: markup } } />
+          <script dangerouslySetInnerHTML={ { __html: `window.__data=${store};` } }/>
           {
-            script.map((src, k) => <script key={k} src={src} />)
+            script.map((src, k) => <script key={ k } src={ src } />)
           }
         </body>
       </html>
