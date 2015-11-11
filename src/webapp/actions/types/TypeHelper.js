@@ -5,6 +5,6 @@ import keymirror from 'keymirror';
  */
 export default {
   combineTypes: function(syncType, promiseTypes) {
-    return keymirror({...syncType, ...promiseTypes});
+    return keymirror({ ...syncType, ...promiseTypes });
   }
 };

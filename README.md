@@ -13,36 +13,63 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 * Express
 * MongoDB
 * SASS
+* Mocha
 
 ## Requirements
-* Install `NodeJS`
-* Install `MongoDB`
-* Install `Sublime Text` with the following packages:
-  * Babel
-  * SublimeLinter
-  * SublimeLinter ESLint
-  * SublimeLinter SassLint
+* Install **NodeJS 4.2.1**
+* Install **MongoDB 3.0.0**
 
 ## Setup Instruction
-`git clone git@github.com:nus-mtp/cubist.git`   
-`npm install`
+
+```
+$ git clone git@github.com:nus-mtp/cubist.git
+$ npm install
+```
 
 ###For develoment environment
-`npm run api-dev`   
-`npm run webapp-dev`
+
+```
+$ npm run api-dev
+$ npm run webapp-dev
+```
 
 ###For production environment
-`npm run api-prod`   
-`npm run webapp-prod`
 
+```
+$ npm run api-prod
+$ npm run webapp-prod
+```
 
 ## Development Instruction
 * For every issue, work on a separate branch
-* For every commit, specify clearly the purpose of the commit in this format `[purpose] commit message`
-* Run command `npm run lint` before every commit. If you have modified stylesheets, run command `npm run sasslint`
-* When there are new commits in `master` branch, please keep up with it by merging into your branch using command: `git merge master --no-commit`
-* When your branch is ready, create a pull request through GitHub and assign one of the collaborators to review your work
-* After review, you can merge into `master` branch through GitHub or using command: `git merge [your-branch-name] --no-ff --no-commit`
+* For every commit, specify clearly the purpose of the commit in this format:
+
+```
+$ git commit -m "[purpose] commit message"
+```
+
+* Run these commands before every commit:
+
+```
+$ npm run lint
+$ npm run sasslint
+$ npm run test
+```
+
+* When there are new commits in **`master`** branch, please keep up with it by merging into your branch using command:
+
+```
+$ git merge master --no-commit
+$ git commit -m "commit message"
+```
+
+* When your branch is ready, create a pull request through **GitHub** and assign one of the collaborators to review your work
+* After the pull request is approved, you can merge into **`master`** branch through **GitHub** or using command:
+
+```
+$ git merge [your-branch-name] --no-ff --no-commit
+$ git commit -m "commit message"
+```
 
 ## Bug Reports
 For bug reporting, please create issues in Github

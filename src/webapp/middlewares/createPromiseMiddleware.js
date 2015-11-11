@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 
-import {Constants} from 'common';
+import { Constants } from 'common';
 
 /**
  * Promise middleware to handle promise actions.
@@ -8,7 +8,7 @@ import {Constants} from 'common';
  */
 export default (apiClient) => {
   return store => next => action => {
-    const {promise, ...rest} = action;
+    const { promise, ...rest } = action;
     // If there is no promise, go to next middleware
     if (!promise) {
       return next(action);
@@ -21,16 +21,16 @@ export default (apiClient) => {
     }
 
     // Create the promise action in pending state
-    next({...rest, promiseState: Constants.PROMISE_STATE_PENDING});
+    next({ ...rest, promiseState: Constants.PROMISE_STATE_PENDING });
 
     return promise(apiClient)
       .then((res) => {
         // Create the promise action in success state
-        next({...rest, res, promiseState: Constants.PROMISE_STATE_SUCCESS});
+        next({ ...rest, res, promiseState: Constants.PROMISE_STATE_SUCCESS });
       })
       .catch((res) => {
         // Create the promise  action in the failure state
-        next({...rest, res, promiseState: Constants.PROMISE_STATE_FAILURE});
+        next({ ...rest, res, promiseState: Constants.PROMISE_STATE_FAILURE });
         // Return a new reject promise if this is server side
         if (!process.env.BROWSER) {
           return Promise.reject(res.body);

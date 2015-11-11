@@ -39,25 +39,25 @@ class AppContainer extends PureComponent {
   }
 
   render() {
-    const {location} = this.props;
+    const { location } = this.props;
     const isHomePage = location.pathname === '/';
 
     return (
-      <div className={CLASS_NAME}>
+      <div className={ CLASS_NAME }>
         {
           isHomePage &&
-          <Waypoint threshold={0.2}
-            onEnter={this._onTopPageEnter}
-            onLeave={this._onTopPageLeave} />
+          <Waypoint threshold={ 0.2 }
+            onEnter={ this._onTopPageEnter }
+            onLeave={ this._onTopPageLeave } />
         }
-        {this._renderHeader()}
-        {this._renderBody()}
+        { this._renderHeader() }
+        { this._renderBody() }
       </div>
     );
   }
 
   _renderBody() {
-    const {children, location} = this.props;
+    const { children, location } = this.props;
     const isHomePage = location.pathname === '/';
     const contentClasses = [
       'container-fluid',
@@ -68,15 +68,15 @@ class AppContainer extends PureComponent {
     ];
 
     return (
-      <div className={classnames(contentClasses)}>
-        {children}
+      <div className={ classnames(contentClasses) }>
+        { children }
       </div>
     );
   }
 
   _renderHeader() {
-    const {location} = this.props;
-    const {isAtTop} = this.state;
+    const { location } = this.props;
+    const { isAtTop } = this.state;
     const isHomePage = location.pathname === '/';
     const navClasses = [
       'navbar',
@@ -114,22 +114,22 @@ class AppContainer extends PureComponent {
     ];
 
     return (
-      <nav className={classnames(navClasses)}>
+      <nav className={ classnames(navClasses) }>
         <div className="container">
           <div className="navbar-header">
-            <button type="button" className="navbar-toggle collapsed" onClick={this._onMenuToggle}>
+            <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
             </button>
-            <a href="/" className={classnames(navBrandClasses)}>
+            <a href="/" className={ classnames(navBrandClasses) }>
               Cubist
             </a>
           </div>
-          <div className={classnames(collapseClasses)}>
+          <div className={ classnames(collapseClasses) }>
             <div className="navbar-right">
-              <button className={classnames(signUpClasses)}>
+              <button className={ classnames(signUpClasses) }>
                 SIGN UP
               </button>
-              <button className={`${CLASS_NAME}-navbar-login btn btn-success navbar-btn`} >
+              <button className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
                 LOG IN
               </button>
             </div>

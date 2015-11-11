@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {match} from 'redux-router/server';
+import { match } from 'redux-router/server';
 import Promise from 'bluebird';
 
-import {Logger, ClientError} from 'common';
+import { Logger, ClientError } from 'common';
 import appRender from 'webapp/config/render';
 import ApiClient from 'webapp/config/api';
 import redux from 'webapp/config/redux';
@@ -57,10 +57,10 @@ const render = function(req, res, next) {
     const html = ReactDOMServer.renderToStaticMarkup(
       <HtmlDocument
         title="Cubist 3D"
-        markup={componentMarkup}
-        store={JSON.stringify(store.getState())}
-        script={assets.script}
-        css={assets.css} />
+        markup={ componentMarkup }
+        store={ JSON.stringify(store.getState()) }
+        script={ assets.script }
+        css={ assets.css } />
     );
     const doctype = '<!DOCTYPE html>';
     res.send(doctype + html);

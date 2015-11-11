@@ -9,11 +9,11 @@ class ModelCard extends React.Component {
 
   render() {
     return (
-      <figure className={CLASS_NAME}>
-        <div className={`${CLASS_NAME}-thumbnail`}>
+      <figure className={ CLASS_NAME }>
+        <div className={ `${CLASS_NAME}-thumbnail` }>
 
         </div>
-        <figcaption className={`${CLASS_NAME}-caption`}>
+        <figcaption className={ `${CLASS_NAME}-caption` }>
 
         </figcaption>
       </figure>

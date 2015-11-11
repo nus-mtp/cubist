@@ -12,11 +12,11 @@ class RootContainer extends React.Component {
   }
 
   render() {
-    const {children} = this.props;
+    const { children } = this.props;
 
     return (
-      <div className={CLASS_NAME}>
-        {children}
+      <div className={ CLASS_NAME }>
+        { children }
       </div>
     );
   }

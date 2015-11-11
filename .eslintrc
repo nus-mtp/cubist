@@ -1,13 +1,19 @@
 {
   "extends": "airbnb",
   "rules": {
+    /** ES5 **/
+    "strict": 0,
+    "no-var": 0,
+    "prefer-const": 0,
+
+    /** ES6 **/
     "max-len": [1, 120, 2, {ignoreComments: true}],
     "camelcase": 1,
+    "object-curly-spacing": [2, "always"],
     "comma-dangle": [2, "never"],
     "brace-style": 2,
     "id-length": 0,
     "new-cap": 0,
-    "spaced-comment": 0,
     "no-else-return": 0,
     "func-names": 0,
     "react/sort-comp": [2, { order: [
@@ -17,6 +23,8 @@
       "/^_render.+$/",
       "everything-else"
     ]}],
+    "react/jsx-boolean-value": 0,
+    "react/jsx-curly-spacing": [2, "always"],
     "react/jsx-closing-bracket-location": [2, 'after-props'],
     "react/jsx-indent-props": [2, 2],
     "react/jsx-no-duplicate-props": 2,

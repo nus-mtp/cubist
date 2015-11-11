@@ -13,7 +13,7 @@ module.exports = function(webpackConfig, callback) {
     noInfo: true,
     hot: true,
     publicPath: webpackConfig.output.publicPath,
-    headers: {'Access-Control-Allow-Origin': '*'},
+    headers: { 'Access-Control-Allow-Origin': '*' },
     stats: {
       assets: false,
       colors: true,

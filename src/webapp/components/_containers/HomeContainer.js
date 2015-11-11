@@ -4,8 +4,8 @@ import PureComponent from 'react-pure-render/component';
 import Trianglify from 'trianglify';
 import _ from 'lodash';
 
-import {TrianglifyCanvas} from '../common';
-import {ModelCard} from '../model';
+import { TrianglifyCanvas } from '../common';
+import { ModelCard } from '../model';
 
 const CLASS_NAME = 'cb-ctn-home';
 const DEFAULT_WIDTH = 1920;
@@ -38,7 +38,7 @@ class HomeContainer extends PureComponent {
 
   _onDebounceResize = () => {
     clearTimeout(this.state.resize_timer);
-    this.setState({resize_timer: setTimeout(this._onResize, 100)});
+    this.setState({ resize_timer: setTimeout(this._onResize, 100) });
   }
 
   _onResize = () => {
@@ -50,16 +50,16 @@ class HomeContainer extends PureComponent {
 
   render() {
     return (
-      <div className={CLASS_NAME}>
-        {this._renderHeroSection()}
-        {this._renderPopularSection()}
-        {this._renderCategorySection()}
+      <div className={ CLASS_NAME }>
+        { this._renderHeroSection() }
+        { this._renderPopularSection() }
+        { this._renderCategorySection() }
       </div>
     );
   }
 
   _renderHeroSection() {
-    const {width, height, seed, cell_size, variance, x_colors} = this.state;
+    const { width, height, seed, cell_size, variance, x_colors } = this.state;
     const trianglifyProps = {
       variance,
       x_colors,
@@ -70,42 +70,42 @@ class HomeContainer extends PureComponent {
     };
 
     return (
-      <div className={`${CLASS_NAME}-hero`} ref="hero">
-        <TrianglifyCanvas {...trianglifyProps} />
-        <div className={`${CLASS_NAME}-hero-content`}>
-          <h1 className={`${CLASS_NAME}-hero-title`}>CUBIST</h1>
-          <p className={`${CLASS_NAME}-hero-subtitle`}>
+      <div className={ `${CLASS_NAME}-hero` } ref="hero">
+        <TrianglifyCanvas { ...trianglifyProps } />
+        <div className={ `${CLASS_NAME}-hero-content` }>
+          <h1 className={ `${CLASS_NAME}-hero-title` }>CUBIST</h1>
+          <p className={ `${CLASS_NAME}-hero-subtitle` }>
             Your open-source 3D web gallery
           </p>
-          <div className={`${CLASS_NAME}-hero-random`}>
-            <div className={`${CLASS_NAME}-hero-random-4 row`}>
+          <div className={ `${CLASS_NAME}-hero-random` }>
+            <div className={ `${CLASS_NAME}-hero-random-4 row` }>
               {
                 _.fill(new Array(4), 1).map((el, i) => (
-                  <div className={`${CLASS_NAME}-hero-random-4-item col-xs-3`} key={i}>
+                  <div className={ `${CLASS_NAME}-hero-random-4-item col-xs-3` } key={ i }>
                   </div>
                 ))
               }
             </div>
-            <div className={`${CLASS_NAME}-hero-random-6 row`}>
+            <div className={ `${CLASS_NAME}-hero-random-6 row` }>
               {
                 _.fill(new Array(6), 1).map((el, i) => (
-                  <div className={`${CLASS_NAME}-hero-random-6-item col-xs-2`} key={i}>
+                  <div className={ `${CLASS_NAME}-hero-random-6-item col-xs-2` } key={ i }>
                   </div>
                 ))
               }
             </div>
-            <div className={`${CLASS_NAME}-hero-random-4 row`}>
+            <div className={ `${CLASS_NAME}-hero-random-4 row` }>
               {
                 _.fill(new Array(4), 1).map((el, i) => (
-                  <div className={`${CLASS_NAME}-hero-random-4-item col-xs-3`} key={i}>
+                  <div className={ `${CLASS_NAME}-hero-random-4-item col-xs-3` } key={ i }>
                   </div>
                 ))
               }
             </div>
-            <div className={`${CLASS_NAME}-hero-random-6 row`}>
+            <div className={ `${CLASS_NAME}-hero-random-6 row` }>
               {
                 _.fill(new Array(6), 1).map((el, i) => (
-                  <div className={`${CLASS_NAME}-hero-random-6-item col-xs-2`} key={i}>
+                  <div className={ `${CLASS_NAME}-hero-random-6-item col-xs-2` } key={ i }>
                   </div>
                 ))
               }
@@ -118,22 +118,22 @@ class HomeContainer extends PureComponent {
 
   _renderPopularSection() {
     return (
-      <section className={`${CLASS_NAME}-popular`}>
-        <div className={`${CLASS_NAME}-popular-header`}>
+      <section className={ `${CLASS_NAME}-popular` }>
+        <div className={ `${CLASS_NAME}-popular-header` }>
           <h2>TOP POPULAR</h2>
         </div>
-        <div className={`${CLASS_NAME}-popular-content`}>
+        <div className={ `${CLASS_NAME}-popular-content` }>
           <div className="row">
             {
               _.fill(new Array(9), 1).map((el, i) => (
-                <div className={`${CLASS_NAME}-popular-item col-md-4 col-sm-6 col-xs-12`} key={i}>
+                <div className={ `${CLASS_NAME}-popular-item col-md-4 col-sm-6 col-xs-12` } key={ i }>
                   <ModelCard />
                 </div>
               ))
             }
           </div>
         </div>
-        <div className={`${CLASS_NAME}-popular-footer`}>
+        <div className={ `${CLASS_NAME}-popular-footer` }>
           <button className="btn btn-success">
             SEE MORE
           </button>
@@ -144,15 +144,15 @@ class HomeContainer extends PureComponent {
 
   _renderCategorySection() {
     return (
-      <section className={`${CLASS_NAME}-category`}>
-        <div className={`${CLASS_NAME}-category-header`}>
+      <section className={ `${CLASS_NAME}-category` }>
+        <div className={ `${CLASS_NAME}-category-header` }>
           <h2>CATEGORIES</h2>
         </div>
-        <div className={`${CLASS_NAME}-category-content`}>
+        <div className={ `${CLASS_NAME}-category-content` }>
           <div className="row">
             {
               _.fill(new Array(8), 1).map((el, i) => (
-                <div className={`${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6`} key={i}>
+                <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` } key={ i }>
 
                 </div>
               ))

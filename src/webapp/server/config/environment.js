@@ -4,10 +4,10 @@ import morgan from 'morgan';
 import compression from 'compression';
 import favIcon from 'serve-favicon';
 
-import {Logger} from 'common';
+import { Logger } from 'common';
 
 export default (app) => {
-  app.use(morgan('tiny', {'stream': Logger.stream}));
+  app.use(morgan('tiny', { 'stream': Logger.stream }));
   app.use(compression());
   app.use(favIcon(path.resolve(__dirname, '../../assets/favicon.png')));
   // Only serve static files when in production mode

@@ -1,8 +1,8 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {JSONLoader} from 'three';
+import { connect } from 'react-redux';
+import { JSONLoader } from 'three';
 
-import {ModelViewer} from '../model';
+import { ModelViewer } from '../model';
 
 const CLASS_NAME = 'cb-ctn-model';
 
@@ -29,19 +29,19 @@ class ModelContainer extends React.Component {
   }
 
   render() {
-    const {geometry, materials} = this.state;
+    const { geometry, materials } = this.state;
 
     return (
-      <div className={CLASS_NAME}>
-        <h2 className={`${CLASS_NAME}-title`}>
+      <div className={ CLASS_NAME }>
+        <h2 className={ `${CLASS_NAME}-title` }>
           Model Name
         </h2>
         <div className="row">
           <div className="col-md-8">
-            <ModelViewer modelData={{geometry, materials}} />
+            <ModelViewer modelData={ { geometry, materials } } />
           </div>
           <div className="col-md-4">
-            <div className={`${CLASS_NAME}-info-bar`}>
+            <div className={ `${CLASS_NAME}-info-bar` }>
             </div>
           </div>
         </div>

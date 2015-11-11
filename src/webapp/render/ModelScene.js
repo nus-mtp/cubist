@@ -25,7 +25,7 @@ class ModelScene {
   }
   // Camera State
   cameraState = {
-    isAutoRotate: false
+    autoRotate: false
   }
 
   /**
@@ -48,7 +48,7 @@ class ModelScene {
   }
 
   _initRenderer(sceneCanvas, dimensions) {
-    this.renderer = new Three.WebGLRenderer({canvas: sceneCanvas, antialias: true});
+    this.renderer = new Three.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
     this.renderer.setClearColor(0x212121);
   }
@@ -65,22 +65,22 @@ class ModelScene {
   }
 
   _initLight() {
-    //main front light
+    // Main front light
     const light = new Three.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
     this.scene.add(light);
 
-    //fill light
+    // Fill light
     const light2 = new Three.PointLight(0x777777);
     light2.position.set(100, 100, 200);
     this.scene.add(light2);
 
-    //back light
+    // Back light
     const light3 = new Three.PointLight(0x777777);
     light3.position.set(0, 100, -200);
     this.scene.add(light3);
 
-    //ambient light
+    // Ambient light
     const ambientLight = new Three.AmbientLight(0x333333);
     this.scene.add(ambientLight);
   }
@@ -125,7 +125,7 @@ class ModelScene {
 
   updateCameraState(state) {
     Object.assign(this.cameraState, state);
-    this.controls.autoRotate = this.cameraState.isAutoRotate;
+    this.controls.autoRotate = this.cameraState.autoRotate;
   }
 
   /**
@@ -133,7 +133,7 @@ class ModelScene {
    * @return {[type]} [description]
    */
   _updateModel() {
-    const {geometry} = this.modelData;
+    const { geometry } = this.modelData;
     if (this.model) {
       this.scene.remove(this.model);
     }
@@ -153,7 +153,7 @@ class ModelScene {
    */
   _getMaterials() {
     const materials = [];
-    const {wireframe, shading, shadingMode} = this.renderingState;
+    const { wireframe, shading, shadingMode } = this.renderingState;
     if (this.modelData.materials) {
       materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
         m.shading = shading;
@@ -161,7 +161,7 @@ class ModelScene {
       })));
     }
 
-    //Flat shading
+    // Flat shading
     if (shadingMode === 1) {
       materials.push(new Three.MeshPhongMaterial({
         color: 0xc0c0c0,
@@ -170,7 +170,7 @@ class ModelScene {
         transparent: true
       }));
     }
-    //Smooth shading
+    // Smooth shading
     if (shadingMode === 2) {
       materials.push(new Three.MeshPhongMaterial({
         color: 0xc0c0c0,
