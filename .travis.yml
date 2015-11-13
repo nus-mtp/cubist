@@ -19,4 +19,7 @@ addons:
 script:
   - npm run lint-ci
   - npm run sasslint-ci
-  - npm run test-ci
+  - npm run cover-ci
+# Afer Success
+after_success:
+- npm run coveralls
