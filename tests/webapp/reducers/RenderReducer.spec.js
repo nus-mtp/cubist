@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
+
 import reducer from 'webapp/reducers/RenderReducer';
 import { WIREFRAME_TOGGLE, AUTO_ROTATE_TOGGLE, SHADING_TOGGLE } from 'webapp/actions/types';
 

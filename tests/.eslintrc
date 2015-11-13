@@ -3,5 +3,7 @@
     "strict": [2, "never"],
     "no-var": 2,
     "prefer-const": 2,
+    /* For `expect` syntax */
+    "no-unused-expressions": 0
   }
 }
