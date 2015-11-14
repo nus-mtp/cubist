@@ -15,18 +15,17 @@ class OrbitConstraint {
   maxPolarAngle = Math.PI
   // How far you can orbit horizontally, upper and lower limits.
   // If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-  minAzimuthAngle = - Infinity
+  minAzimuthAngle = -Infinity
   maxAzimuthAngle = Infinity
   // Set to true to enable damping
-  enableDamping = false
   dampingFactor = 0.25
 
   // Epsilon
   _epsilon = 0.000001
 
   // Current position in spherical coordinate system.
-  _theta
-  _phi
+  _theta = 0
+  _phi = 0
 
   // Pending changes
   _phiDelta = 0
@@ -35,10 +34,14 @@ class OrbitConstraint {
   _panOffset = new Three.Vector3()
   _zoomChanged = false
 
+  // Last position and quaternion in the previous frame
   _lastPosition = new Three.Vector3();
   _lastQuaternion = new Three.Quaternion();
 
   constructor(camera) {
+    if (!camera) {
+      throw new Error('Camera is undefined');
+    }
     this.camera = camera;
   }
 
@@ -58,17 +61,17 @@ class OrbitConstraint {
     this._phiDelta -= angle;
   }
 
-  panLeft(distance) {
+  _panLeft(distance) {
     const te = this.camera.matrix.elements;
-    const v = new Three.Vector3(te[0], te[1], te[2]);
-    v.multiplyScalar(-distance);
+    let v = new Three.Vector3(te[0], te[1], te[2]);
+    v = v.multiplyScalar(-distance);
     this._panOffset.add(v);
   }
 
-  panUp(distance) {
+  _panUp(distance) {
     const te = this.camera.matrix.elements;
-    const v = new Three.Vector3(te[4], te[5], te[6]);
-    v.multiplyScalar(distance);
+    let v = new Three.Vector3(te[4], te[5], te[6]);
+    v = v.multiplyScalar(distance);
     this._panOffset.add(v);
   }
 
@@ -76,26 +79,25 @@ class OrbitConstraint {
     if (this.camera instanceof Three.PerspectiveCamera) {
       // perspective
       const position = this.camera.position;
-      const offset = position.clone().sub(this.target);
-      let targetDistance = offset.length();
+      let targetDistance = position.clone().sub(this.target).length();
 
       // half of the fov is center to top of screen
       targetDistance *= Math.tan((this.camera.fov / 2) * Math.PI / 180.0);
 
       // we actually don't use screenWidth, since perspective camera is fixed to screen height
-      this.panLeft(2 * deltaX * targetDistance / screenHeight);
-      this.panUp(2 * deltaY * targetDistance / screenHeight);
-    } else if (this.camera instanceof Three.OrthographicCamera) {
+      this._panLeft(2 * deltaX * targetDistance / screenHeight);
+      this._panUp(2 * deltaY * targetDistance / screenHeight);
+    } else {
       // orthographic
-      this.panLeft(deltaX * (this.camera.right - this.camera.left) / screenWidth);
-      this.panUp(deltaY * (this.camera.top - this.camera.bottom) / screenHeight);
+      this._panLeft(deltaX * (this.camera.right - this.camera.left) / screenWidth);
+      this._panUp(deltaY * (this.camera.top - this.camera.bottom) / screenHeight);
     }
   }
 
   dollyIn(dollyScale) {
     if (this.camera instanceof Three.PerspectiveCamera) {
       this._scale /= dollyScale;
-    } else if (this.camera instanceof Three.OrthographicCamera) {
+    } else {
       this.camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.camera.zoom * dollyScale));
       this.camera.updateProjectionMatrix();
       this._zoomChanged = true;
@@ -105,25 +107,20 @@ class OrbitConstraint {
   dollyOut(dollyScale) {
     if (this.camera instanceof Three.PerspectiveCamera) {
       this._scale *= dollyScale;
-    } else if (this.camera instanceof Three.OrthographicCamera) {
+    } else {
       this.camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.camera.zoom / dollyScale));
       this.camera.updateProjectionMatrix();
       this._zoomChanged = true;
     }
   }
 
-  update = function() {
-    const offset = new Three.Vector3();
-    // so camera.up is the orbit axis
+  // Update function to be called for every frame
+  update() {
+    // Let camera.up is the orbit axis
     const quat = new Three.Quaternion().setFromUnitVectors(this.camera.up, new Three.Vector3(0, 1, 0));
     const quatInverse = quat.clone().inverse();
-
-    const position = this.camera.position;
-
-    offset.copy(position).sub(this.target);
-
-    // rotate offset to "y-axis-is-up" space
-    offset.applyQuaternion(quat);
+    // Rotate offset to "y-axis-is-up" space
+    const offset = this.camera.position.clone().sub(this.target).applyQuaternion(quat);
 
     // angle from z-axis around y-axis
     this._theta = Math.atan2(offset.x, offset.z);
@@ -158,20 +155,15 @@ class OrbitConstraint {
     // rotate offset back to "camera-up-vector-is-up" space
     offset.applyQuaternion(quatInverse);
 
-    position.copy(this.target).add(offset);
+    this.camera.position.copy(this.target).add(offset);
 
     this.camera.lookAt( this.target );
 
-    if (this.enableDamping === true) {
-      this._thetaDelta *= ( 1 - this.dampingFactor );
-      this._phiDelta *= ( 1 - this.dampingFactor );
-    } else {
-      this._thetaDelta = 0;
-      this._phiDelta = 0;
-    }
+    this._thetaDelta *= (1 - this.dampingFactor);
+    this._phiDelta *= (1 - this.dampingFactor);
 
     this._scale = 1;
-    this._panOffset.set( 0, 0, 0 );
+    this._panOffset.set(0, 0, 0);
 
     // Update condition is:
     // min(camera displacement, camera rotation in radians)^2 > EPS
