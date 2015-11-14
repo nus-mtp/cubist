@@ -4,7 +4,7 @@ import { List, Map } from 'immutable';
 import ReducerHelper from 'webapp/reducers/ReducerHelper';
 
 describe('Reducer Helper', () => {
-  describe('[#createReducer]', () => {
+  describe('#createReducer', () => {
     it('Should create a reducer function', () => {
       expect(ReducerHelper.createReducer()).is.a('function');
     });

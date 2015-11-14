@@ -13,7 +13,7 @@ describe('Render Reducer', () => {
     }));
   });
 
-  describe('[#Action: WIREFRAME_TOGGLE]', () => {
+  describe('#Action: WIREFRAME_TOGGLE', () => {
     it('Should handle WIREFRAME_TOGGLE toggling from TRUE to FALSE', () => {
       expect(
         reducer(Map({ wireframe: true }), { type: WIREFRAME_TOGGLE })
@@ -31,7 +31,7 @@ describe('Render Reducer', () => {
     });
   });
 
-  describe('[#Action: SHADING_TOGGLE]', () => {
+  describe('#Action: SHADING_TOGGLE', () => {
     it('Should handle SHADING_TOGGLE by incrementing shading type', () => {
       expect(
         reducer(Map({ shadingMode: 0 }), { type: SHADING_TOGGLE })
