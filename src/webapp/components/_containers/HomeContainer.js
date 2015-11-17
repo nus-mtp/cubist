@@ -1,11 +1,22 @@
+import classnames from 'classnames';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PureComponent from 'react-pure-render/component';
 import Trianglify from 'trianglify';
-import _ from 'lodash';
 
 import { TrianglifyCanvas } from '../common';
 import { ModelCard } from '../model';
+import { requireServerJson } from 'webapp/utils';
+
+const randomModels = process.env.BROWSER
+  ? require('webapp/assets/model-random.json')
+  : requireServerJson(__dirname, '../../assets/model-random.json');
+const topModels = process.env.BROWSER
+  ? require('webapp/assets/model-top.json')
+  : requireServerJson(__dirname, '../../assets/model-top.json');
+const categories = process.env.BROWSER
+  ? require('webapp/assets/model-category.json')
+  : requireServerJson(__dirname, '../../assets/model-category.json');
 
 const CLASS_NAME = 'cb-ctn-home';
 const DEFAULT_WIDTH = 1920;
@@ -16,7 +27,7 @@ class HomeContainer extends PureComponent {
     ...Trianglify.defaults,
     width: process.env.BROWSER ? window.innerWidth : DEFAULT_WIDTH,
     height: process.env.BROWSER ? window.innerHeight : DEFAULT_HEIGHT,
-    x_colors: 'RdBu',
+    x_colors: 'YlGnBu',
     cell_size: 40,
     resize_timer: null,
     variance: 0.75,
@@ -77,43 +88,49 @@ class HomeContainer extends PureComponent {
           <p className={ `${CLASS_NAME}-hero-subtitle` }>
             Your open-source 3D web gallery
           </p>
-          <div className={ `${CLASS_NAME}-hero-random` }>
-            <div className={ `${CLASS_NAME}-hero-random-4 row` }>
-              {
-                _.fill(new Array(4), 1).map((el, i) => (
-                  <div className={ `${CLASS_NAME}-hero-random-4-item col-xs-3` } key={ i }>
-                  </div>
-                ))
-              }
-            </div>
-            <div className={ `${CLASS_NAME}-hero-random-6 row` }>
-              {
-                _.fill(new Array(6), 1).map((el, i) => (
-                  <div className={ `${CLASS_NAME}-hero-random-6-item col-xs-2` } key={ i }>
-                  </div>
-                ))
-              }
-            </div>
-            <div className={ `${CLASS_NAME}-hero-random-4 row` }>
-              {
-                _.fill(new Array(4), 1).map((el, i) => (
-                  <div className={ `${CLASS_NAME}-hero-random-4-item col-xs-3` } key={ i }>
-                  </div>
-                ))
-              }
-            </div>
-            <div className={ `${CLASS_NAME}-hero-random-6 row` }>
-              {
-                _.fill(new Array(6), 1).map((el, i) => (
-                  <div className={ `${CLASS_NAME}-hero-random-6-item col-xs-2` } key={ i }>
-                  </div>
-                ))
-              }
-            </div>
+          <div className={ `${CLASS_NAME}-hero-random row` }>
+            { this._renderRandomModels() }
           </div>
         </div>
       </div>
     );
+  }
+
+  _renderRandomModels() {
+    let rowIndex = 0;
+    let rowItems = 4;
+
+    return randomModels.map((model, i) => {
+      if (rowIndex === rowItems) {
+        rowIndex = 0;
+        rowItems = rowItems === 4 ? 6 : 4;
+      }
+      rowIndex++;
+      let itemClasses;
+      if (rowItems === 4) {
+        itemClasses = [
+          `${CLASS_NAME}-hero-random-item`,
+          `${CLASS_NAME}-hero-random-4-item`,
+          'col-xs-3'
+        ];
+      } else {
+        itemClasses = [
+          `${CLASS_NAME}-hero-random-item`,
+          `${CLASS_NAME}-hero-random-6-item`,
+          'col-xs-2'
+        ];
+      }
+      const style = {
+        backgroundImage: `url(${model.image_url})`
+      };
+
+      return (
+        <div className={ classnames(itemClasses) } style={ style } key={ i }>
+          <div className={ `${CLASS_NAME}-hero-random-item-overlay` }>
+          </div>
+        </div>
+      );
+    });
   }
 
   _renderPopularSection() {
@@ -124,13 +141,7 @@ class HomeContainer extends PureComponent {
         </div>
         <div className={ `${CLASS_NAME}-popular-content` }>
           <div className="row">
-            {
-              _.fill(new Array(9), 1).map((el, i) => (
-                <div className={ `${CLASS_NAME}-popular-item col-md-4 col-sm-6 col-xs-12` } key={ i }>
-                  <ModelCard />
-                </div>
-              ))
-            }
+            { this._renderPopularModels() }
           </div>
         </div>
         <div className={ `${CLASS_NAME}-popular-footer` }>
@@ -142,6 +153,14 @@ class HomeContainer extends PureComponent {
     );
   }
 
+  _renderPopularModels() {
+    return topModels.map((model, i) => (
+      <div className={ `${CLASS_NAME}-popular-item col-md-4 col-sm-6 col-xs-12` } key={ i }>
+        <ModelCard model={ model } />
+      </div>
+    ));
+  }
+
   _renderCategorySection() {
     return (
       <section className={ `${CLASS_NAME}-category` }>
@@ -150,17 +169,31 @@ class HomeContainer extends PureComponent {
         </div>
         <div className={ `${CLASS_NAME}-category-content` }>
           <div className="row">
-            {
-              _.fill(new Array(8), 1).map((el, i) => (
-                <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` } key={ i }>
-
-                </div>
-              ))
-            }
+            { this._renderCategories() }
           </div>
         </div>
       </section>
     );
+  }
+
+  _renderCategories() {
+    return categories.map((category, i) => {
+      const style = {
+        backgroundImage: `url(${category.image_url})`
+      };
+
+      return (
+        <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` }
+          style={ style }
+          key={ i }>
+          <div className={ `${CLASS_NAME}-category-item-overlay` }>
+            <div className={ `${CLASS_NAME}-category-item-title` }>
+              { category.category }
+            </div>
+          </div>
+        </div>
+      );
+    });
   }
 }
 

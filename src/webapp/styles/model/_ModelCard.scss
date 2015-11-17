@@ -6,9 +6,56 @@
 
 .cb-model-card-thumbnail {
   background-color: rgba(0, 0, 0, .1);
-  height: 300px;  
+  background-position: center center;
+  background-size: cover;
+  height: 275px;
+}
+
+.cb-model-card-thumbnail-overlay {
+  background-color: rgba(255, 255, 255, .3);
+  cursor: pointer;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .3s ease;
+  width: 100%;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .cb-model-card-caption {
-  height: 100px;
+  align-items: center;
+  display: flex;
+  padding: 15px;
+}
+
+.cb-model-card-caption-avatar {
+  background-color: $cb-primary;
+  border-radius: 50%;
+  display: inline-block;
+  height: 45px;
+  line-height: 45px;
+  text-align: center;
+  vertical-align: middle;
+  width: 45px;
+}
+
+.cb-model-card-caption-avatar-icon {
+  color: $cb-white;
+  font-size: 18px;
+}
+
+.cb-model-card-caption-info {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.cb-model-card-caption-info-title {
+  font-size: 1.25em;
+}
+
+.cb-model-card-caption-info-uploader {
+  color: $cb-dark-gray;
+  font-weight: 200;
 }
