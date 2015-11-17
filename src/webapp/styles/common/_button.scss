@@ -5,7 +5,7 @@
 }
 
 .btn-success {
-  @include button-variant(#fff, #f64747, rgba(0, 0, 0, 0));
+  @include button-variant(#fff, #2BDE73, rgba(0, 0, 0, 0));
 }
 
 .btn.active.focus, 
@@ -19,7 +19,7 @@
 
 // Custom Button Classes
 .btn-transparent {
-  @include button-variant(#000, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
+  @include button-variant($cb-default, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
 
   &:hover, 
   &:active, 

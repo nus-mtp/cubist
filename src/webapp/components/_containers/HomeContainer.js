@@ -16,7 +16,7 @@ class HomeContainer extends PureComponent {
     ...Trianglify.defaults,
     width: process.env.BROWSER ? window.innerWidth : DEFAULT_WIDTH,
     height: process.env.BROWSER ? window.innerHeight : DEFAULT_HEIGHT,
-    x_colors: 'RdBu',
+    x_colors: 'GnBu',
     cell_size: 40,
     resize_timer: null,
     variance: 0.75,
