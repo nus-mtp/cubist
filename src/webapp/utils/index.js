@@ -1,4 +1,5 @@
 export default {
   compareLocations: require('./compareLocations'),
-  getDataDependencies: require('./getDataDependencies')
+  getDataDependencies: require('./getDataDependencies'),
+  requireServerJson: require('./requireServerJson')
 };

@@ -31,6 +31,7 @@ class HtmlDocument extends React.Component {
           {
             css.map((href, k) => <link key={ k } rel="stylesheet" type="text/css" href={ href } />)
           }
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
         </head>
         <body>
           <div id="root" dangerouslySetInnerHTML={ { __html: markup } } />
