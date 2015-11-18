@@ -15,10 +15,12 @@ class ModelCard extends React.Component {
 
     return (
       <figure className={ CLASS_NAME }>
-        <div className={ `${CLASS_NAME}-thumbnail` } style={ thumbnailStyle }>
+        <a className={ `${CLASS_NAME}-thumbnail` }
+          style={ thumbnailStyle }
+          href="/model/1">
           <div className={ `${CLASS_NAME}-thumbnail-overlay` }>
           </div>
-        </div>
+        </a>
         <figcaption className={ `${CLASS_NAME}-caption` }>
           <div className={ `${CLASS_NAME}-caption-avatar` }>
             <i className={ `${CLASS_NAME}-caption-avatar-icon fa fa-user` } />
