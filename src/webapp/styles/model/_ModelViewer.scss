@@ -1,0 +1,26 @@
+.cb-model-viewer {
+  position: relative;
+}
+
+.cb-model-viewer-options {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+// Wireframe Button
+.cb-model-viewer-wireframe-button {
+  font-size: 20px;
+
+  &.is-active {
+    color: $cb-primary;
+  }
+}
+
+.cb-model-viewer-auto-rotate-button {
+  font-size: 20px;
+
+  &.is-active {
+    color: $cb-primary;
+  }
+}
