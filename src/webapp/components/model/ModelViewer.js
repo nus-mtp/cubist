@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -37,22 +38,72 @@ class ModelViewer extends React.Component {
     return (
       <div className={ CLASS_NAME }>
         <ModelCanvas { ...this.props } />
-        <button type="button"
-          className="btn btn-success"
-          onClick={ this._onToggleWireframeButtonClick }>
-          Toggle Wireframe
-        </button>
-        <button type="button"
-          className="btn btn-success"
-          onClick={ this._onToggleShadingButtonClick }>
-          Toggle Shading
-        </button>
-        <button type="button"
-          className="btn btn-success"
-          onClick={ this._onToggleAutoRotateButtonClick }>
-          Toggle Auto-Rotate
-        </button>
+        <div className={ `${CLASS_NAME}-options` }>
+          { this._renderShadingButton() }
+          { this._renderAutoRotatebutton() }
+          { this._renderWireframeButton() }
+        </div>
       </div>
+    );
+  }
+
+  _renderWireframeButton() {
+    const { wireframe } = this.props;
+    const wireframeButtonClasses = [
+      'btn',
+      'btn-transparent-alt',
+      `${CLASS_NAME}-wireframe-button`,
+      {
+        [`is-active`]: wireframe
+      }
+    ];
+
+    return (
+      <button type="button"
+        className={ classnames(wireframeButtonClasses) }
+        onClick={ this._onToggleWireframeButtonClick }>
+        <i className="fa fa-codepen" />
+      </button>
+    );
+  }
+
+  _renderAutoRotatebutton() {
+    const { autoRotate } = this.props;
+    const autoRotateButtonClasses = [
+      'btn',
+      'btn-transparent-alt',
+      `${CLASS_NAME}-auto-rotate-button`,
+      {
+        [`is-active`]: autoRotate
+      }
+    ];
+
+    return (
+      <button type="button"
+        className={ classnames(autoRotateButtonClasses) }
+        onClick={ this._onToggleAutoRotateButtonClick }>
+        <i className="fa fa-street-view" />
+      </button>
+    );
+  }
+
+  _renderShadingButton() {
+    const { shadingMode } = this.props;
+    let buttonTitle;
+    if (shadingMode === 0) {
+      buttonTitle = 'Default';
+    } else if (shadingMode === 1) {
+      buttonTitle = 'Flat';
+    } else {
+      buttonTitle = 'Smooth';
+    }
+
+    return (
+      <button type="button"
+        className="btn btn-transparent-alt"
+        onClick={ this._onToggleShadingButtonClick }>
+        { buttonTitle }
+      </button>
     );
   }
 }
