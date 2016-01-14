@@ -10,11 +10,11 @@ require('./gulp/task-build-webpack-prod');
  * Run Web Application Rendering Server in development environement
  * Static files will be bundled and served by Webpack development server to enable hot reload
  */
-gulp.task('webapp-dev', ['build-webpack-dev'], function() {
+gulp.task('webapp-dev', ['build-webpack-dev'], function () {
   var developmentEnv = _.cloneDeep(process.env);
   developmentEnv.NODE_ENV = 'development';
   developmentEnv.BROWSER = false;
-  spawn('nodemon', ['webapp-server.js'], {
+  spawn('nodemon', ['-w', 'src/common', '-w', 'src/webapp', 'webapp-server.js'], {
     env: developmentEnv,
     stdio: 'inherit'
   });
@@ -24,7 +24,7 @@ gulp.task('webapp-dev', ['build-webpack-dev'], function() {
  * Run Web Application Rendering Server in production environment
  * Static files will be bundled by Webpack and served by the rendering server
  */
-gulp.task('webapp-prod', ['build-webpack-prod'], function() {
+gulp.task('webapp-prod', ['build-webpack-prod'], function () {
   var productionEnv = _.cloneDeep(process.env);
   productionEnv.NODE_ENV = 'production';
   productionEnv.BROWSER = false;
@@ -37,10 +37,10 @@ gulp.task('webapp-prod', ['build-webpack-prod'], function() {
 /**
  * Run API Server in development environment
  */
-gulp.task('api-dev', function() {
+gulp.task('api-dev', function () {
   var developmentEnv = _.cloneDeep(process.env);
   developmentEnv.NODE_ENV = 'development';
-  spawn('nodemon', ['api-server.js'], {
+  spawn('nodemon', ['-w', 'src/common', '-w', 'src/api', 'api-server.js'], {
     env: developmentEnv,
     stdio: 'inherit'
   });
@@ -49,7 +49,7 @@ gulp.task('api-dev', function() {
 /**
  * Run API Server in production environment
  */
-gulp.task('api-prod', function() {
+gulp.task('api-prod', function () {
   var productionEnv = _.cloneDeep(process.env);
   productionEnv.NODE_ENV = 'production';
   spawn('node', ['api-server.js'], {
@@ -61,7 +61,7 @@ gulp.task('api-prod', function() {
 /**
  * Run PM2 to run both server for deployed environment
  */
-gulp.task('pm2', ['build-webpack-prod'], function() {
+gulp.task('pm2', ['build-webpack-prod'], function () {
   spawn('pm2', ['start', 'processes.json'], {
     stdio: 'inherit'
   });

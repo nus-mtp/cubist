@@ -17,6 +17,7 @@
     "no-else-return": 0,
     "func-names": 0,
     "react/sort-comp": [2, { order: [
+      "/fetchData/",
       "lifecycle",
       "/^_on.+$/",
       "render",
@@ -30,9 +31,10 @@
     "react/jsx-no-duplicate-props": 2,
     "react/jsx-no-undef": 2,
     "react/no-direct-mutation-state": 2,
-    "react/no-multi-comp": 2,
+    "react/no-multi-comp": 0,
     "react/no-did-mount-set-state": 0
   },
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
     "node": true,
@@ -40,6 +42,7 @@
     "mongo": true,
     "mocha": true
   },
+  
   "plugins": [
     "mocha"
   ]

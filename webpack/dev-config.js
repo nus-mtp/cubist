@@ -14,7 +14,7 @@ module.exports = {
   progress: true,
   devtool: 'cheap-module-eval-source-map',
   entry: {
-    'main': [
+    main: [
       'webpack-dev-server/client?http://' + WEBPACK_HOST + ':' + WEBPACK_PORT,
       'webpack/hot/only-dev-server',
       './src/webapp/index.js'
@@ -29,21 +29,28 @@ module.exports = {
   module: {
     loaders: [
       {
-        loader: 'url-loader?limit=100000',
-        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/
+        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/,
+        loader: 'url-loader?limit=100000'
       },
       {
-        exclude: /node_modules/,
-        loaders: ['react-hot-loader', 'babel-loader'],
-        test: /\.js$/
+        test: /\.js$/,
+        loaders: [
+          'react-hot-loader',
+          'babel-loader?' + JSON.stringify({
+            cacheDirectory: true,
+            presets: ['es2015', 'stage-0', 'react'],
+            plugins: ['add-module-exports']
+          })
+        ],
+        exclude: /node_modules/
       },
       {
-        loader: 'json-loader',
-        test: /\.json$/
+        test: /\.json$/,
+        loader: 'json-loader'
       },
       {
-        loaders: ['style-loader', 'css-loader', 'autoprefixer-loader', 'sass-loader'],
-        test: /\.(scss|sass)$/
+        test: /\.(scss|sass)$/,
+        loaders: ['style-loader', 'css-loader', 'autoprefixer-loader', 'sass-loader']
       }
     ]
   },
@@ -52,16 +59,23 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
 
+    // Define variables
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('development'),
         BROWSER: JSON.stringify(true)
       }
     }),
-    function() {
+
+    // Optimizations
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+
+    // Stats Control
+    function () {
       this.plugin('done', notifyStats);
     },
-    function() {
+    function () {
       this.plugin('done', writeStats);
     }
   ],

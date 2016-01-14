@@ -11,7 +11,7 @@ module.exports = {
   progress: true,
   devtool: 'source-map',
   entry: {
-    'main': './src/webapp/index.js'
+    main: './src/webapp/index.js'
   },
   output: {
     path: assetsPath,
@@ -22,28 +22,35 @@ module.exports = {
   module: {
     loaders: [
       {
-        loader: 'url-loader?limit=100000',
-        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/
+        test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/,
+        loader: 'url-loader?limit=100000'
       },
       {
-        exclude: /node_modules/,
-        loaders: [
-          'babel-loader'
-        ],
-        test: /\.js$/
+        test: /\.js$/,
+        loader: 'babel-loader?' + JSON.stringify({
+          presets: ['es2015', 'stage-0', 'react'],
+          plugins: ['add-module-exports']
+        }),
+        exclude: /node_modules/
       },
       {
-        loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!sass'),
-        test: /\.(scss|sass)$/
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
+      {
+        test: /\.(css|scss|sass)$/,
+        loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!sass')
       }
     ]
   },
   plugins: [
     // Prevent inline css require in entry chunk
     new ExtractTextPlugin('[name]-[hash].css'),
+
     // Ignore dev configuration
     new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
-    // Global Vars Definition
+
+    // Define variables
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
@@ -58,7 +65,9 @@ module.exports = {
         warnings: false
       }
     }),
-    function() {
+
+    // Stats Control
+    function () {
       this.plugin('done', writeStats);
     }
   ],
