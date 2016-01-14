@@ -32,7 +32,7 @@ class HomeContainer extends PureComponent {
     resize_timer: null,
     variance: 0.75,
     seed: Math.random()
-  }
+  };
 
   componentDidMount() {
     window.addEventListener('resize', this._onDebounceResize);
@@ -50,14 +50,14 @@ class HomeContainer extends PureComponent {
   _onDebounceResize = () => {
     clearTimeout(this.state.resize_timer);
     this.setState({ resize_timer: setTimeout(this._onResize, 100) });
-  }
+  };
 
   _onResize = () => {
     this.setState({
       width: window.innerWidth,
       height: ReactDOM.findDOMNode(this.refs.hero).offsetHeight
     });
-  }
+  };
 
   render() {
     return (

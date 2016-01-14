@@ -17,7 +17,7 @@ if (process.env.NODE_ENV !== 'development') {
   assets = require('../webpack-stats.json');
 }
 
-const render = function(req, res, next) {
+const render = function (req, res, next) {
   // Initialize API Interface for server
   const apiClient = new ApiClient(req);
   // Initialize Redux Store

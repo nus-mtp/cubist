@@ -5,19 +5,19 @@ import {
 } from './types';
 
 export default {
-  pan: function() {
+  pan() {
     return {
       type: CAMERA_PAN
     };
   },
 
-  rotate: function() {
+  rotate() {
     return {
       type: CAMERA_ROTATE
     };
   },
 
-  zoom: function() {
+  zoom() {
     return {
       type: CAMERA_ZOOM
     };

@@ -11,13 +11,13 @@ class HtmlDocument extends React.Component {
     store: React.PropTypes.string.isRequired,
     script: React.PropTypes.arrayOf(React.PropTypes.string),
     css: React.PropTypes.arrayOf(React.PropTypes.string)
-  }
+  };
 
   static defaultProps = {
     title: 'Cubist',
     script: [],
     css: []
-  }
+  };
 
   render() {
     const { title, markup, store, script, css } = this.props;

@@ -5,7 +5,7 @@ import Trianglify from 'trianglify';
 class TrianglifyCanvas extends React.Component {
   static defaultProps = {
     ...Trianglify.defaults
-  }
+  };
 
   componentDidMount() {
     this._renderCanvas();

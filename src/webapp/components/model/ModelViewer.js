@@ -17,22 +17,22 @@ class ModelViewer extends React.Component {
     autoRotate: React.PropTypes.bool,
     modelData: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
-  }
+  };
 
   _onToggleWireframeButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleWireframe());
-  }
+  };
 
   _onToggleShadingButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleShading());
-  }
+  };
 
   _onToggleAutoRotateButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleAutoRotate());
-  }
+  };
 
   render() {
     return (
