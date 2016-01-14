@@ -15,22 +15,22 @@ if (!process.env.BROWSER) {
  * @type {Object}
  */
 const Logger = {
-  debug: function(str, debugEnv) {
+  debug(str, debugEnv) {
     this.log(str, debugEnv, 'debug');
   },
-  info: function(str, debugEnv) {
+  info(str, debugEnv) {
     this.log(str, debugEnv, 'info');
   },
-  warn: function(str, debugEnv) {
+  warn(str, debugEnv) {
     this.log(str, debugEnv, 'warn');
   },
-  error: function(str, debugEnv) {
+  error(str, debugEnv) {
     this.log(str, debugEnv, 'error');
   },
   stream: split().on('data', (line) => {
     Logger.info(line, 'http');
   }),
-  log: function(str, debugEnv = 'misc', level) {
+  log(str, debugEnv = 'misc', level) {
     if (logger) {
       logger.log(level, `${debugEnv}: ${str}`);
     } else {

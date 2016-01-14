@@ -4,13 +4,13 @@ import {
 } from './types';
 
 export default {
-  redirect: function() {
+  redirect() {
     return {
       type: REDIRECT
     };
   },
 
-  isRequestFirstTime: function() {
+  isRequestFirstTime() {
     return {
       type: REQUEST_FIRST_TIME
     };

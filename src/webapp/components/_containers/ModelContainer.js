@@ -9,12 +9,12 @@ const CLASS_NAME = 'cb-ctn-model';
 class ModelContainer extends React.Component {
   static propTypes = {
 
-  }
+  };
 
   state = {
     geometry: undefined,
     materials: undefined
-  }
+  };
 
   // This is only for testing
   // Currently we are loading the model JSON data from the rendering server instead of storage service

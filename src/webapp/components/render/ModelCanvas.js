@@ -19,13 +19,13 @@ class ModelCanvas extends React.Component {
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     modelData: React.PropTypes.object
-  }
+  };
 
   static defaultProps = {
     containerWidth: 500,
     aspectRatio: 16.0 / 9,
     modelData: {}
-  }
+  };
 
   componentDidMount() {
     const { containerWidth, aspectRatio } = this.props;
@@ -70,29 +70,29 @@ class ModelCanvas extends React.Component {
     if (this.modelScene) {
       this.modelScene.onMouseDown(event);
     }
-  }
+  };
 
   _onMouseMove = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseMove(event);
     }
-  }
+  };
 
   _onMouseUp = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseUp(event);
     }
-  }
+  };
 
   _onWheel = (event) => {
     if (this.modelScene) {
       this.modelScene.onWheel(event);
     }
-  }
+  };
 
   _onContextMenu = (event) => {
     event.preventDefault();
-  }
+  };
 
   render() {
     const { containerWidth, aspectRatio } = this.props;
