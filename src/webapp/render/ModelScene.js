@@ -71,6 +71,7 @@ class ModelScene {
     // Main front light
     const light = new Three.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
+    light.castShadow = true;
     this.scene.add(light);
 
     // Fill light
@@ -128,12 +129,8 @@ class ModelScene {
 
   updateCameraState(state) {
     Object.assign(this.cameraState, state);
-    if(state == 'resetView'){
-      this.controls.resetView = this.cameraState.resetView;    
-    }
-    else{
-      this.controls.autoRotate = this.cameraState.autoRotate;
-    }
+    this.controls.resetView = this.cameraState.resetView;
+    this.controls.autoRotate = this.cameraState.autoRotate;
   }
 
   /**

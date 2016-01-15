@@ -12,7 +12,7 @@ const initialState = Immutable.fromJS({
   wireframe: false,
   shadingMode: 0,
   autoRotate: false,
-  resetView: false
+  resetViewToggle: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -39,7 +39,7 @@ export default ReducerHelper.createReducer(initialState, {
 
   [RESET_VIEW_TOGGLE]: (state) => {
     let nextState = state;
-    nextState = nextState.set('resetView', true);
+    nextState = nextState.set('resetViewToggle', !nextState.get('resetViewToggle'));
 
     return nextState;
   }

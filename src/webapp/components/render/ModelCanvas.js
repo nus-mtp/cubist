@@ -18,7 +18,8 @@ class ModelCanvas extends React.Component {
     autoRotate: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
-    modelData: React.PropTypes.object
+    modelData: React.PropTypes.object,
+    resetViewToggle: React.PropTypes.bool
   };
 
   static defaultProps = {
@@ -59,6 +60,9 @@ class ModelCanvas extends React.Component {
     }
     if (nextProps.autoRotate !== this.props.autoRotate && this.modelScene) {
       this.modelScene.updateCameraState({ autoRotate: nextProps.autoRotate });
+    }
+    if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
+      this.modelScene.updateCameraState({ resetViewControl: true });
     }
   }
 

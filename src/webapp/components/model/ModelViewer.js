@@ -37,7 +37,7 @@ class ModelViewer extends React.Component {
   _onToggleResetViewButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleResetView());
-  }
+  };
 
   render() {
     return (
@@ -113,22 +113,18 @@ class ModelViewer extends React.Component {
     );
   }
 
-  // sophia testing 
+  // sophia testing
   _renderResetViewButton() {
-    const { resetView } = this.props;
-    let buttonTitle = 'Reset View';
+    const buttonTitle = 'Reset View';
     const resetViewButtonClasses = [
       'btn',
       'btn-transparent-alt',
-      `${CLASS_NAME}-reset-view-button`,
-      {
-        [`is-active`]: resetView
-      }
+      `${CLASS_NAME}-reset-view-button`
     ];
 
     return (
       <button type="button"
-        className="btn btn-transparent-alt"
+        className={ classnames(resetViewButtonClasses) }
         onClick={ this._onToggleResetViewButtonClick }>
         { buttonTitle }
       </button>
@@ -141,7 +137,6 @@ export default connect((state) => {
   return {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate'),
-    resetView: state.RenderStore.get('resetView')
+    autoRotate: state.RenderStore.get('autoRotate')
   };
 })(ModelViewer);

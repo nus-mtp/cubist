@@ -24,7 +24,7 @@ export default {
     };
   },
 
-  toggleResetView: function() {
+  toggleResetView() {
     return {
       type: RESET_VIEW_TOGGLE
     };
