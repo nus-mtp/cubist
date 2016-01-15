@@ -4,13 +4,15 @@ import ReducerHelper from './ReducerHelper';
 import {
   WIREFRAME_TOGGLE,
   SHADING_TOGGLE,
-  AUTO_ROTATE_TOGGLE
+  AUTO_ROTATE_TOGGLE,
+  RESET_VIEW_TOGGLE
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
   wireframe: false,
   shadingMode: 0,
-  autoRotate: false
+  autoRotate: false,
+  resetViewToggle: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -31,6 +33,13 @@ export default ReducerHelper.createReducer(initialState, {
   [AUTO_ROTATE_TOGGLE]: (state) => {
     let nextState = state;
     nextState = nextState.set('autoRotate', !nextState.get('autoRotate'));
+
+    return nextState;
+  },
+
+  [RESET_VIEW_TOGGLE]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('resetViewToggle', !nextState.get('resetViewToggle'));
 
     return nextState;
   }

@@ -21,6 +21,9 @@ class OrbitControl extends Three.EventDispatcher {
   autoRotate = false;
   autoRotateSpeed = 2.0;
 
+  // Set to true to Reset Camera to default viewpoint
+  resetView = false;
+
   // Set to false to disable use of the keys
   enableKeys = true;
 
@@ -84,6 +87,10 @@ class OrbitControl extends Three.EventDispatcher {
   }
 
   update() {
+    if (this.resetView && this._state === this._STATE.NONE) {
+      this.reset();
+    }
+
     if (this.autoRotate && this._state === this._STATE.NONE) {
       this.constraint.rotateLeft(this.getAutoRotationAngle());
     }
@@ -95,6 +102,7 @@ class OrbitControl extends Three.EventDispatcher {
 
   reset() {
     this._state = this._STATE.NONE;
+    this.resetView = false;
 
     this.target.copy(this._target0);
     this.camera.position.copy(this._position0);
