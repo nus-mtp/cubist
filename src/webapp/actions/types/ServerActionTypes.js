@@ -1,8 +1,8 @@
 import TypeHelper from './TypeHelper';
 
 const normalTypes = {
-  NAVIGATE_START: null,
-  NAVIGATE_COMPLETE: null
+  REDIRECT_SERVER: null,
+  FIRST_TIME: null
 };
 
 const promiseTypes = {
