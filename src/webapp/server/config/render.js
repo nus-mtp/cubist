@@ -43,7 +43,7 @@ const render = function (req, res, next) {
   })
   .then((component) => {
     const componentMarkup = ReactDOMServer.renderToString(component);
-    const redirectPath = store.getState().RequestStore.get('redirect');
+    const redirectPath = store.getState().ServerStore.get('redirect');
     if (redirectPath) {
       Logger.info('Redirect on server: ' + redirectPath, DEBUG_ENV);
       res.redirect(redirectPath);
