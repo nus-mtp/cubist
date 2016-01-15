@@ -25,7 +25,8 @@ class ModelScene {
   }
   // Camera State
   cameraState = {
-    autoRotate: false
+    autoRotate: false,
+    resetView: false
   }
 
   /**
@@ -125,7 +126,12 @@ class ModelScene {
 
   updateCameraState(state) {
     Object.assign(this.cameraState, state);
-    this.controls.autoRotate = this.cameraState.autoRotate;
+    if(state == 'resetView'){
+      this.controls.resetView = this.cameraState.resetView;    
+    }
+    else{
+      this.controls.autoRotate = this.cameraState.autoRotate;
+    }
   }
 
   /**

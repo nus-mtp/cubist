@@ -34,6 +34,11 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleAutoRotate());
   }
 
+  _onToggleResetViewButtonClick = () => {
+    const { dispatch } = this.props;
+    dispatch(RenderActions.toggleResetView());
+  }
+
   render() {
     return (
       <div className={ CLASS_NAME }>
@@ -42,6 +47,7 @@ class ModelViewer extends React.Component {
           { this._renderShadingButton() }
           { this._renderAutoRotatebutton() }
           { this._renderWireframeButton() }
+          { this._renderResetViewButton() }
         </div>
       </div>
     );
@@ -106,12 +112,36 @@ class ModelViewer extends React.Component {
       </button>
     );
   }
+
+  // sophia testing 
+  _renderResetViewButton() {
+    const { resetView } = this.props;
+    let buttonTitle = 'Reset View';
+    const resetViewButtonClasses = [
+      'btn',
+      'btn-transparent-alt',
+      `${CLASS_NAME}-reset-view-button`,
+      {
+        [`is-active`]: resetView
+      }
+    ];
+
+    return (
+      <button type="button"
+        className="btn btn-transparent-alt"
+        onClick={ this._onToggleResetViewButtonClick }>
+        { buttonTitle }
+      </button>
+    );
+  }
+
 }
 
 export default connect((state) => {
   return {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate')
+    autoRotate: state.RenderStore.get('autoRotate'),
+    resetView: state.RenderStore.get('resetView')
   };
 })(ModelViewer);
