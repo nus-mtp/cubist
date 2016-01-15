@@ -9,13 +9,16 @@ import { Constants } from 'common';
 export default (apiClient) => {
   return store => next => action => {
     const { promise, ...rest } = action;
+    const { ServerStore, RequestStore } = store.getState();
+    const navigateId = RequestStore.get('navigateId');
+
     // If there is no promise, go to next middleware
     if (!promise) {
       return next(action);
     }
     // If this is in browser and in the initial rendering phase, ignore the action
     if (process.env.BROWSER) {
-      if (store.getState().RequestStore.get('firstTime')) {
+      if (ServerStore.get('firstTime')) {
         return null;
       }
     }
@@ -26,7 +29,11 @@ export default (apiClient) => {
     return promise(apiClient)
       .then((res) => {
         // Create the promise action in success state
-        next({ ...rest, res, promiseState: Constants.PROMISE_STATE_SUCCESS });
+        if (navigateId) {
+          next({ ...rest, res, navigateId, promiseState: Constants.PROMISE_STATE_NAVIGATE });
+        } else {
+          next({ ...rest, res, promiseState: Constants.PROMISE_STATE_SUCCESS });
+        }
       })
       .catch((res) => {
         // Create the promise  action in the failure state
