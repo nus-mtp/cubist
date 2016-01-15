@@ -5,7 +5,7 @@ const CLASS_NAME = 'cb-model-card';
 class ModelCard extends React.Component {
   static propTypes = {
     model: React.PropTypes.object
-  }
+  };
 
   render() {
     const { model } = this.props;

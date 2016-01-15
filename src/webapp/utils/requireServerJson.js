@@ -5,7 +5,7 @@ if (!process.env.BROWSER) {
   path = require('path');
 }
 
-export default function(dirName, jsonPath) {
+export default function (dirName, jsonPath) {
   if (!jsonPath) {
     return '';
   }

@@ -2,37 +2,37 @@ import Three from 'three';
 
 class OrbitConstraint {
   // Focus target where camera orbits around
-  target = new Three.Vector3()
+  target = new Three.Vector3();
   // Limits to how far you can dolly in and out ( PerspectiveCamera only )
-  minDistance = 0
-  maxDistance = Infinity
+  minDistance = 0;
+  maxDistance = Infinity;
   // Limits to how far you can zoom in and out ( OrthographicCamera only )
-  minZoom = 0
-  maxZoom = Infinity
+  minZoom = 0;
+  maxZoom = Infinity;
   // How far you can orbit vertically, upper and lower limits.
   // Range is 0 to Math.PI radians.
-  minPolarAngle = 0
-  maxPolarAngle = Math.PI
+  minPolarAngle = 0;
+  maxPolarAngle = Math.PI;
   // How far you can orbit horizontally, upper and lower limits.
   // If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-  minAzimuthAngle = -Infinity
-  maxAzimuthAngle = Infinity
+  minAzimuthAngle = -Infinity;
+  maxAzimuthAngle = Infinity;
   // Set to true to enable damping
-  dampingFactor = 0.25
+  dampingFactor = 0.25;
 
   // Epsilon
-  _epsilon = 0.000001
+  _epsilon = 0.000001;
 
   // Current position in spherical coordinate system.
-  _theta = 0
-  _phi = 0
+  _theta = 0;
+  _phi = 0;
 
   // Pending changes
-  _phiDelta = 0
-  _thetaDelta = 0
-  _scale = 1
-  _panOffset = new Three.Vector3()
-  _zoomChanged = false
+  _phiDelta = 0;
+  _thetaDelta = 0;
+  _scale = 1;
+  _panOffset = new Three.Vector3();
+  _zoomChanged = false;
 
   // Last position and quaternion in the previous frame
   _lastPosition = new Three.Vector3();
@@ -157,7 +157,7 @@ class OrbitConstraint {
 
     this.camera.position.copy(this.target).add(offset);
 
-    this.camera.lookAt( this.target );
+    this.camera.lookAt(this.target);
 
     this._thetaDelta *= (1 - this.dampingFactor);
     this._phiDelta *= (1 - this.dampingFactor);

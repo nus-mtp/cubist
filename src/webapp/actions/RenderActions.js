@@ -6,19 +6,19 @@ import {
 } from './types';
 
 export default {
-  toggleWireframe: function() {
+  toggleWireframe() {
     return {
       type: WIREFRAME_TOGGLE
     };
   },
 
-  toggleShading: function() {
+  toggleShading() {
     return {
       type: SHADING_TOGGLE
     };
   },
 
-  toggleAutoRotate: function() {
+  toggleAutoRotate() {
     return {
       type: AUTO_ROTATE_TOGGLE
     };

@@ -9,12 +9,12 @@ class AppContainer extends PureComponent {
   static propTypes = {
     children: React.PropTypes.node,
     location: React.PropTypes.object
-  }
+  };
 
   state = {
     isAtTop: true,
     isMenuOpened: false
-  }
+  };
 
   _onTopPageEnter = () => {
     if (!this.state.isAtTop) {
@@ -22,7 +22,7 @@ class AppContainer extends PureComponent {
         isAtTop: true
       });
     }
-  }
+  };
 
   _onTopPageLeave = () => {
     if (this.state.isAtTop) {
@@ -30,13 +30,13 @@ class AppContainer extends PureComponent {
         isAtTop: false
       });
     }
-  }
+  };
 
   _onMenuToggle = () => {
     this.setState({
       isMenuOpened: !this.state.isMenuOpened
     });
-  }
+  };
 
   render() {
     const { location } = this.props;

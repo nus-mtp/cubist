@@ -1,33 +1,35 @@
 import Three from 'three';
+import _ from 'lodash';
+
 import OrbitControls from './OrbitControls';
 
 class ModelScene {
   // Renderer of the Scene
-  renderer = undefined
+  renderer = undefined;
   // The Scene
-  scene = undefined
+  scene = undefined;
   // The Main Camera in the scene
-  camera = undefined
+  camera = undefined;
   // The Model
-  model = undefined
+  model = undefined;
   // Orbit Controls
-  controls = undefined
+  controls = undefined;
   // Data of the model
   modelData = {
     geometry: undefined,
     materials: undefined
-  }
+  };
   // Current Rendering State
   renderingState = {
     wireframe: false,
     shadingMode: 0,
     shading: Three.SmoothShading
-  }
+  };
   // Camera State
   cameraState = {
     autoRotate: false,
     resetView: false
-  }
+  };
 
   /**
    * Constructor function of the scene
@@ -97,7 +99,7 @@ class ModelScene {
     requestAnimationFrame(this._animate);
     this.controls.update();
     this._render();
-  }
+  };
 
   /**
    * Render function which will be called for every fame
@@ -162,8 +164,9 @@ class ModelScene {
     const { wireframe, shading, shadingMode } = this.renderingState;
     if (this.modelData.materials) {
       materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
-        m.shading = shading;
-        return m;
+        const material = _.clone(m);
+        material.shading = shading;
+        return material;
       })));
     }
 
@@ -211,19 +214,19 @@ class ModelScene {
 
   onMouseDown = (event) => {
     this.controls.onMouseDown(event);
-  }
+  };
 
   onMouseMove = (event) => {
     this.controls.onMouseMove(event);
-  }
+  };
 
   onMouseUp = (event) => {
     this.controls.onMouseUp(event);
-  }
+  };
 
   onWheel = (event) => {
     this.controls.onMouseWheel(event);
-  }
+  };
 
   /**
    * Dispose all entities in scene

@@ -17,15 +17,15 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [CAMERA_PAN]: function() {
+  [CAMERA_PAN]() {
 
   },
 
-  [CAMERA_ROTATE]: function() {
+  [CAMERA_ROTATE]() {
 
   },
 
-  [CAMERA_ZOOM]: function() {
+  [CAMERA_ZOOM]() {
 
   }
 });
