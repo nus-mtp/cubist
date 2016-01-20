@@ -165,4 +165,4 @@ User.statics.hashPassword = function (password) {
   });
 };
 
-export default mongoose.model('_User', User, '_User');
+export default mongoose.model('User', User, 'User');
