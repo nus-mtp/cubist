@@ -7,7 +7,7 @@ import { ClientError, Logger } from 'common';
 const DEBUG_ENV = 'mongodb';
 
 /**
- * Database Initialization
+ * Server Database Initialization
  */
 export default () => {
   return new Promise((resolve, reject) => {

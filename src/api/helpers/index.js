@@ -1,4 +1,5 @@
 export default {
   MongooseHelper: require('./mongoose'),
-  ResponseHelper: require('./response')
+  ResponseHelper: require('./response'),
+  SendgridHelper: require('./sendgrid')
 };

@@ -1,6 +1,3 @@
-/**
- * Controllers
- */
 export default {
-
+  UserController: require('./UserController')
 };
