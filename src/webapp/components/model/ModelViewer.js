@@ -1,9 +1,10 @@
-import classnames from 'classnames';
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 
 import { ModelCanvas } from '../render';
-import { RenderActions } from 'webapp/actions';
+import { RenderActions, WalkthroughActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -16,6 +17,8 @@ class ModelViewer extends React.Component {
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
     modelData: React.PropTypes.object,
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    cameraCoordinate: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
 
@@ -39,17 +42,95 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleResetView());
   };
 
+  _onWalkthroughAdd = () => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.addPoint());
+  };
+
+  _onWalkthroughUpdate = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updatePoint(index, [10, 10, 10]));
+  };
+
+  _onWalkthroughDelete = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.deletePoint(index));
+  };
+
+  _onWalkthroughToggleDisjointMode = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.toggleDisjointMode(index));
+  };
+
+
   render() {
     return (
       <div className={ CLASS_NAME }>
-        <ModelCanvas { ...this.props } />
-        <div className={ `${CLASS_NAME}-options` }>
-          { this._renderShadingButton() }
-          { this._renderAutoRotatebutton() }
-          { this._renderWireframeButton() }
-          { this._renderResetViewButton() }
+        <div style={ { position: 'relative' } }>
+          <ModelCanvas { ...this.props } />
+          <div className={ `${CLASS_NAME}-options` }>
+            { this._renderShadingButton() }
+            { this._renderAutoRotatebutton() }
+            { this._renderWireframeButton() }
+            { this._renderResetViewButton() }
+          </div>
+        </div>
+        <div>
+          { this._renderWalkthroughSection() }
         </div>
       </div>
+    );
+  }
+
+  _renderWalkthroughSection() {
+    const { walkthroughPoints } = this.props;
+
+    return (
+      <div>
+        <h3>Current Camera Coordinate:</h3>
+        <p>{ '10, 10, 10' }</p>
+        {
+          walkthroughPoints.map((point, index) => (
+            <div key={ index }>
+                <h4>{ `Point ${index + 1}` }</h4>
+                <p>{ `${point.get('posX')}, ${point.get('posY')}, ${point.get('posZ')}` }</p>
+                <button className="btn btn-primary" onClick={ e => this._onWalkthroughUpdate(e, index) } >
+                  SET
+                </button>
+                <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
+                  DELETE
+                </button>
+                { this._renderWalkthroughToggleDisjointButton(index, point.get('disjointMode')) }
+            </div>
+          ))
+        }
+        <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
+          ADD NEW POINT
+        </button>
+      </div>
+    );
+  }
+
+  _renderWalkthroughToggleDisjointButton(index, status) {
+    let buttonTitle;
+    let disableStatus;
+    if (status === true) {
+      buttonTitle = 'Disjoint';
+    } else {
+      buttonTitle = 'Continuous';
+    }
+
+    if(index === 0) {
+      disableStatus = true;
+    }else {
+      disableStatus = false;
+    }
+
+
+    return (
+      <button className="btn btn-warning" onClick={ e => this._onWalkthroughToggleDisjointMode(e, index) } disabled={ disableStatus }>
+      { buttonTitle }
+      </button>
     );
   }
 
@@ -113,7 +194,6 @@ class ModelViewer extends React.Component {
     );
   }
 
-  // sophia testing
   _renderResetViewButton() {
     const buttonTitle = 'Reset View';
     const resetViewButtonClasses = [
@@ -130,13 +210,14 @@ class ModelViewer extends React.Component {
       </button>
     );
   }
-
 }
+
 
 export default connect((state) => {
   return {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate')
+    autoRotate: state.RenderStore.get('autoRotate'),
+    walkthroughPoints: state.WalkthroughStore.get('points')
   };
 })(ModelViewer);

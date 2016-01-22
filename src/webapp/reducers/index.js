@@ -4,6 +4,7 @@ import RequestStore from './RequestReducer';
 import ServerStore from './ServerReducer';
 import RenderStore from './RenderReducer';
 import CameraStore from './CameraReducer';
+import WalkthroughStore from './WalkthroughReducer';
 
 // Define list of Redux stores
 export default {
@@ -11,5 +12,6 @@ export default {
   RequestStore,
   RenderStore,
   ServerStore,
-  CameraStore
+  CameraStore,
+  WalkthroughStore
 };
