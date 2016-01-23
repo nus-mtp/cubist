@@ -5,6 +5,12 @@ import keymirror from 'keymirror';
  * @type {Object}
  */
 const AppConstants = {
+  TOKEN_KEY: 'X-Cubist-Token',
+
+  // Email Template ID
+  EMAIL_SENDER_ADDRESS: 'support@cubist3d.me',
+  EMAIL_SENDER_NAME: 'Cubist3D Administrator',
+
   // Promise States
   ...keymirror({
     PROMISE_STATE_PENDING: null,

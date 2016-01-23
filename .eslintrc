@@ -5,6 +5,7 @@
     "strict": 0,
     "no-var": 0,
     "prefer-const": 0,
+    "no-param-reassign": [2, { "props": false }],
 
     /** ES6 **/
     "max-len": [1, 120, 2, {ignoreComments: true}],
