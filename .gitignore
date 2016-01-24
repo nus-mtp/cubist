@@ -28,4 +28,5 @@ node_modules
 
 # Build files
 /public
+/models
 src/webapp/server/webpack-stats.json

@@ -151,7 +151,7 @@ UserController.promise.register = function (req) {
     return Promise.reject(new ClientError(error));
   }
 
-  return User.findOneByEmail(user.email)
+  return User.findOneByUsernameOrEmail(user.email)
     .then(MongooseHelper.checkNil)
     .then(() => {
       return User.createUser(user);
