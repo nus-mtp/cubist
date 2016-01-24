@@ -7,10 +7,7 @@ import { ClientError, Logger } from 'common';
 
 const DEBUG_ENV = 'mongodb';
 
-/**
- * Server Database Initialization
- */
-export default () => {
+export function connectDb() {
   return new Promise((resolve, reject) => {
     mongoose.connect(settings.DATABASE_URL, (err) => {
       const { host, port } = mongoose.connection;
@@ -21,14 +18,21 @@ export default () => {
         resolve();
       }
     });
-  })
-  .then(() => {
-    return User.findOneByEmail(settings.ADMIN_EMAIL)
-    .then((user) => {
-      if (user) {
-        return Promise.resolve();
-      }
-      return User.createAdmin();
-    });
   });
-};
+}
+
+/**
+ * Server Database Initialization
+ */
+export default function () {
+  return connectDb()
+    .then(() => {
+      return User.findOneByEmail(settings.ADMIN_EMAIL)
+      .then((user) => {
+        if (user) {
+          return Promise.resolve();
+        }
+        return User.createAdmin();
+      });
+    });
+}
