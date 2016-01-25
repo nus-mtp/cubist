@@ -203,22 +203,53 @@ class ModelScene {
     const objects = [];
     const { wireframe, shading, shadingMode } = this.renderingState;
     
+    if(shadingMode === 0){
+      objects.push(this.model);
+    }
+
+    if(shadingMode === 1){
+      this.model.traverse(function ( child ) {
+        if ( child instanceof Three.Mesh) {
+          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: Three.FlatShading,
+            wireframe: false,
+            transparent: true
+          }));
+          
+          objects.push(newMesh);
+        }
+      });
+    }   
+
+    if(shadingMode === 2){
+      this.model.traverse(function ( child ) {
+        if ( child instanceof Three.Mesh) {
+          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: Three.SmoothShading,
+            wireframe: false,
+            transparent: true
+          }));
+          
+          objects.push(newMesh);
+        }
+      });
+    }
 
     if (wireframe) {
       this.model.traverse(function ( child ) {
         if ( child instanceof Three.Mesh) {
           var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial());
-          newMesh.material.color = new Three.Color(0xffffff);
+          newMesh.material.color = new Three.Color(0x00c0c0);
           newMesh.material.wireframe = true;
 
-          console.log("Mesh Found");
           objects.push(newMesh);
         }
       });
     }
-    objects.push(this.model);
-    console.log("mesh pushed");
-
+    
+  
     return objects;
   }
   /**
