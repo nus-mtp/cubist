@@ -12,6 +12,8 @@ class ModelScene {
   camera = undefined;
   // The Model
   model = undefined;
+  // Objects to display in the scene
+  displayObjects = [];
   // Orbit Controls
   controls = undefined;
   // Data of the model
@@ -109,19 +111,27 @@ class ModelScene {
     this.renderer.render(this.scene, this.camera);
   }
 
+  
+  updateSceneObjects(){
+    this.removeSceneObjects();
+    this.displayObjects = this._getDisplayObjects();
+    
+    for(var i = 0; i < this.displayObjects.length; i++ ){
+      this.displayObjects[i].scale.set(40, 40, 40);
+      this.displayObjects[i].position.y = -20;
+      this.scene.add(this.displayObjects[i]);
+    }
+  }
+
   /**
    * Update the model data of the model
    * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
    */
   updateModel(model) {
-    if (this.model) {
-      this.scene.remove(this.model);
-    }
     this.model = model;
-    this.model.scale.set(40, 40, 40);
-    this.model.position.y = -20;
-    this.scene.add(this.model);
+    this.updateSceneObjects();    
   }
+
 
   /**
    * Update the rendering state of the model
@@ -129,7 +139,7 @@ class ModelScene {
    */
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
-    this.updateModel();
+    this.updateSceneObjects();
   }
 
   updateCameraState(state) {
@@ -138,6 +148,11 @@ class ModelScene {
     this.controls.autoRotate = this.cameraState.autoRotate;
   }
 
+  removeSceneObjects(){
+    for(var i = 0; i < this.displayObjects.length; i++ ){
+      this.scene.remove(this.displayObjects[i]);
+    }
+  }
   /**
    * Get the materials based on the current model data and rendering state
    * @return {[Object]} [an array of material object]
@@ -184,6 +199,28 @@ class ModelScene {
     return materials;
   }
 
+  _getDisplayObjects() {
+    const objects = [];
+    const { wireframe, shading, shadingMode } = this.renderingState;
+    
+
+    if (wireframe) {
+      this.model.traverse(function ( child ) {
+        if ( child instanceof Three.Mesh) {
+          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial());
+          newMesh.material.color = new Three.Color(0xffffff);
+          newMesh.material.wireframe = true;
+
+          console.log("Mesh Found");
+          objects.push(newMesh);
+        }
+      });
+    }
+    objects.push(this.model);
+    console.log("mesh pushed");
+
+    return objects;
+  }
   /**
    * Handler function for the scene when the scene dimensions are modified
    * @param  {Object} dimensions [data of the scene dimensions]
