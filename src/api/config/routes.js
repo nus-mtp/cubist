@@ -1,5 +1,5 @@
 import { Authorisation } from 'api/middlewares';
-import { UserController } from 'api/controllers';
+import { UserController, ModelController } from 'api/controllers';
 
 export default (app) => {
   // Authentication
@@ -12,4 +12,7 @@ export default (app) => {
   app.post('/user/adminLogin', UserController.request.adminLogin);
   app.post('/user/resetPassword', UserController.request.resetPassword);
   app.post('/user/logout', Authorisation.requireUser, UserController.request.logout);
+
+  // Model
+  app.get('/model/:modelId', ModelController.request.getModel);
 };

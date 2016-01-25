@@ -214,7 +214,7 @@ class MaterialCreator {
       loader = new THREE.ImageLoader(manager);
       loader.setCrossOrigin(this.crossOrigin);
       loader.load(url, function (image) {
-        texture.image = THREE.MTLLoader.ensurePowerOfTwo_(image);
+        texture.image = MTLLoader.ensurePowerOfTwo_(image);
         texture.needsUpdate = true;
         if (onLoad) {
           onLoad(texture);
@@ -238,8 +238,8 @@ class MTLLoader {
   static ensurePowerOfTwo_(image) {
     if (!THREE.Math.isPowerOfTwo(image.width) || !THREE.Math.isPowerOfTwo(image.height)) {
       const canvas = document.createElement('canvas');
-      canvas.width = THREE.MTLLoader.nextHighestPowerOfTwo_(image.width);
-      canvas.height = THREE.MTLLoader.nextHighestPowerOfTwo_(image.height);
+      canvas.width = MTLLoader.nextHighestPowerOfTwo_(image.width);
+      canvas.height = MTLLoader.nextHighestPowerOfTwo_(image.height);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
       return canvas;

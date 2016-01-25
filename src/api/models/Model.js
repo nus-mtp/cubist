@@ -18,7 +18,7 @@ const Model = new Schema({
 
 Model.statics.createModel = function (model) {
   return MongooseHelper.create(this, _.pick(model, [
-    'title', 'uploader', 'imageUrls'
+    'title', 'uploader', 'urls', 'imageUrls'
   ]));
 };
 

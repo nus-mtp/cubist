@@ -36,6 +36,7 @@ connectDb()
       modelsList.map(m => Model.createModel({
         title: m.title,
         uploader: nameIdMap[m.uploader],
+        urls: m.urls,
         imageUrls: m.imageUrls
       }))
     );

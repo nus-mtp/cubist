@@ -116,7 +116,7 @@ User.statics.findByUserId = function (userId) {
  */
 User.statics.createAdmin = function () {
   return this.createUser({
-    name: Constants.ADMIN_NAME,
+    name: settings.ADMIN_NAME,
     role: Constants.ROLE_ADMIN,
     email: settings.ADMIN_EMAIL,
     password: settings.ADMIN_PASSWORD

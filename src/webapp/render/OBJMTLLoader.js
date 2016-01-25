@@ -15,7 +15,7 @@ class OBJMTLLoader {
       materialsCreator.preload();
       const loader = new THREE.XHRLoader(this.manager);
       loader.setCrossOrigin(this.crossOrigin);
-      loader.load(url, function (text) {
+      loader.load(url, (text) => {
         const object = this.parse(text);
         object.traverse(o => {
           if (o instanceof THREE.Mesh) {
@@ -134,25 +134,25 @@ class OBJMTLLoader {
     }
 
     // v float float float
-    const vertexPattern = /v(+[\d|\.|\+|\-|e]+)(+[\d|\.|\+|\-|e]+)(+[\d|\.|\+|\-|e]+)/;
+    const vertexPattern = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
 
     // vn float float float
-    const normalPattern = /vn(+[\d|\.|\+|\-|e]+)(+[\d|\.|\+|\-|e]+)(+[\d|\.|\+|\-|e]+)/;
+    const normalPattern = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
 
     // vt float float
-    const uvPattern = /vt(+[\d|\.|\+|\-|e]+)(+[\d|\.|\+|\-|e]+)/;
+    const uvPattern = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
 
     // f vertex vertex vertex ...
-    const facePattern1 = /f(+\d+)(+\d+)(+\d+)(+\d+)?/;
+    const facePattern1 = /f( +\d+)( +\d+)( +\d+)( +\d+)?/;
 
     // f vertex/uv vertex/uv vertex/uv ...
-    const facePattern2 = /f(+(\d+)\/(\d+))(+(\d+)\/(\d+))(+(\d+)\/(\d+))(+(\d+)\/(\d+))?/;
+    const facePattern2 = /f( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))?/;
 
     // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
-    const facePattern3 = /f(+(\d+)\/(\d+)\/(\d+))(+(\d+)\/(\d+)\/(\d+))(+(\d+)\/(\d+)\/(\d+))(+(\d+)\/(\d+)\/(\d+))?/;
+    const facePattern3 = /f( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))?/;
 
     // f vertex//normal vertex//normal vertex//normal ...
-    const facePattern4 = /f(+(\d+)\/\/(\d+))(+(\d+)\/\/(\d+))(+(\d+)\/\/(\d+))(+(\d+)\/\/(\d+))?/;
+    const facePattern4 = /f( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))?/;
 
     const lines = data.split('\n');
 

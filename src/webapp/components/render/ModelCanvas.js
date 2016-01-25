@@ -18,14 +18,14 @@ class ModelCanvas extends React.Component {
     autoRotate: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
-    modelData: React.PropTypes.object,
+    object: React.PropTypes.object,
     resetViewToggle: React.PropTypes.bool
   };
 
   static defaultProps = {
     containerWidth: 500,
     aspectRatio: 16.0 / 9,
-    modelData: {}
+    object: {}
   };
 
   componentDidMount() {
@@ -48,8 +48,8 @@ class ModelCanvas extends React.Component {
       });
     }
     // Update model
-    if (nextProps.modelData !== this.props.modelData && this.modelScene) {
-      this.modelScene.updateModelData(nextProps.modelData);
+    if (nextProps.object !== this.props.object && this.modelScene) {
+      this.modelScene.updateModel(nextProps.object);
     }
     // Update rendering state
     if (nextProps.wireframe !== this.props.wireframe && this.modelScene) {
