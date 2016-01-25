@@ -10,6 +10,8 @@ class ModelScene {
   scene = undefined;
   // The Main Camera in the scene
   camera = undefined;
+  // The main front light
+  frontLight = undefined;
   // Background scene and camera
   backgroundScene = undefined;
   backgroundCamera = undefined;
@@ -49,7 +51,7 @@ class ModelScene {
     this._initCamera(dimensions);
     this._initBackground();
     this._initLight();
-    this._initSkybox();
+    // this._initSkybox();
     this._initControls(dimensions);
 
     this._animate();
@@ -58,7 +60,7 @@ class ModelScene {
   _initRenderer(sceneCanvas, dimensions) {
     this.renderer = new Three.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
-    this.renderer.setClearColor(0x212121, 0);
+    this.renderer.setClearColor(0x212121, 0); // Alpha value set to 0 for transparancy
     this.renderer.autoClear = false;
   }
 
@@ -75,28 +77,27 @@ class ModelScene {
 
   _initBackground() {
     // Load background texture
-      const texture = Three.ImageUtils.loadTexture( '/modelAssets/doge.jpeg' );
-      const backgroundMesh = new Three.Mesh(
-        new Three.PlaneGeometry(2, 2, 0),
-        new Three.MeshBasicMaterial({
-          map: texture
-        }));
+    const texture = Three.ImageUtils.loadTexture('/modelAssets/doge.jpeg');
+    const backgroundMesh = new Three.Mesh(
+      new Three.PlaneGeometry(2, 2, 0),
+      new Three.MeshBasicMaterial({
+        map: texture
+      }));
     // Turn off any depth checking
-      backgroundMesh.material.depthTest = false;
-      backgroundMesh.material.depthWrite = false;
+    backgroundMesh.material.depthTest = false;
+    backgroundMesh.material.depthWrite = false;
     // Create the background scene
-      this.backgroundScene = new Three.Scene();
-      this.backgroundCamera = new Three.Camera();
-      this.backgroundScene.add(this.backgroundCamera);
-      this.backgroundScene.add(backgroundMesh);
+    this.backgroundScene = new Three.Scene();
+    this.backgroundCamera = new Three.Camera();
+    this.backgroundScene.add(this.backgroundCamera);
+    this.backgroundScene.add(backgroundMesh);
   }
 
   _initLight() {
     // Main front light
-    const light = new Three.PointLight(0xdddddd);
-    //light.position.set(-100, 250, 200);
-    light.castShadow = true;
-    this.camera.add(light);
+    this.frontLight = new Three.PointLight(0xdddddd);
+    this.frontLight.castShadow = true;
+    this.camera.add(this.frontLight);
 
     /*
     // Fill light
@@ -115,6 +116,7 @@ class ModelScene {
     this.scene.add(ambientLight);
   }
 
+  /*
   _initSkybox() {
     // Skybox
     const skyboxGeom = new Three.BoxGeometry(1000,1000,1000,1,1,1);
@@ -131,20 +133,19 @@ class ModelScene {
     const sceneSkybox = new Three.Mesh( skyboxGeom, skyboxMat );
     //this.scene.add(sceneSkybox);
 
-    /*
     //add a sphere with the material of a cube camera env map
     const sphereGeom =  new Three.SphereGeometry( 50, 32, 16 ); // radius, segmentsWidth, segmentsHeight
     var mirrorSphereCamera = new Three.CubeCamera( 0.1, 5000, 512 );
     // mirrorCubeCamera.renderTarget.minFilter = Three.LinearMipMapLinearFilter;
     this.scene.add( mirrorSphereCamera );
-    
+
     const mirrorSphereMaterial = new Three.MeshBasicMaterial( { envMap: mirrorSphereCamera.renderTarget } );
     var mirrorSphere = new Three.Mesh( sphereGeom, mirrorSphereMaterial );
     //mirrorSphere.position.set(75,50,0);
     mirrorSphereCamera.position.set(mirrorSphere.position);
     this.scene.add(mirrorSphere);
-    */
   }
+  */
 
   _initControls(dimensions) {
     this.controls = new OrbitControls(this.camera, dimensions);
@@ -227,22 +228,28 @@ class ModelScene {
       })));
     }
 
-    // Flat shading
+    // Shadeless
     if (shadingMode === 1) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.FlatShading,
-        wireframe: false,
-        transparent: true
-      }));
+      this.frontLight.visible = false;
+    } else {
+      this.frontLight.visible = true;
     }
     // Smooth shading
     if (shadingMode === 2) {
       materials.push(new Three.MeshPhongMaterial({
         color: 0xc0c0c0,
         specular: 0x050505,
-        shininess: 100, 
+        shininess: 100,
         shading: Three.SmoothShading,
+        wireframe: false,
+        transparent: true
+      }));
+    }
+    // Flat shading
+    if (shadingMode === 3) {
+      materials.push(new Three.MeshPhongMaterial({
+        color: 0xc0c0c0,
+        shading: Three.FlatShading,
         wireframe: false,
         transparent: true
       }));
