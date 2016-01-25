@@ -240,10 +240,13 @@ class ModelScene {
     if (wireframe) {
       this.model.traverse(function ( child ) {
         if ( child instanceof Three.Mesh) {
-          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial());
-          newMesh.material.color = new Three.Color(0x00c0c0);
-          newMesh.material.wireframe = true;
-
+          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0x00e0c0,
+            shading: Three.FlatShading,
+            wireframe: true,
+            transparent: true
+          }));
+          
           objects.push(newMesh);
         }
       });
