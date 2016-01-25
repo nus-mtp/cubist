@@ -1,3 +1,4 @@
 export default {
-  UserController: require('./UserController')
+  UserController: require('./UserController'),
+  ModelController: require('./ModelController')
 };

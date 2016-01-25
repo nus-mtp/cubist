@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 import Promise from 'bluebird';
+import _ from 'lodash';
 
 import { Constants } from 'common';
 import settings from 'api/config/settings';
@@ -9,7 +10,13 @@ import { MongooseHelper } from 'api/helpers';
 // Schema Definition
 const User = new Schema({
   _hashedPassword: { type: String, required: true },
-  name: { type: String, required: true, trim: true },
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+    index: true,
+    trim: true
+  },
   role: {
     type: String,
     enum: [Constants.ROLE_ADMIN, Constants.ROLE_USER],
@@ -80,6 +87,21 @@ User.statics.findOneByEmail = function (email) {
 };
 
 /**
+ * Find single user by email or name
+ * @param  { String } email [email of the user]
+ * @param  { String } name [username of the user]
+ * @return { Promise } [promise of the query result]
+ */
+User.statics.findOneByUsernameOrEmail = function (email, name) {
+  return Promise.resolve(this.findOne({
+    $or: [
+      { email },
+      { name }
+    ]
+  }));
+};
+
+/**
  * Find single user by user ID
  * @param  { String } userId [id of the user]
  * @return { Promise }        [promise of the query result]
@@ -94,7 +116,7 @@ User.statics.findByUserId = function (userId) {
  */
 User.statics.createAdmin = function () {
   return this.createUser({
-    name: 'ADMIN',
+    name: settings.ADMIN_NAME,
     role: Constants.ROLE_ADMIN,
     email: settings.ADMIN_EMAIL,
     password: settings.ADMIN_PASSWORD
@@ -103,18 +125,22 @@ User.statics.createAdmin = function () {
 
 /**
  * Create a single user with the password being hashed
- * @param  { String } options.name     [name of the user]
- * @param  { String } options.email    [email of the user]
+ * @param  { String } options.name [name of the user]
+ * @param  { String } options.email [email of the user]
  * @param  { String } options.password [password of the user]
- * @param  { String } options.role     [role of the user]
- * @return { Promise }                  [promise of the create result]
+ * @param  { String } options.role [role of the user]
+ * @return { Promise } [promise of the create result]
  */
-User.statics.createUser = function ({ name, email, password, role = Constants.ROLE_USER }) {
+User.statics.createUser = function (user) {
+  const {
+    name, email, password, role = Constants.ROLE_USER
+  } = _.pick(user, ['name', 'email', 'password', 'role']);
+
   return Promise.resolve()
     .then(() => {
       return this.hashPassword(password);
     })
-    .then((hashedPassword) => {
+    .then(hashedPassword => {
       const hashedUser = {
         _hashedPassword: hashedPassword,
         name,

@@ -113,9 +113,14 @@ class ModelScene {
    * Update the model data of the model
    * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
    */
-  updateModelData(modelData) {
-    this.modelData = modelData;
-    this._updateModel();
+  updateModel(model) {
+    if (this.model) {
+      this.scene.remove(this.model);
+    }
+    this.model = model;
+    this.model.scale.set(40, 40, 40);
+    this.model.position.y = -20;
+    this.scene.add(this.model);
   }
 
   /**
@@ -124,32 +129,13 @@ class ModelScene {
    */
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
-    this._updateModel();
+    this.updateModel();
   }
 
   updateCameraState(state) {
     Object.assign(this.cameraState, state);
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
-  }
-
-  /**
-   * Reinitialize the current model (WARN: This function should try to be called as few as possible)
-   * @return {[type]} [description]
-   */
-  _updateModel() {
-    const { geometry } = this.modelData;
-    if (this.model) {
-      this.scene.remove(this.model);
-    }
-    const materials = this._getMaterials();
-    if (materials.length === 1) {
-      this.model = new Three.Mesh(geometry, materials[0]);
-    } else {
-      this.model = Three.SceneUtils.createMultiMaterialObject(geometry, materials);
-    }
-    this.model.scale.set(20, 20, 20);
-    this.scene.add(this.model);
   }
 
   /**

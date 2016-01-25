@@ -15,7 +15,7 @@ class ModelViewer extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
-    modelData: React.PropTypes.object,
+    object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
 

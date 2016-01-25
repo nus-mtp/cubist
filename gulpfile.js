@@ -2,9 +2,23 @@
 
 var gulp = require('gulp');
 var _ = require('lodash');
+var argv = require('yargs').argv;
 var spawn = require('child_process').spawn;
 require('./gulp/task-build-webpack-dev');
 require('./gulp/task-build-webpack-prod');
+
+/**
+ * Run custom scripts
+ */
+gulp.task('script', function() {
+  var env = _.cloneDeep(process.env);
+  env.NODE_ENV = 'development';
+  env.NODE_PATH = 'src';
+  spawn('node_modules/.bin/babel-node', [argv.path], {
+    env: env,
+    stdio: 'inherit'
+  });
+});
 
 /**
  * Run Web Application Rendering Server in development environement
