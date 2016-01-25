@@ -1,5 +1,4 @@
 import Three from 'three';
-import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
@@ -12,15 +11,10 @@ class ModelScene {
   camera = undefined;
   // The Model
   model = undefined;
-  // Objects to display in the scene
+  // Stores currently displayed objects (meshes/models)
   displayObjects = [];
   // Orbit Controls
   controls = undefined;
-  // Data of the model
-  modelData = {
-    geometry: undefined,
-    materials: undefined
-  };
   // Current Rendering State
   renderingState = {
     wireframe: false,
@@ -111,12 +105,13 @@ class ModelScene {
     this.renderer.render(this.scene, this.camera);
   }
 
-  
-  updateSceneObjects(){
+  /**
+   * Update the objects (meshes/models) displayed in the scene
+   */
+  updateSceneObjects() {
     this.removeSceneObjects();
     this.displayObjects = this._getDisplayObjects();
-    
-    for(var i = 0; i < this.displayObjects.length; i++ ){
+    for (let i = 0; i < this.displayObjects.length; i++) {
       this.displayObjects[i].scale.set(40, 40, 40);
       this.displayObjects[i].position.y = -20;
       this.scene.add(this.displayObjects[i]);
@@ -124,14 +119,13 @@ class ModelScene {
   }
 
   /**
-   * Update the model data of the model
-   * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
+   * Update the model variable of this class
+   * @param  {Object} model [the new model to be displayed]
    */
   updateModel(model) {
     this.model = model;
-    this.updateSceneObjects();    
+    this.updateSceneObjects();
   }
-
 
   /**
    * Update the rendering state of the model
@@ -148,113 +142,67 @@ class ModelScene {
     this.controls.autoRotate = this.cameraState.autoRotate;
   }
 
-  removeSceneObjects(){
-    for(var i = 0; i < this.displayObjects.length; i++ ){
+  /**
+   * Remove objects (models/meshes) currently displayed in the scene
+   */
+  removeSceneObjects() {
+    for (let i = 0; i < this.displayObjects.length; i++) {
       this.scene.remove(this.displayObjects[i]);
     }
   }
+
   /**
-   * Get the materials based on the current model data and rendering state
-   * @return {[Object]} [an array of material object]
+   * Get the objects to display based on this.model and rendering state
    */
-  _getMaterials() {
-    const materials = [];
-    const { wireframe, shading, shadingMode } = this.renderingState;
-    if (this.modelData.materials) {
-      materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
-        const material = _.clone(m);
-        material.shading = shading;
-        return material;
-      })));
-    }
-
-    // Flat shading
-    if (shadingMode === 1) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.FlatShading,
-        wireframe: false,
-        transparent: true
-      }));
-    }
-    // Smooth shading
-    if (shadingMode === 2) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.SmoothShading,
-        wireframe: false,
-        transparent: true
-      }));
-    }
-
-    if (wireframe) {
-      materials.push(new Three.MeshBasicMaterial({
-        color: 0x00c0c0,
-        shading: Three.FlatShading,
-        wireframe: true,
-        transparent: true
-      }));
-    }
-
-    return materials;
-  }
-
   _getDisplayObjects() {
     const objects = [];
-    const { wireframe, shading, shadingMode } = this.renderingState;
-    
-    if(shadingMode === 0){
+    const { wireframe, shadingMode } = this.renderingState;
+    if (shadingMode === 0) {
       objects.push(this.model);
     }
-
-    if(shadingMode === 1){
-      this.model.traverse(function ( child ) {
-        if ( child instanceof Three.Mesh) {
-          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+    if (shadingMode === 1) {
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
             color: 0xc0c0c0,
             shading: Three.FlatShading,
             wireframe: false,
             transparent: true
           }));
-          
           objects.push(newMesh);
         }
       });
-    }   
-
-    if(shadingMode === 2){
-      this.model.traverse(function ( child ) {
-        if ( child instanceof Three.Mesh) {
-          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+    }
+    if (shadingMode === 2) {
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
             color: 0xc0c0c0,
             shading: Three.SmoothShading,
             wireframe: false,
             transparent: true
           }));
-          
           objects.push(newMesh);
         }
       });
     }
 
     if (wireframe) {
-      this.model.traverse(function ( child ) {
-        if ( child instanceof Three.Mesh) {
-          var newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
             color: 0x00e0c0,
             shading: Three.FlatShading,
             wireframe: true,
             transparent: true
           }));
-          
           objects.push(newMesh);
         }
       });
     }
-    
-  
     return objects;
   }
+
   /**
    * Handler function for the scene when the scene dimensions are modified
    * @param  {Object} dimensions [data of the scene dimensions]
