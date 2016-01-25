@@ -16,7 +16,7 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 * Mocha
 
 ## Requirements
-* Install **NodeJS 4.2.1**
+* Install **NodeJS 5.2+**
 * Install **MongoDB 3.0.0**
 
 ## Setup Instruction
@@ -39,6 +39,13 @@ $ npm run webapp-dev
 $ npm run api-prod
 $ npm run webapp-prod
 ```
+
+## Development Data Generation
+* Go to team's Google Drive and download `models.zip`
+* Extract to copy the `models` folder into the repo folder
+* Clear MongoDB database for `cubist-api-development` (if necessary)
+* Install Gulp globally by running: `npm install gulp -g`
+* Run script: `gulp script --path src/api/scripts/createData/index.js`
 
 ## Development Instruction
 * For every issue, work on a separate branch
