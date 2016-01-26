@@ -2,9 +2,7 @@ import TypeHelper from './TypeHelper';
 
 // Normal Action Types
 const normalTypes = {
-  CAMERA_PAN: null,
-  CAMERA_ROTATE: null,
-  CAMERA_ZOOM: null
+  CAMERA_ORBIT: null
 };
 
 // Promise Action Types

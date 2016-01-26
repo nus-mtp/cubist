@@ -1,25 +1,12 @@
 import {
-  CAMERA_PAN,
-  CAMERA_ROTATE,
-  CAMERA_ZOOM
+  CAMERA_ORBIT
 } from './types';
 
 export default {
-  pan() {
+  orbitCamera(camera) {
     return {
-      type: CAMERA_PAN
-    };
-  },
-
-  rotate() {
-    return {
-      type: CAMERA_ROTATE
-    };
-  },
-
-  zoom() {
-    return {
-      type: CAMERA_ZOOM
+      type: CAMERA_ORBIT,
+      payload: camera
     };
   }
 };

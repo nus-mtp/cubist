@@ -2,30 +2,20 @@ import Immutable from 'immutable';
 
 import ReducerHelper from './ReducerHelper';
 import {
-  CAMERA_PAN,
-  CAMERA_ROTATE,
-  CAMERA_ZOOM
+  CAMERA_ORBIT
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
-  posX: 0,
-  posY: 0,
-  posZ: 300,
-  lookX: 0,
-  lookY: 0,
-  lookZ: 0
+  position: new Immutable.List(),
+  up: new Immutable.List(),
+  lookAt: new Immutable.List(),
+  zoom: 1
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [CAMERA_PAN]() {
-
-  },
-
-  [CAMERA_ROTATE]() {
-
-  },
-
-  [CAMERA_ZOOM]() {
-
+  [CAMERA_ORBIT](state, action) {
+    let nextState = state;
+    nextState = nextState.merge(Immutable.fromJS(action.payload));
+    return nextState;
   }
 });

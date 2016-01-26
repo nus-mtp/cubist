@@ -125,7 +125,7 @@ class OrbitControl extends Three.EventDispatcher {
     this.dimensions = dimensions;
   }
 
-  onMouseDown = (event) => {
+  onMouseDown(event) {
     if (this.enabled === false) {
       return;
     }
@@ -155,9 +155,9 @@ class OrbitControl extends Three.EventDispatcher {
     if (this._state !== this._STATE.NONE) {
       this.dispatchEvent(this._startEvent);
     }
-  };
+  }
 
-  onMouseMove = (event) => {
+  onMouseMove(event) {
     if (this.enabled === false) {
       return;
     }
@@ -208,17 +208,17 @@ class OrbitControl extends Three.EventDispatcher {
     if (this._state !== this._STATE.NONE) {
       this.update();
     }
-  };
+  }
 
-  onMouseUp = () => {
+  onMouseUp() {
     if (this.enabled === false) {
       return;
     }
     this.dispatchEvent(this._endEvent);
     this._state = this._STATE.NONE;
-  };
+  }
 
-  onMouseWheel = (event) => {
+  onMouseWheel(event) {
     if (this.enabled === false || this.enableZoom === false || this._state !== this._STATE.NONE) {
       return;
     }
@@ -236,9 +236,9 @@ class OrbitControl extends Three.EventDispatcher {
     this.update();
     this.dispatchEvent(this._startEvent);
     this.dispatchEvent(this._endEvent);
-  };
+  }
 
-  onKeyDown = (event) => {
+  onKeyDown(event) {
     if (this.enabled === false || this.enableKeys === false || this.enablePan === false) {
       return;
     }
@@ -267,9 +267,9 @@ class OrbitControl extends Three.EventDispatcher {
       default:
         return;
     }
-  };
+  }
 
-  onTouchStart = (event) => {
+  onTouchStart(event) {
     if (this.enabled === false) {
       return;
     }
@@ -309,9 +309,9 @@ class OrbitControl extends Three.EventDispatcher {
     if (this._state !== this._STATE.NONE) {
       this.dispatchEvent(this._startEvent);
     }
-  };
+  }
 
-  onTouchMove = (event) => {
+  onTouchMove(event) {
     if (this.enabled === false) {
       return;
     }
@@ -389,16 +389,16 @@ class OrbitControl extends Three.EventDispatcher {
       default:
         this._state = this._STATE.NONE;
     }
-  };
+  }
 
-  onTouchEnd = () => {
+  onTouchEnd() {
     if (this.enabled === false) {
       return;
     }
 
     this.dispatchEvent(this._endEvent);
     this._state = this._STATE.NONE;
-  };
+  }
 
   dispose() {
 

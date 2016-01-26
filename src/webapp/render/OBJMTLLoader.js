@@ -149,7 +149,9 @@ class OBJMTLLoader {
     const facePattern2 = /f( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))?/;
 
     // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
+    /* eslint-disable max-len */
     const facePattern3 = /f( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))?/;
+    /* eslint-enable max-len */
 
     // f vertex//normal vertex//normal vertex//normal ...
     const facePattern4 = /f( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))?/;

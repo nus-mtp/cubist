@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import Dimensions from 'react-dimensions';
+import _ from 'lodash';
 
+import { CameraActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
@@ -13,6 +16,7 @@ const CLASS_NAME = 'cb-model-canvas';
 class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
+    dispatch: React.PropTypes.func,
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
@@ -70,27 +74,34 @@ class ModelCanvas extends React.Component {
     this.modelScene.dispose();
   }
 
+  _onCameraOrbit(camera) {
+    const { dispatch } = this.props;
+    dispatch(CameraActions.orbitCamera(camera));
+  }
+
+  _onCameraOrbitThrottle = _.throttle(this._onCameraOrbit.bind(this), 100);
+
   _onMouseDown = (event) => {
     if (this.modelScene) {
-      this.modelScene.onMouseDown(event);
+      this.modelScene.onMouseDown(event, this._onCameraOrbitThrottle);
     }
   };
 
   _onMouseMove = (event) => {
     if (this.modelScene) {
-      this.modelScene.onMouseMove(event);
+      this.modelScene.onMouseMove(event, this._onCameraOrbitThrottle);
     }
   };
 
   _onMouseUp = (event) => {
     if (this.modelScene) {
-      this.modelScene.onMouseUp(event);
+      this.modelScene.onMouseUp(event, this._onCameraOrbitThrottle);
     }
   };
 
   _onWheel = (event) => {
     if (this.modelScene) {
-      this.modelScene.onWheel(event);
+      this.modelScene.onWheel(event, this._onCameraOrbitThrottle);
     }
   };
 
@@ -121,4 +132,4 @@ class ModelCanvas extends React.Component {
 }
 
 // HOC with dimensions listener to make the rendering canvas responsive
-export default Dimensions()(ModelCanvas);
+export default connect()(Dimensions()(ModelCanvas));
