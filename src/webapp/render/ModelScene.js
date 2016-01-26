@@ -92,11 +92,11 @@ class ModelScene {
   /**
    * Frame updater function
    */
-  _animate = () => {
+  _animate() {
     requestAnimationFrame(this._animate);
     this.controls.update();
     this._render();
-  };
+  }
 
   /**
    * Render function which will be called for every fame
@@ -214,21 +214,25 @@ class ModelScene {
     this.controls.setDimensions(dimensions.width, dimensions.height);
   }
 
-  onMouseDown = (event) => {
+  onMouseDown(event, callback) {
     this.controls.onMouseDown(event);
-  };
+    callback(this.camera);
+  }
 
-  onMouseMove = (event) => {
+  onMouseMove(event, callback) {
     this.controls.onMouseMove(event);
-  };
+    callback(this.camera);
+  }
 
-  onMouseUp = (event) => {
+  onMouseUp(event, callback) {
     this.controls.onMouseUp(event);
-  };
+    callback(this.camera);
+  }
 
-  onWheel = (event) => {
+  onWheel(event, callback) {
     this.controls.onMouseWheel(event);
-  };
+    callback(this.camera);
+  }
 
   /**
    * Dispose all entities in scene
