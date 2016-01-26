@@ -1,5 +1,28 @@
 import THREE from 'three';
 
+function nextHighestPowerOfTwo_(x) {
+  let copyX = x;
+  --copyX;
+  for (let i = 1; i < 32; i <<= 1) {
+    copyX = copyX | copyX >> i;
+  }
+
+  return copyX + 1;
+}
+
+function ensurePowerOfTwo_(image) {
+  if (!THREE.Math.isPowerOfTwo(image.width) || !THREE.Math.isPowerOfTwo(image.height)) {
+    const canvas = document.createElement('canvas');
+    canvas.width = nextHighestPowerOfTwo_(image.width);
+    canvas.height = nextHighestPowerOfTwo_(image.height);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  }
+
+  return image;
+}
+
 /**
  * Create a new THREE-MTLLoader.MaterialCreator
  * @param baseUrl - Url relative to which textures are loaded
@@ -214,7 +237,7 @@ class MaterialCreator {
       loader = new THREE.ImageLoader(manager);
       loader.setCrossOrigin(this.crossOrigin);
       loader.load(url, function (image) {
-        texture.image = MTLLoader.ensurePowerOfTwo_(image);
+        texture.image = ensurePowerOfTwo_(image);
         texture.needsUpdate = true;
         if (onLoad) {
           onLoad(texture);
@@ -234,30 +257,6 @@ class MTLLoader {
   constructor(manager) {
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
   }
-
-  static ensurePowerOfTwo_(image) {
-    if (!THREE.Math.isPowerOfTwo(image.width) || !THREE.Math.isPowerOfTwo(image.height)) {
-      const canvas = document.createElement('canvas');
-      canvas.width = MTLLoader.nextHighestPowerOfTwo_(image.width);
-      canvas.height = MTLLoader.nextHighestPowerOfTwo_(image.height);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
-      return canvas;
-    }
-
-    return image;
-  }
-
-  static nextHighestPowerOfTwo_(x) {
-    let copyX = x;
-    --copyX;
-    for (let i = 1; i < 32; i <<= 1) {
-      copyX = copyX | copyX >> i;
-    }
-
-    return copyX + 1;
-  }
-
 
   load(url, onLoad, onProgress, onError) {
     const loader = new THREE.XHRLoader(this.manager);
