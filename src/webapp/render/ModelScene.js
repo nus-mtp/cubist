@@ -1,4 +1,4 @@
-import Three from 'three';
+import THREE from 'three';
 
 import OrbitControls from './OrbitControls';
 
@@ -19,7 +19,7 @@ class ModelScene {
   renderingState = {
     wireframe: false,
     shadingMode: 0,
-    shading: Three.SmoothShading
+    shading: THREE.SmoothShading
   };
   // Camera State
   cameraState = {
@@ -47,17 +47,17 @@ class ModelScene {
   }
 
   _initRenderer(sceneCanvas, dimensions) {
-    this.renderer = new Three.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
     this.renderer.setClearColor(0x212121);
   }
 
   _initScene() {
-    this.scene = new Three.Scene();
+    this.scene = new THREE.Scene();
   }
 
   _initCamera(dimensions) {
-    this.camera = new Three.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
+    this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
     this.scene.add(this.camera);
     this.camera.position.set(0, 450, 500);
     this.camera.lookAt(this.scene.position);
@@ -65,23 +65,23 @@ class ModelScene {
 
   _initLight() {
     // Main front light
-    const light = new Three.PointLight(0xdddddd);
+    const light = new THREE.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
     light.castShadow = true;
     this.scene.add(light);
 
     // Fill light
-    const light2 = new Three.PointLight(0x777777);
+    const light2 = new THREE.PointLight(0x777777);
     light2.position.set(100, 100, 200);
     this.scene.add(light2);
 
     // Back light
-    const light3 = new Three.PointLight(0x777777);
+    const light3 = new THREE.PointLight(0x777777);
     light3.position.set(0, 100, -200);
     this.scene.add(light3);
 
     // Ambient light
-    const ambientLight = new Three.AmbientLight(0x333333);
+    const ambientLight = new THREE.AmbientLight(0x333333);
     this.scene.add(ambientLight);
   }
 
@@ -93,7 +93,7 @@ class ModelScene {
    * Frame updater function
    */
   _animate() {
-    requestAnimationFrame(this._animate);
+    requestAnimationFrame(this._animate.bind(this));
     this.controls.update();
     this._render();
   }
@@ -162,10 +162,10 @@ class ModelScene {
     }
     if (shadingMode === 1) {
       this.model.traverse(function (child) {
-        if (child instanceof Three.Mesh) {
-          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
-            shading: Three.FlatShading,
+            shading: THREE.FlatShading,
             wireframe: false,
             transparent: true
           }));
@@ -175,10 +175,10 @@ class ModelScene {
     }
     if (shadingMode === 2) {
       this.model.traverse(function (child) {
-        if (child instanceof Three.Mesh) {
-          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
-            shading: Three.SmoothShading,
+            shading: THREE.SmoothShading,
             wireframe: false,
             transparent: true
           }));
@@ -189,10 +189,10 @@ class ModelScene {
 
     if (wireframe) {
       this.model.traverse(function (child) {
-        if (child instanceof Three.Mesh) {
-          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0x00e0c0,
-            shading: Three.FlatShading,
+            shading: THREE.FlatShading,
             wireframe: true,
             transparent: true
           }));
@@ -216,22 +216,33 @@ class ModelScene {
 
   onMouseDown(event, callback) {
     this.controls.onMouseDown(event);
-    callback(this.camera);
+    callback(this.getCameraOrbit());
   }
 
   onMouseMove(event, callback) {
     this.controls.onMouseMove(event);
-    callback(this.camera);
+    callback(this.getCameraOrbit());
   }
 
   onMouseUp(event, callback) {
     this.controls.onMouseUp(event);
-    callback(this.camera);
+    callback(this.getCameraOrbit());
   }
 
   onWheel(event, callback) {
     this.controls.onMouseWheel(event);
-    callback(this.camera);
+    callback(this.getCameraOrbit());
+  }
+
+  getCameraOrbit() {
+    const lookAt = new THREE.Vector3(0, 0, -1);
+    lookAt.applyMatrix4(this.camera.matrixWorld);
+    return {
+      position: this.camera.position,
+      up: this.camera.up,
+      lookAt,
+      zoom: this.camera.zoom
+    };
   }
 
   /**
