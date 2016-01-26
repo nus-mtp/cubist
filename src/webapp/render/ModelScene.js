@@ -1,5 +1,4 @@
 import Three from 'three';
-import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
@@ -12,13 +11,10 @@ class ModelScene {
   camera = undefined;
   // The Model
   model = undefined;
+  // Stores currently displayed objects (meshes/models)
+  displayObjects = [];
   // Orbit Controls
   controls = undefined;
-  // Data of the model
-  modelData = {
-    geometry: undefined,
-    materials: undefined
-  };
   // Current Rendering State
   renderingState = {
     wireframe: false,
@@ -110,17 +106,25 @@ class ModelScene {
   }
 
   /**
-   * Update the model data of the model
-   * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
+   * Update the objects (meshes/models) displayed in the scene
+   */
+  updateSceneObjects() {
+    this.removeSceneObjects();
+    this.displayObjects = this._getDisplayObjects();
+    for (let i = 0; i < this.displayObjects.length; i++) {
+      this.displayObjects[i].scale.set(40, 40, 40);
+      this.displayObjects[i].position.y = -20;
+      this.scene.add(this.displayObjects[i]);
+    }
+  }
+
+  /**
+   * Update the model variable of this class
+   * @param  {Object} model [the new model to be displayed]
    */
   updateModel(model) {
-    if (this.model) {
-      this.scene.remove(this.model);
-    }
     this.model = model;
-    this.model.scale.set(40, 40, 40);
-    this.model.position.y = -20;
-    this.scene.add(this.model);
+    this.updateSceneObjects();
   }
 
   /**
@@ -129,7 +133,7 @@ class ModelScene {
    */
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
-    this.updateModel();
+    this.updateSceneObjects();
   }
 
   updateCameraState(state) {
@@ -139,49 +143,64 @@ class ModelScene {
   }
 
   /**
-   * Get the materials based on the current model data and rendering state
-   * @return {[Object]} [an array of material object]
+   * Remove objects (models/meshes) currently displayed in the scene
    */
-  _getMaterials() {
-    const materials = [];
-    const { wireframe, shading, shadingMode } = this.renderingState;
-    if (this.modelData.materials) {
-      materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
-        const material = _.clone(m);
-        material.shading = shading;
-        return material;
-      })));
+  removeSceneObjects() {
+    for (let i = 0; i < this.displayObjects.length; i++) {
+      this.scene.remove(this.displayObjects[i]);
     }
+  }
 
-    // Flat shading
-    if (shadingMode === 1) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.FlatShading,
-        wireframe: false,
-        transparent: true
-      }));
+  /**
+   * Get the objects to display based on this.model and rendering state
+   */
+  _getDisplayObjects() {
+    const objects = [];
+    const { wireframe, shadingMode } = this.renderingState;
+    if (shadingMode === 0) {
+      objects.push(this.model);
     }
-    // Smooth shading
+    if (shadingMode === 1) {
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: Three.FlatShading,
+            wireframe: false,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
+    }
     if (shadingMode === 2) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.SmoothShading,
-        wireframe: false,
-        transparent: true
-      }));
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: Three.SmoothShading,
+            wireframe: false,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
     }
 
     if (wireframe) {
-      materials.push(new Three.MeshBasicMaterial({
-        color: 0x00c0c0,
-        shading: Three.FlatShading,
-        wireframe: true,
-        transparent: true
-      }));
+      this.model.traverse(function (child) {
+        if (child instanceof Three.Mesh) {
+          const newMesh = new Three.Mesh(child.geometry, new Three.MeshPhongMaterial({
+            color: 0x00e0c0,
+            shading: Three.FlatShading,
+            wireframe: true,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
     }
-
-    return materials;
+    return objects;
   }
 
   /**
