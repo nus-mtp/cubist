@@ -30,3 +30,4 @@ node_modules
 /public
 /models
 src/webapp/server/webpack-stats.json
+src/api/config/settings/private.js

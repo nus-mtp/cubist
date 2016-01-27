@@ -4,10 +4,6 @@
   letter-spacing: .5px;
 }
 
-.btn-success {
-  @include button-variant(#fff, #2BDE73, rgba(0, 0, 0, 0));
-}
-
 .btn.active.focus, 
 .btn.active:focus, 
 .btn.focus, 

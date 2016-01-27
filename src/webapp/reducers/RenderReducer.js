@@ -25,7 +25,7 @@ export default ReducerHelper.createReducer(initialState, {
 
   [SHADING_TOGGLE]: (state) => {
     let nextState = state;
-    nextState = nextState.set('shadingMode', (nextState.get('shadingMode') + 1) % 3);
+    nextState = nextState.set('shadingMode', (nextState.get('shadingMode') + 1) % 4);
 
     return nextState;
   },

@@ -49,6 +49,12 @@ describe('Render Reducer', () => {
       expect(
         reducer(Map({ shadingMode: 2 }), { type: SHADING_TOGGLE })
       ).to.equal(
+        Map({ shadingMode: 3 })
+      );
+      
+      expect(
+        reducer(Map({ shadingMode: 3 }), { type: SHADING_TOGGLE })
+      ).to.equal(
         Map({ shadingMode: 0 })
       );
     });

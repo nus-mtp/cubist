@@ -38,7 +38,8 @@ class HomeContainer extends PureComponent {
     window.addEventListener('resize', this._onDebounceResize);
     window.addEventListener('orientationchange', this._onDebounceResize);
     this.setState({
-      height: ReactDOM.findDOMNode(this.refs.hero).offsetHeight
+      // Provide some offset height at initial load
+      height: ReactDOM.findDOMNode(this.refs.hero).offsetHeight + 25
     });
   }
 

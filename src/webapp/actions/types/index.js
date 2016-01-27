@@ -4,5 +4,6 @@ export default {
   ...require('./CameraActionTypes'),
   ...require('./ServerActionTypes'),
   ...require('./WalkthroughActionTypes'),
-  ...require('./ModelActionTypes')
+  ...require('./ModelActionTypes'),
+  ...require('./UserActionTypes')
 };

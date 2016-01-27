@@ -33,6 +33,7 @@
     "react/jsx-indent-props": [2, 2],
     "react/jsx-no-duplicate-props": 2,
     "react/jsx-no-undef": 2,
+    "react/jsx-no-bind": 0,
     "react/no-direct-mutation-state": 2,
     "react/no-multi-comp": 0,
     "react/no-did-mount-set-state": 0

@@ -243,9 +243,13 @@ class ModelViewer extends React.Component {
     if (shadingMode === 0) {
       buttonTitle = 'Default';
     } else if (shadingMode === 1) {
+      buttonTitle = 'Shadeless';
+    } else if (shadingMode === 2) {
+      buttonTitle = 'Smooth';
+    } else if (shadingMode === 3) {
       buttonTitle = 'Flat';
     } else {
-      buttonTitle = 'Smooth';
+      buttonTitle = 'NIL';
     }
 
     return (

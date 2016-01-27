@@ -1,0 +1,34 @@
+.cb-auth {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.cb-auth-card {
+  width: 30%;
+
+  @include breakpoint($max-tablet) {
+    width: 60%;
+  }
+
+  @include breakpoint($max-mobile) {
+    width: 80%;
+  }
+}
+
+.cb-auth-card-heading {
+  padding-top: .75em;
+  padding-bottom: .75em;
+  color: $cb-white;
+  font-weight: 500;
+  font-size: 2.5em;
+}
+
+.cb-auth-message {
+  margin-top: 15px;
+}
+
+.cb-auth-other-links {
+  margin-top: 15px;
+}
