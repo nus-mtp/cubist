@@ -9,6 +9,11 @@ class ModelScene {
   scene = undefined;
   // The Main Camera in the scene
   camera = undefined;
+  // The main front light
+  frontLight = undefined;
+  // Background scene and camera
+  backgroundScene = undefined;
+  backgroundCamera = undefined;
   // The Model
   model = undefined;
   // Stores currently displayed objects (meshes/models)
@@ -40,6 +45,7 @@ class ModelScene {
     this._initRenderer(sceneCanvas, dimensions);
     this._initScene();
     this._initCamera(dimensions);
+    this._initBackground();
     this._initLight();
     this._initControls(dimensions);
 
@@ -49,7 +55,8 @@ class ModelScene {
   _initRenderer(sceneCanvas, dimensions) {
     this.renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
-    this.renderer.setClearColor(0x212121);
+    this.renderer.setClearColor(0x212121, 0); // Alpha value set to 0 for transparancy
+    this.renderer.autoClear = false;
   }
 
   _initScene() {
@@ -63,7 +70,30 @@ class ModelScene {
     this.camera.lookAt(this.scene.position);
   }
 
+  _initBackground() {
+    // Load background texture
+    const texture = THREE.ImageUtils.loadTexture('/modelAssets/doge.jpeg');
+    const backgroundMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(2, 2, 0),
+      new THREE.MeshBasicMaterial({
+        map: texture
+      }));
+    // Turn off any depth checking
+    backgroundMesh.material.depthTest = false;
+    backgroundMesh.material.depthWrite = false;
+    // Create the background scene
+    this.backgroundScene = new THREE.Scene();
+    this.backgroundCamera = new THREE.Camera();
+    this.backgroundScene.add(this.backgroundCamera);
+    this.backgroundScene.add(backgroundMesh);
+  }
+
   _initLight() {
+    // Main front light
+    this.frontLight = new THREE.PointLight(0xdddddd);
+    this.frontLight.castShadow = true;
+    this.camera.add(this.frontLight);
+    /*
     // Main front light
     const light = new THREE.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
@@ -79,9 +109,10 @@ class ModelScene {
     const light3 = new THREE.PointLight(0x777777);
     light3.position.set(0, 100, -200);
     this.scene.add(light3);
+    */
 
     // Ambient light
-    const ambientLight = new THREE.AmbientLight(0x333333);
+    const ambientLight = new THREE.AmbientLight(0x444444);
     this.scene.add(ambientLight);
   }
 
@@ -102,6 +133,9 @@ class ModelScene {
    * Render function which will be called for every fame
    */
   _render() {
+    this.renderer.clear();
+    // Render background first so that the model appears in front
+    this.renderer.render(this.backgroundScene, this.backgroundCamera);
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -157,15 +191,23 @@ class ModelScene {
   _getDisplayObjects() {
     const objects = [];
     const { wireframe, shadingMode } = this.renderingState;
-    if (shadingMode === 0) {
+    // Default Shading Mode
+    if (shadingMode === 0 || 1) {
       objects.push(this.model);
     }
+    // Shadeless Mode - turn lights off in shadeless mode
     if (shadingMode === 1) {
+      this.frontLight.visible = false;
+    } else {
+      this.frontLight.visible = true;
+    }
+    // Smooth Shading mode
+    if (shadingMode === 2) {
       this.model.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
           const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
-            shading: THREE.FlatShading,
+            shading: THREE.SmoothShading,
             wireframe: false,
             transparent: true
           }));
@@ -173,12 +215,13 @@ class ModelScene {
         }
       });
     }
-    if (shadingMode === 2) {
+    // Flat Shading mode
+    if (shadingMode === 3) {
       this.model.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
           const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
-            shading: THREE.SmoothShading,
+            shading: THREE.FlatShading,
             wireframe: false,
             transparent: true
           }));
