@@ -112,7 +112,7 @@ UserController.promise.login = function (req, isAdminLogin) {
       // Check if this is for admin login
       if (isAdminLogin) {
         if (user.role !== Constants.ROLE_ADMIN) {
-          return Promise.reject(new ClientError(Constants.ERRORUser_ROLE_NOT_ADMIN));
+          return Promise.reject(new ClientError(Constants.ERROR_USER_ROLE_NOT_ADMIN));
         }
       }
 
@@ -122,7 +122,7 @@ UserController.promise.login = function (req, isAdminLogin) {
           if (err) {
             reject(err);
           } else if (!res) {
-            reject(new ClientError(Constants.ERRORUser_PASSWORD_INCORRECT));
+            reject(new ClientError(Constants.ERROR_USER_PASSWORD_INCORRECT));
           } else {
             resolve(user);
           }

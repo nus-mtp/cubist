@@ -5,4 +5,4 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 const config = require('./' + configFile);
-export default config;
+export default Object.assign({}, config, require('./private'));

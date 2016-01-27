@@ -3,5 +3,6 @@ export default {
   ...require('./RenderActionTypes'),
   ...require('./CameraActionTypes'),
   ...require('./ServerActionTypes'),
-  ...require('./ModelActionTypes')
+  ...require('./ModelActionTypes'),
+  ...require('./UserActionTypes')
 };
