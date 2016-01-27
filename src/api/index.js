@@ -2,7 +2,7 @@ import express from 'express';
 import Promise from 'bluebird';
 
 import environment from './config/environment';
-import database from './config/database';
+import { default as database } from './config/database';
 import routes from './config/routes';
 import { Logger } from 'common';
 import settings from './config/settings';

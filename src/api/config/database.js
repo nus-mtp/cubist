@@ -2,14 +2,12 @@ import Promise from 'bluebird';
 import mongoose from 'mongoose';
 
 import settings from './settings';
+import { User } from 'api/models';
 import { ClientError, Logger } from 'common';
 
 const DEBUG_ENV = 'mongodb';
 
-/**
- * Database Initialization
- */
-export default () => {
+export function connectDb() {
   return new Promise((resolve, reject) => {
     mongoose.connect(settings.DATABASE_URL, (err) => {
       const { host, port } = mongoose.connection;
@@ -21,4 +19,20 @@ export default () => {
       }
     });
   });
-};
+}
+
+/**
+ * Server Database Initialization
+ */
+export default function () {
+  return connectDb()
+    .then(() => {
+      return User.findOneByEmail(settings.ADMIN_EMAIL)
+      .then((user) => {
+        if (user) {
+          return Promise.resolve();
+        }
+        return User.createAdmin();
+      });
+    });
+}

@@ -22,6 +22,7 @@ class ModelViewer extends React.Component {
     modelData: React.PropTypes.object,
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     cameraCoordinate: React.PropTypes.object,
+    object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
 

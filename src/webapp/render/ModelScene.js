@@ -1,5 +1,4 @@
-import Three from 'three';
-import _ from 'lodash';
+import THREE from 'three';
 
 import OrbitControls from './OrbitControls';
 
@@ -12,18 +11,15 @@ class ModelScene {
   camera = undefined;
   // The Model
   model = undefined;
+  // Stores currently displayed objects (meshes/models)
+  displayObjects = [];
   // Orbit Controls
   controls = undefined;
-  // Data of the model
-  modelData = {
-    geometry: undefined,
-    materials: undefined
-  };
   // Current Rendering State
   renderingState = {
     wireframe: false,
     shadingMode: 0,
-    shading: Three.SmoothShading
+    shading: THREE.SmoothShading
   };
   // Camera State
   cameraState = {
@@ -59,17 +55,17 @@ class ModelScene {
   }
 
   _initRenderer(sceneCanvas, dimensions) {
-    this.renderer = new Three.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
     this.renderer.setClearColor(0x212121);
   }
 
   _initScene() {
-    this.scene = new Three.Scene();
+    this.scene = new THREE.Scene();
   }
 
   _initCamera(dimensions) {
-    this.camera = new Three.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
+    this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
     this.scene.add(this.camera);
     this.camera.position.set(0, 450, 500);
     this.camera.lookAt(this.scene.position);
@@ -77,23 +73,23 @@ class ModelScene {
 
   _initLight() {
     // Main front light
-    const light = new Three.PointLight(0xdddddd);
+    const light = new THREE.PointLight(0xdddddd);
     light.position.set(-100, 250, 200);
     light.castShadow = true;
     this.scene.add(light);
 
     // Fill light
-    const light2 = new Three.PointLight(0x777777);
+    const light2 = new THREE.PointLight(0x777777);
     light2.position.set(100, 100, 200);
     this.scene.add(light2);
 
     // Back light
-    const light3 = new Three.PointLight(0x777777);
+    const light3 = new THREE.PointLight(0x777777);
     light3.position.set(0, 100, -200);
     this.scene.add(light3);
 
     // Ambient light
-    const ambientLight = new Three.AmbientLight(0x333333);
+    const ambientLight = new THREE.AmbientLight(0x333333);
     this.scene.add(ambientLight);
   }
 
@@ -104,11 +100,11 @@ class ModelScene {
   /**
    * Frame updater function
    */
-  _animate = () => {
-    requestAnimationFrame(this._animate);
+  _animate() {
+    requestAnimationFrame(this._animate.bind(this));
     this.controls.update();
     this._render();
-  };
+  }
 
   /**
    * Render function which will be called for every fame
@@ -118,12 +114,25 @@ class ModelScene {
   }
 
   /**
-   * Update the model data of the model
-   * @param  {Object} modelData [the new model data mainly comprising `geometry` and `materials`]
+   * Update the objects (meshes/models) displayed in the scene
    */
-  updateModelData(modelData) {
-    this.modelData = modelData;
-    this._updateModel();
+  updateSceneObjects() {
+    this.removeSceneObjects();
+    this.displayObjects = this._getDisplayObjects();
+    for (let i = 0; i < this.displayObjects.length; i++) {
+      this.displayObjects[i].scale.set(40, 40, 40);
+      this.displayObjects[i].position.y = -20;
+      this.scene.add(this.displayObjects[i]);
+    }
+  }
+
+  /**
+   * Update the model variable of this class
+   * @param  {Object} model [the new model to be displayed]
+   */
+  updateModel(model) {
+    this.model = model;
+    this.updateSceneObjects();
   }
 
   /**
@@ -132,7 +141,7 @@ class ModelScene {
    */
   updateRenderingState(state) {
     Object.assign(this.renderingState, state);
-    this._updateModel();
+    this.updateSceneObjects();
   }
 
   updateCameraState(state) {
@@ -142,68 +151,64 @@ class ModelScene {
   }
 
   /**
-   * Reinitialize the current model (WARN: This function should try to be called as few as possible)
-   * @return {[type]} [description]
+   * Remove objects (models/meshes) currently displayed in the scene
    */
-  _updateModel() {
-    const { geometry } = this.modelData;
-    if (this.model) {
-      this.scene.remove(this.model);
+  removeSceneObjects() {
+    for (let i = 0; i < this.displayObjects.length; i++) {
+      this.scene.remove(this.displayObjects[i]);
     }
-    const materials = this._getMaterials();
-    if (materials.length === 1) {
-      this.model = new Three.Mesh(geometry, materials[0]);
-    } else {
-      this.model = Three.SceneUtils.createMultiMaterialObject(geometry, materials);
-    }
-    this.model.scale.set(20, 20, 20);
-    this.scene.add(this.model);
   }
 
   /**
-   * Get the materials based on the current model data and rendering state
-   * @return {[Object]} [an array of material object]
+   * Get the objects to display based on this.model and rendering state
    */
-  _getMaterials() {
-    const materials = [];
-    const { wireframe, shading, shadingMode } = this.renderingState;
-    if (this.modelData.materials) {
-      materials.push(new Three.MeshFaceMaterial(this.modelData.materials.map(m => {
-        const material = _.clone(m);
-        material.shading = shading;
-        return material;
-      })));
+  _getDisplayObjects() {
+    const objects = [];
+    const { wireframe, shadingMode } = this.renderingState;
+    if (shadingMode === 0) {
+      objects.push(this.model);
     }
-
-    // Flat shading
     if (shadingMode === 1) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.FlatShading,
-        wireframe: false,
-        transparent: true
-      }));
+      this.model.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: THREE.FlatShading,
+            wireframe: false,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
     }
-    // Smooth shading
     if (shadingMode === 2) {
-      materials.push(new Three.MeshPhongMaterial({
-        color: 0xc0c0c0,
-        shading: Three.SmoothShading,
-        wireframe: false,
-        transparent: true
-      }));
+      this.model.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
+            color: 0xc0c0c0,
+            shading: THREE.SmoothShading,
+            wireframe: false,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
     }
 
     if (wireframe) {
-      materials.push(new Three.MeshBasicMaterial({
-        color: 0x00c0c0,
-        shading: Three.FlatShading,
-        wireframe: true,
-        transparent: true
-      }));
+      this.model.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
+            color: 0x00e0c0,
+            shading: THREE.FlatShading,
+            wireframe: true,
+            transparent: true
+          }));
+          objects.push(newMesh);
+        }
+      });
     }
-
-    return materials;
+    return objects;
   }
 
   /**
@@ -217,21 +222,36 @@ class ModelScene {
     this.controls.setDimensions(dimensions.width, dimensions.height);
   }
 
-  onMouseDown = (event) => {
+  onMouseDown(event, callback) {
     this.controls.onMouseDown(event);
-  };
+    callback(this.getCameraOrbit());
+  }
 
-  onMouseMove = (event) => {
+  onMouseMove(event, callback) {
     this.controls.onMouseMove(event);
-  };
+    callback(this.getCameraOrbit());
+  }
 
-  onMouseUp = (event) => {
+  onMouseUp(event, callback) {
     this.controls.onMouseUp(event);
-  };
+    callback(this.getCameraOrbit());
+  }
 
-  onWheel = (event) => {
+  onWheel(event, callback) {
     this.controls.onMouseWheel(event);
-  };
+    callback(this.getCameraOrbit());
+  }
+
+  getCameraOrbit() {
+    const lookAt = new THREE.Vector3(0, 0, -1);
+    lookAt.applyMatrix4(this.camera.matrixWorld);
+    return {
+      position: this.camera.position,
+      up: this.camera.up,
+      lookAt,
+      zoom: this.camera.zoom
+    };
+  }
 
   /**
    * Dispose all entities in scene

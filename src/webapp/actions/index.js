@@ -3,5 +3,6 @@ export default {
   RenderActions: require('./RenderActions'),
   CameraActions: require('./CameraActions'),
   ServerActions: require('./ServerActions'),
-  WalkthroughActions: require('./WalkthroughActions')
+  WalkthroughActions: require('./WalkthroughActions'),
+  ModelActions: require('./ModelActions')
 };

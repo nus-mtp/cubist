@@ -9,7 +9,8 @@ describe('Render Reducer', () => {
     expect(reducer(undefined, {})).to.equal(Map({
       wireframe: false,
       shadingMode: 0,
-      autoRotate: false
+      autoRotate: false,
+      resetViewToggle: false
     }));
   });
 
