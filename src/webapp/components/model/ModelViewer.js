@@ -8,6 +8,7 @@ import { RenderActions, WalkthroughActions } from 'webapp/actions';
 
 import { DropdownButton } from 'react-bootstrap';
 import { MenuItem } from 'react-bootstrap';
+import { Input } from 'react-bootstrap';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -24,7 +25,8 @@ class ModelViewer extends React.Component {
     cameraCoordinate: React.PropTypes.object,
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: React.PropTypes.func.isRequired,
+    position: React.PropTypes.instanceOf(Immutable.List)
   };
 
   _onToggleWireframeButtonClick = () => {
@@ -52,9 +54,9 @@ class ModelViewer extends React.Component {
     dispatch(WalkthroughActions.addPoint());
   };
 
-  _onWalkthroughUpdate = (e, index) => {
+  _onWalkthroughUpdate = (e, index, coordinate) => {
     const { dispatch } = this.props;
-    dispatch(WalkthroughActions.updatePoint(index, [10, 10, 10]));
+    dispatch(WalkthroughActions.updatePoint(index, [coordinate[0], coordinate[1], coordinate[2]]));
   };
 
   _onWalkthroughDelete = (e, index) => {
@@ -71,6 +73,12 @@ class ModelViewer extends React.Component {
     e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.updateAnimationMode(index, animationMode));
+  };
+
+  _onWalkthroughDurationUpdate = (e, index, duration) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
 
@@ -94,18 +102,20 @@ class ModelViewer extends React.Component {
   }
 
   _renderWalkthroughSection() {
-    const { walkthroughPoints } = this.props;
-
+    const { walkthroughPoints, position } = this.props;
+    const { x, y, z } = position;
     return (
       <div>
         <h3>Current Camera Coordinate:</h3>
-        <p>{ '10, 10, 10' }</p>
+        <p>{ `${Math.round(x * 100) / 100}, ${Math.round(y * 100) / 100}, ${Math.round(z * 100) / 100}` }</p>
         {
           walkthroughPoints.map((point, index) => (
             <div key={ index }>
                 <h4>{ `Point ${index + 1}` }</h4>
                 <p>{ `${point.get('posX')}, ${point.get('posY')}, ${point.get('posZ')}` }</p>
-                <button className="btn btn-primary" onClick={ e => this._onWalkthroughUpdate(e, index) } >
+                <button className="btn btn-primary"
+                  onClick={ e => this._onWalkthroughUpdate(e, index,
+                    [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100]) } >
                   SET
                 </button>
                 <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
@@ -113,6 +123,7 @@ class ModelViewer extends React.Component {
                 </button>
                 { this._renderWalkthroughToggleDisjointButton(index, point.get('disjointMode')) }
                 { this._renderWalkthroughAnimationDropdown(index, point) }
+                { this._renderAnimationDurationField(index, point) }
             </div>
           ))
         }
@@ -262,8 +273,26 @@ class ModelViewer extends React.Component {
       </button>
     );
   }
-}
 
+  _renderAnimationDurationField(index, point) {
+    const textValue = point.get('duration');
+
+    return (
+      <Input
+        type="text"
+        defaultValue={ textValue }
+        placeholder="Enter Text"
+        label="Duration"
+        help="0.00 to 5.00 seconds"
+        bsStyle="success"
+        hasFeedback
+        ref="input"
+        groupClassName="group-class"
+        labelClassName="label-class"
+        onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+    );
+  }
+}
 
 export default connect((state) => {
   return {
@@ -271,6 +300,10 @@ export default connect((state) => {
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
     walkthroughPoints: state.WalkthroughStore.get('points'),
-    resetViewToggle: state.RenderStore.get('resetViewToggle')
+    resetViewToggle: state.RenderStore.get('resetViewToggle'),
+    position: state.CameraStore.get('position'),
+    up: state.CameraStore.get('up'),
+    lookAt: state.CameraStore.get('lookAt'),
+    zoom: state.CameraStore.get('zoom')
   };
 })(ModelViewer);

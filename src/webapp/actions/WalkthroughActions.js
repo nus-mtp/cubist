@@ -3,7 +3,8 @@ import {
   UPDATE_POINT,
   DELETE_POINT,
   TOGGLE_DISJOINT,
-  UPDATE_ANIMATION
+  UPDATE_ANIMATION,
+  UPDATE_DURATION
 } from './types';
 
 export default {
@@ -49,6 +50,16 @@ export default {
       payload: {
         index,
         animationMode
+      }
+    };
+  },
+
+  updateAnimationDuration(index, animationDuration) {
+    return {
+      type: UPDATE_DURATION,
+      payload: {
+        index,
+        animationDuration
       }
     };
   }
