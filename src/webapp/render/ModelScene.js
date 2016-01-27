@@ -141,6 +141,7 @@ class ModelScene {
    */
   updateModel(model) {
     this.model = model;
+    this.updateObjectVertexNormals();
     this.updateSceneObjects();
   }
 
@@ -168,6 +169,17 @@ class ModelScene {
     }
   }
 
+  /**
+    * Run through all meshes in the model object and have threejs calculate their vertex normals
+  */
+  updateObjectVertexNormals() {
+    this.model.traverse(function (child) {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.computeVertexNormals();
+        child.geometry.normalsNeedUpdate = true;
+      }
+    });
+  }
   /**
    * Get the objects to display based on this.model and rendering state
    */
