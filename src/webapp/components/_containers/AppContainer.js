@@ -1,15 +1,27 @@
 import React from 'react';
+import Immutable from 'immutable';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 import Waypoint from 'react-waypoint';
 
+import { Logger } from 'common';
+import { UserActions } from 'webapp/actions';
+
+const DEBUG_ENV = 'app-container';
 const CLASS_NAME = 'cb-ctn-app';
 
 class AppContainer extends PureComponent {
+  static fetchData({ dispatch }) {
+    Logger.info('Fetch data', DEBUG_ENV);
+    return dispatch(UserActions.me());
+  }
+
   static propTypes = {
     children: React.PropTypes.node,
-    location: React.PropTypes.object
+    location: React.PropTypes.object,
+    user: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   state = {
@@ -76,7 +88,7 @@ class AppContainer extends PureComponent {
   }
 
   _renderHeader() {
-    const { location } = this.props;
+    const { location, user } = this.props;
     const { isAtTop } = this.state;
     const isHomePage = location.pathname === '/';
     const navClasses = [
@@ -104,16 +116,6 @@ class AppContainer extends PureComponent {
       }
     ];
 
-    const signUpClasses = [
-      'btn',
-      'navbar-btn',
-      `${CLASS_NAME}-navbar-register`,
-      {
-        'btn-transparent': !(isHomePage && isAtTop),
-        'btn-transparent-alt': isHomePage & isAtTop
-      }
-    ];
-
     return (
       <nav className={ classnames(navClasses) }>
         <div className="container">
@@ -126,19 +128,77 @@ class AppContainer extends PureComponent {
             </a>
           </div>
           <div className={ classnames(collapseClasses) }>
-            <div className="navbar-right">
-              <Link to="/register" className={ classnames(signUpClasses) }>
-                SIGN UP
-              </Link>
-              <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
-                LOG IN
-              </Link>
-            </div>
+            {
+              user
+              ? this._renderUserHeader()
+              : this._renderPublicHeader()
+            }
           </div>
         </div>
       </nav>
     );
   }
+
+  _renderPublicHeader() {
+    const { location } = this.props;
+    const { isAtTop } = this.state;
+    const isHomePage = location.pathname === '/';
+
+    const signUpClasses = [
+      'btn',
+      'navbar-btn',
+      `${CLASS_NAME}-navbar-register`,
+      {
+        'btn-transparent': !(isHomePage && isAtTop),
+        'btn-transparent-alt': isHomePage & isAtTop
+      }
+    ];
+
+    return (
+      <div className="navbar-right">
+        <Link to="/register" className={ classnames(signUpClasses) }>
+          SIGN UP
+        </Link>
+        <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
+          LOG IN
+        </Link>
+      </div>
+    );
+  }
+
+  _renderUserHeader() {
+    const { location, user } = this.props;
+    const { isAtTop } = this.state;
+    const isHomePage = location.pathname === '/';
+
+    const userClasses = [
+      'btn',
+      'navbar-btn',
+      `${CLASS_NAME}-navbar-user`,
+      {
+        'btn-transparent': !(isHomePage && isAtTop),
+        'btn-transparent-alt': isHomePage & isAtTop
+      }
+    ];
+
+    return (
+      <div className="navbar-right">
+        <button className={ `${CLASS_NAME}-navbar-upload btn btn-success navbar-btn` }>
+          UPLOAD
+        </button>
+        <button className={ classnames(userClasses) }>
+          { user.get('name') }
+        </button>
+      </div>
+    );
+  }
 }
 
-export default AppContainer;
+export default connect(state => {
+  const currentUserId = state.UserStore.get('currentUserId');
+  const users = state.UserStore.get('users');
+
+  return {
+    user: users.get(currentUserId)
+  };
+})(AppContainer);
