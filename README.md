@@ -40,7 +40,8 @@ $ npm run api-prod
 $ npm run webapp-prod
 ```
 
-## Development Data Generation
+## Project Initialization
+* Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
 * Go to team's Google Drive and download `models.zip`
 * Extract to copy the `models` folder into the repo folder
 * Clear MongoDB database for `cubist-api-development` (if necessary)
