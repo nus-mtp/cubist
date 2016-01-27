@@ -22,6 +22,7 @@ class ModelViewer extends React.Component {
     modelData: React.PropTypes.object,
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     cameraCoordinate: React.PropTypes.object,
+    resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
@@ -269,6 +270,7 @@ export default connect((state) => {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
-    walkthroughPoints: state.WalkthroughStore.get('points')
+    walkthroughPoints: state.WalkthroughStore.get('points'),
+    resetViewToggle: state.RenderStore.get('resetViewToggle')
   };
 })(ModelViewer);
