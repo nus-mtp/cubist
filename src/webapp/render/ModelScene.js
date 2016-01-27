@@ -72,7 +72,8 @@ class ModelScene {
 
   _initBackground() {
     // Load background texture
-    const texture = THREE.ImageUtils.loadTexture('/modelAssets/doge.jpeg');
+    const texture = THREE.ImageUtils.loadTexture('/models/doge.jpeg');
+    //const texture = THREE.ImageUtils.loadTexture('/home/ben/Documents/cubist/models/doge.jpeg');
     const backgroundMesh = new THREE.Mesh(
       new THREE.PlaneGeometry(2, 2, 0),
       new THREE.MeshBasicMaterial({
