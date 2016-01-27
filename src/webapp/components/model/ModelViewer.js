@@ -15,6 +15,7 @@ class ModelViewer extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
+    resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
@@ -137,6 +138,7 @@ export default connect((state) => {
   return {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate')
+    autoRotate: state.RenderStore.get('autoRotate'),
+    resetViewToggle: state.RenderStore.get('resetViewToggle')
   };
 })(ModelViewer);
