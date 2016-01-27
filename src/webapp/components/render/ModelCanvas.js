@@ -62,6 +62,7 @@ class ModelCanvas extends React.Component {
       this.modelScene.updateCameraState({ autoRotate: nextProps.autoRotate });
     }
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
+      console.log('enter loop');
       this.modelScene.updateCameraState({ resetViewControl: true });
     }
   }

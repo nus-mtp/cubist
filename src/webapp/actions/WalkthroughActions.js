@@ -2,7 +2,8 @@ import {
   ADD_POINT,
   UPDATE_POINT,
   DELETE_POINT,
-  TOGGLE_DISJOINT
+  TOGGLE_DISJOINT,
+  UPDATE_ANIMATION
 } from './types';
 
 export default {
@@ -38,6 +39,16 @@ export default {
       type: TOGGLE_DISJOINT,
       payload: {
         index
+      }
+    };
+  },
+
+  updateAnimationMode(index, animationMode) {
+    return {
+      type: UPDATE_ANIMATION,
+      payload: {
+        index,
+        animationMode
       }
     };
   }

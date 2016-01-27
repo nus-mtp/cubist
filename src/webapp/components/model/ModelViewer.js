@@ -6,6 +6,9 @@ import Immutable from 'immutable';
 import { ModelCanvas } from '../render';
 import { RenderActions, WalkthroughActions } from 'webapp/actions';
 
+import { DropdownButton } from 'react-bootstrap';
+import { MenuItem } from 'react-bootstrap';
+
 const CLASS_NAME = 'cb-model-viewer';
 
 /**
@@ -62,6 +65,12 @@ class ModelViewer extends React.Component {
     dispatch(WalkthroughActions.toggleDisjointMode(index));
   };
 
+  _onWalkthroughAnimation = (e, index, animationMode) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updateAnimationMode(index, animationMode));
+  };
+
 
   render() {
     return (
@@ -101,6 +110,7 @@ class ModelViewer extends React.Component {
                   DELETE
                 </button>
                 { this._renderWalkthroughToggleDisjointButton(index, point.get('disjointMode')) }
+                { this._renderWalkthroughAnimationDropdown(index, point) }
             </div>
           ))
         }
@@ -108,6 +118,45 @@ class ModelViewer extends React.Component {
           ADD NEW POINT
         </button>
       </div>
+    );
+  }
+
+  _renderWalkthroughAnimationDropdown(index, point) {
+    const disjointMode = point.get('disjointMode');
+    let buttonTitle;
+    buttonTitle = point.get('animationMode');
+
+    if (disjointMode) {
+      return this._renderDisjointDropdownMenu(index, point);
+    } else {
+      return this._renderContinuousDropdownMenu(index, point);
+    }
+  }
+
+  _renderDisjointDropdownMenu(index, point) {
+    let buttonTitle;
+    buttonTitle = point.get('animationMode');
+
+    return (
+        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >Stationary</MenuItem>
+        </DropdownButton>
+    );
+  }
+
+  _renderContinuousDropdownMenu(index, point) {
+    let buttonTitle;
+    buttonTitle = point.get('animationMode');
+
+    return (
+        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >Stationary</MenuItem>
+          <MenuItem divider />
+          <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >Translation</MenuItem>
+          <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >Rotation</MenuItem>
+          <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >Zooming</MenuItem>
+          <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >Translation + Rotation</MenuItem>
+        </DropdownButton>
     );
   }
 
@@ -120,9 +169,9 @@ class ModelViewer extends React.Component {
       buttonTitle = 'Continuous';
     }
 
-    if(index === 0) {
+    if (index === 0) {
       disableStatus = true;
-    }else {
+    } else {
       disableStatus = false;
     }
 

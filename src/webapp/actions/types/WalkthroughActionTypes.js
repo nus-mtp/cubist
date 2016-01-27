@@ -5,7 +5,8 @@ const normalTypes = {
   ADD_POINT: null,
   UPDATE_POINT: null,
   DELETE_POINT: null,
-  TOGGLE_DISJOINT: null
+  TOGGLE_DISJOINT: null,
+  UPDATE_ANIMATION: null
 };
 
 // Promise Action Types
