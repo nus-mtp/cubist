@@ -15,6 +15,7 @@ class ModelViewer extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
+    resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired
   };
@@ -99,9 +100,13 @@ class ModelViewer extends React.Component {
     if (shadingMode === 0) {
       buttonTitle = 'Default';
     } else if (shadingMode === 1) {
+      buttonTitle = 'Shadeless';
+    } else if (shadingMode === 2) {
+      buttonTitle = 'Smooth';
+    } else if (shadingMode === 3) {
       buttonTitle = 'Flat';
     } else {
-      buttonTitle = 'Smooth';
+      buttonTitle = 'NIL';
     }
 
     return (
@@ -137,6 +142,7 @@ export default connect((state) => {
   return {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate')
+    autoRotate: state.RenderStore.get('autoRotate'),
+    resetViewToggle: state.RenderStore.get('resetViewToggle')
   };
 })(ModelViewer);
