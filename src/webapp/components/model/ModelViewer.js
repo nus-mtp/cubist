@@ -123,8 +123,6 @@ class ModelViewer extends React.Component {
 
   _renderWalkthroughAnimationDropdown(index, point) {
     const disjointMode = point.get('disjointMode');
-    let buttonTitle;
-    buttonTitle = point.get('animationMode');
 
     if (disjointMode) {
       return this._renderDisjointDropdownMenu(index, point);
@@ -134,28 +132,30 @@ class ModelViewer extends React.Component {
   }
 
   _renderDisjointDropdownMenu(index, point) {
-    let buttonTitle;
-    buttonTitle = point.get('animationMode');
-
+    const buttonTitle = point.get('animationMode');
     return (
         <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >Stationary</MenuItem>
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary</MenuItem>
         </DropdownButton>
     );
   }
 
   _renderContinuousDropdownMenu(index, point) {
-    let buttonTitle;
-    buttonTitle = point.get('animationMode');
-
+    const buttonTitle = point.get('animationMode');
     return (
         <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >Stationary</MenuItem>
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary</MenuItem>
           <MenuItem divider />
-          <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >Translation</MenuItem>
-          <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >Rotation</MenuItem>
-          <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >Zooming</MenuItem>
-          <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >Translation + Rotation</MenuItem>
+          <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
+          Translation</MenuItem>
+          <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
+          Rotation</MenuItem>
+          <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
+          Zooming</MenuItem>
+          <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
+          Translation + Rotation</MenuItem>
         </DropdownButton>
     );
   }
@@ -177,7 +177,8 @@ class ModelViewer extends React.Component {
 
 
     return (
-      <button className="btn btn-warning" onClick={ e => this._onWalkthroughToggleDisjointMode(e, index) } disabled={ disableStatus }>
+      <button className="btn btn-warning"
+        onClick={ e => this._onWalkthroughToggleDisjointMode(e, index) } disabled={ disableStatus }>
       { buttonTitle }
       </button>
     );

@@ -88,7 +88,6 @@ class OrbitControl extends Three.EventDispatcher {
 
   update() {
     if (this.resetView && this._state === this._STATE.NONE) {
-      console.log('enter');
       this.reset();
     }
 
