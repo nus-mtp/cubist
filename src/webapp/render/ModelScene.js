@@ -73,7 +73,6 @@ class ModelScene {
   _initBackground() {
     // Load background texture
     const texture = THREE.ImageUtils.loadTexture('/models/doge.jpeg');
-    //const texture = THREE.ImageUtils.loadTexture('/home/ben/Documents/cubist/models/doge.jpeg');
     const backgroundMesh = new THREE.Mesh(
       new THREE.PlaneGeometry(2, 2, 0),
       new THREE.MeshBasicMaterial({
@@ -94,23 +93,6 @@ class ModelScene {
     this.frontLight = new THREE.PointLight(0xdddddd);
     this.frontLight.castShadow = true;
     this.camera.add(this.frontLight);
-    /*
-    // Main front light
-    const light = new THREE.PointLight(0xdddddd);
-    light.position.set(-100, 250, 200);
-    light.castShadow = true;
-    this.scene.add(light);
-
-    // Fill light
-    const light2 = new THREE.PointLight(0x777777);
-    light2.position.set(100, 100, 200);
-    this.scene.add(light2);
-
-    // Back light
-    const light3 = new THREE.PointLight(0x777777);
-    light3.position.set(0, 100, -200);
-    this.scene.add(light3);
-    */
 
     // Ambient light
     const ambientLight = new THREE.AmbientLight(0x444444);
