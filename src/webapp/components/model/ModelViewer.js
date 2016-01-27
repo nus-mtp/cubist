@@ -1,9 +1,14 @@
-import classnames from 'classnames';
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 
 import { ModelCanvas } from '../render';
-import { RenderActions } from 'webapp/actions';
+import { RenderActions, WalkthroughActions } from 'webapp/actions';
+
+import { DropdownButton } from 'react-bootstrap';
+import { MenuItem } from 'react-bootstrap';
+import { Input } from 'react-bootstrap';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -15,9 +20,13 @@ class ModelViewer extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
+    modelData: React.PropTypes.object,
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    cameraCoordinate: React.PropTypes.object,
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: React.PropTypes.func.isRequired,
+    position: React.PropTypes.instanceOf(Immutable.List)
   };
 
   _onToggleWireframeButtonClick = () => {
@@ -40,17 +49,151 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleResetView());
   };
 
+  _onWalkthroughAdd = () => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.addPoint());
+  };
+
+  _onWalkthroughUpdate = (e, index, coordinate) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updatePoint(index, [coordinate[0], coordinate[1], coordinate[2]]));
+  };
+
+  _onWalkthroughDelete = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.deletePoint(index));
+  };
+
+  _onWalkthroughToggleDisjointMode = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.toggleDisjointMode(index));
+  };
+
+  _onWalkthroughAnimation = (e, index, animationMode) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updateAnimationMode(index, animationMode));
+  };
+
+  _onWalkthroughDurationUpdate = (e, index, duration) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
+  };
+
+
   render() {
     return (
       <div className={ CLASS_NAME }>
-        <ModelCanvas { ...this.props } />
-        <div className={ `${CLASS_NAME}-options` }>
-          { this._renderShadingButton() }
-          { this._renderAutoRotatebutton() }
-          { this._renderWireframeButton() }
-          { this._renderResetViewButton() }
+        <div style={ { position: 'relative' } }>
+          <ModelCanvas { ...this.props } />
+          <div className={ `${CLASS_NAME}-options` }>
+            { this._renderShadingButton() }
+            { this._renderAutoRotatebutton() }
+            { this._renderWireframeButton() }
+            { this._renderResetViewButton() }
+          </div>
+        </div>
+        <div>
+          { this._renderWalkthroughSection() }
         </div>
       </div>
+    );
+  }
+
+  _renderWalkthroughSection() {
+    const { walkthroughPoints, position } = this.props;
+    const { x, y, z } = position;
+    return (
+      <div>
+        <h3>Current Camera Coordinate:</h3>
+        <p>{ `${Math.round(x * 100) / 100}, ${Math.round(y * 100) / 100}, ${Math.round(z * 100) / 100}` }</p>
+        {
+          walkthroughPoints.map((point, index) => (
+            <div key={ index }>
+                <h4>{ `Point ${index + 1}` }</h4>
+                <p>{ `${point.get('posX')}, ${point.get('posY')}, ${point.get('posZ')}` }</p>
+                <button className="btn btn-primary"
+                  onClick={ e => this._onWalkthroughUpdate(e, index,
+                    [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100]) } >
+                  SET
+                </button>
+                <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
+                  DELETE
+                </button>
+                { this._renderWalkthroughToggleDisjointButton(index, point.get('disjointMode')) }
+                { this._renderWalkthroughAnimationDropdown(index, point) }
+                { this._renderAnimationDurationField(index, point) }
+            </div>
+          ))
+        }
+        <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
+          ADD NEW POINT
+        </button>
+      </div>
+    );
+  }
+
+  _renderWalkthroughAnimationDropdown(index, point) {
+    const disjointMode = point.get('disjointMode');
+
+    if (disjointMode) {
+      return this._renderDisjointDropdownMenu(index, point);
+    } else {
+      return this._renderContinuousDropdownMenu(index, point);
+    }
+  }
+
+  _renderDisjointDropdownMenu(index, point) {
+    const buttonTitle = point.get('animationMode');
+    return (
+        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary</MenuItem>
+        </DropdownButton>
+    );
+  }
+
+  _renderContinuousDropdownMenu(index, point) {
+    const buttonTitle = point.get('animationMode');
+    return (
+        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary</MenuItem>
+          <MenuItem divider />
+          <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
+          Translation</MenuItem>
+          <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
+          Rotation</MenuItem>
+          <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
+          Zooming</MenuItem>
+          <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
+          Translation + Rotation</MenuItem>
+        </DropdownButton>
+    );
+  }
+
+  _renderWalkthroughToggleDisjointButton(index, status) {
+    let buttonTitle;
+    let disableStatus;
+    if (status === true) {
+      buttonTitle = 'Disjoint';
+    } else {
+      buttonTitle = 'Continuous';
+    }
+
+    if (index === 0) {
+      disableStatus = true;
+    } else {
+      disableStatus = false;
+    }
+
+
+    return (
+      <button className="btn btn-warning"
+        onClick={ e => this._onWalkthroughToggleDisjointMode(e, index) } disabled={ disableStatus }>
+      { buttonTitle }
+      </button>
     );
   }
 
@@ -118,7 +261,6 @@ class ModelViewer extends React.Component {
     );
   }
 
-  // sophia testing
   _renderResetViewButton() {
     const buttonTitle = 'Reset View';
     const resetViewButtonClasses = [
@@ -136,6 +278,24 @@ class ModelViewer extends React.Component {
     );
   }
 
+  _renderAnimationDurationField(index, point) {
+    const textValue = point.get('duration');
+
+    return (
+      <Input
+        type="text"
+        defaultValue={ textValue }
+        placeholder="Enter Text"
+        label="Duration"
+        help="0.00 to 5.00 seconds"
+        bsStyle="success"
+        hasFeedback
+        ref="input"
+        groupClassName="group-class"
+        labelClassName="label-class"
+        onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+    );
+  }
 }
 
 export default connect((state) => {
@@ -143,6 +303,11 @@ export default connect((state) => {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
-    resetViewToggle: state.RenderStore.get('resetViewToggle')
+    walkthroughPoints: state.WalkthroughStore.get('points'),
+    resetViewToggle: state.RenderStore.get('resetViewToggle'),
+    position: state.CameraStore.get('position'),
+    up: state.CameraStore.get('up'),
+    lookAt: state.CameraStore.get('lookAt'),
+    zoom: state.CameraStore.get('zoom')
   };
 })(ModelViewer);

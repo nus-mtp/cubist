@@ -32,6 +32,14 @@ class ModelScene {
     resetView: false
   };
 
+  /*
+  cameraCoordinate = {
+    pos_x: 0,
+    pos_y: 0,
+    pos_z: 0
+  };
+  */
+
   /**
    * Constructor function of the scene
    * @param  {DOMElement} sceneCanvas [the dom element for the canvas containing the scene]
