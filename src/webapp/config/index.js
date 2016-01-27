@@ -6,6 +6,7 @@ import { ReduxRouter } from 'redux-router';
 import ApiClient from './api';
 import redux from './redux';
 import routes from './routes';
+import { ServerActions } from 'webapp/actions';
 
 const apiClient = new ApiClient();
 const store = redux(apiClient, window.__data);
@@ -16,3 +17,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+store.dispatch(ServerActions.firstTime());

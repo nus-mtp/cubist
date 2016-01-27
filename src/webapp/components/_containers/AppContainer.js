@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 import Waypoint from 'react-waypoint';
@@ -126,12 +127,12 @@ class AppContainer extends PureComponent {
           </div>
           <div className={ classnames(collapseClasses) }>
             <div className="navbar-right">
-              <button className={ classnames(signUpClasses) }>
+              <Link to="/register" className={ classnames(signUpClasses) }>
                 SIGN UP
-              </button>
-              <button className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
+              </Link>
+              <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
                 LOG IN
-              </button>
+              </Link>
             </div>
           </div>
         </div>

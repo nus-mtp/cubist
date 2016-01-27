@@ -141,6 +141,7 @@ UserController.promise.login = function (req, isAdminLogin) {
 };
 
 UserController.promise.register = function (req) {
+  console.log(req.body);
   const user = _.pick(req.body, 'name', 'email', 'password');
   const error = User.validate(user, {
     name: true,
