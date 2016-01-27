@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import {
   REQ_GET_USER_ME,
   REQ_GET_USER_USER_INFO,

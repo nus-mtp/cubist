@@ -1,16 +1,17 @@
 import React from 'react';
+import _ from 'lodash';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
-import Waypoint from 'react-waypoint';
 
 import { Logger } from 'common';
 import { UserActions } from 'webapp/actions';
 
 const DEBUG_ENV = 'app-container';
 const CLASS_NAME = 'cb-ctn-app';
+const TOP_LIMIT = 25;
 
 class AppContainer extends PureComponent {
   static fetchData({ dispatch }) {
@@ -29,21 +30,31 @@ class AppContainer extends PureComponent {
     isMenuOpened: false
   };
 
-  _onTopPageEnter = () => {
-    if (!this.state.isAtTop) {
-      this.setState({
-        isAtTop: true
-      });
-    }
-  };
+  componentDidMount() {
+    window.addEventListener('scroll', this._onScrollThrottle);
+    this._onScroll();
+  }
 
-  _onTopPageLeave = () => {
-    if (this.state.isAtTop) {
-      this.setState({
-        isAtTop: false
-      });
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScrollThrottle);
+  }
+
+  _onScrollThrottle = _.throttle(this._onScroll.bind(this), 50);
+
+  _onScroll() {
+    const { location } = this.props;
+    if (location.pathname !== '/') {
+      return;
     }
-  };
+
+    const { isAtTop } = this.state;
+    const offsetY = window.pageYOffset;
+    if (offsetY <= TOP_LIMIT && !isAtTop) {
+      this.setState({ isAtTop: true });
+    } else if (offsetY > TOP_LIMIT && isAtTop) {
+      this.setState({ isAtTop: false });
+    }
+  }
 
   _onMenuToggle = () => {
     this.setState({
@@ -52,17 +63,8 @@ class AppContainer extends PureComponent {
   };
 
   render() {
-    const { location } = this.props;
-    const isHomePage = location.pathname === '/';
-
     return (
       <div className={ CLASS_NAME }>
-        {
-          isHomePage &&
-          <Waypoint threshold={ 0.2 }
-            onEnter={ this._onTopPageEnter }
-            onLeave={ this._onTopPageLeave } />
-        }
         { this._renderHeader() }
         { this._renderBody() }
       </div>
