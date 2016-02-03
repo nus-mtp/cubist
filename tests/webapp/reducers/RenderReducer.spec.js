@@ -10,7 +10,8 @@ describe('Render Reducer', () => {
       wireframe: false,
       shadingMode: 0,
       autoRotate: false,
-      resetViewToggle: false
+      resetViewToggle: false,
+      playbackWalkthroughToggle: false
     }));
   });
 
@@ -51,7 +52,7 @@ describe('Render Reducer', () => {
       ).to.equal(
         Map({ shadingMode: 3 })
       );
-      
+
       expect(
         reducer(Map({ shadingMode: 3 }), { type: SHADING_TOGGLE })
       ).to.equal(

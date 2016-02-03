@@ -3,6 +3,11 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
+// let TWEEN;
+// if (process.env.BROWSER) {
+//   TWEEN = require('tween.js');
+// }
+
 class ModelScene {
   // Renderer of the Scene
   renderer = undefined;
@@ -30,7 +35,20 @@ class ModelScene {
   // Camera State
   cameraState = {
     autoRotate: false,
-    resetView: false
+    resetView: false,
+    playbackWalkthrough: false
+  };
+
+  target = {
+    x: 100,
+    y: 450,
+    z: 500
+  };
+
+  source = {
+    x: 0,
+    y: 450,
+    z: 500
   };
 
   /*
@@ -131,6 +149,23 @@ class ModelScene {
     this.renderer.render(this.scene, this.camera);
   }
 
+  // Playback for Walkthrough
+  _playbackWalkthrough() {
+    const destX = 0;
+    const destY = 500;
+
+    if (this.cameraState.playbackWalkthrough) {
+      this.camera.position.x += (destX - this.camera.position.x) * 0.05;
+      this.camera.position.y += (- destY - this.camera.position.y) * 0.05;
+
+      this.camera.lookAt(this.scene.position);
+
+      this.renderer.render(this.scene, this.camera);
+
+      this.cameraState.playbackWalkthrough = false;
+    }
+  }
+
   /**
    * Update the objects (meshes/models) displayed in the scene
    */
@@ -168,6 +203,7 @@ class ModelScene {
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
     this.cameraState.resetView = false;
+    this.controls.playbackWalkthrough = this.cameraState.playbackWalkthrough;
   }
 
   /**

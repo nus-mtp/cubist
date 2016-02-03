@@ -2,7 +2,8 @@ import {
   WIREFRAME_TOGGLE,
   SHADING_TOGGLE,
   AUTO_ROTATE_TOGGLE,
-  RESET_VIEW_TOGGLE
+  RESET_VIEW_TOGGLE,
+  PLAY_WALKTHROUGH
 } from './types';
 
 export default {
@@ -27,6 +28,12 @@ export default {
   toggleResetView() {
     return {
       type: RESET_VIEW_TOGGLE
+    };
+  },
+
+  togglePlaybackWalkthrough() {
+    return {
+      type: PLAY_WALKTHROUGH
     };
   }
 };

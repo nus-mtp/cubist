@@ -26,7 +26,8 @@ class ModelViewer extends React.Component {
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired,
-    position: React.PropTypes.instanceOf(Immutable.Map)
+    position: React.PropTypes.instanceOf(Immutable.Map),
+    playbackWalkthroughToggle: React.PropTypes.bool
   };
 
   constructor(props) {
@@ -110,6 +111,10 @@ class ModelViewer extends React.Component {
     dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
+  _onWalkthroughPlay = () => {
+    const { dispatch } = this.props;
+    dispatch(RenderActions.togglePlaybackWalkthrough());
+  };
 
   render() {
     return (

@@ -16,6 +16,7 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
+
   [ADD_POINT]: (state) => {
     const pos = { x: 0, y: 0, z: 0 };
     const disjointMode = true;

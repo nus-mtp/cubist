@@ -5,14 +5,16 @@ import {
   WIREFRAME_TOGGLE,
   SHADING_TOGGLE,
   AUTO_ROTATE_TOGGLE,
-  RESET_VIEW_TOGGLE
+  RESET_VIEW_TOGGLE,
+  PLAY_WALKTHROUGH
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
   wireframe: false,
   shadingMode: 0,
   autoRotate: false,
-  resetViewToggle: false
+  resetViewToggle: false,
+  playbackWalkthroughToggle: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -40,6 +42,13 @@ export default ReducerHelper.createReducer(initialState, {
   [RESET_VIEW_TOGGLE]: (state) => {
     let nextState = state;
     nextState = nextState.set('resetViewToggle', !nextState.get('resetViewToggle'));
+
+    return nextState;
+  },
+
+  [PLAY_WALKTHROUGH]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('playbackWalkthroughToggle', !nextState.get('playbackWalkthroughToggle'));
 
     return nextState;
   }

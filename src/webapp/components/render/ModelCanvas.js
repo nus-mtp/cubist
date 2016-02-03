@@ -24,7 +24,8 @@ class ModelCanvas extends React.Component {
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
     snapshotToken: React.PropTypes.string,
-    resetViewToggle: React.PropTypes.bool
+    resetViewToggle: React.PropTypes.bool,
+    playbackWalkthroughToggle: React.PropTypes.bool
   };
 
   static defaultProps = {
@@ -69,9 +70,15 @@ class ModelCanvas extends React.Component {
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
     }
+
     // Snapshot Trigger
-    if (nextProps.snapshotToken !== this.props.snapshotToken) {
+    if (nextProps.snapshotToken !== this.props.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
+    }
+
+    // Walkthrough Playback Trigger
+    if (nextProps.playbackWalkthroughToggle !== this.props.playbackWalkthroughToggle && this.modelScene) {
+      this.modelScene.updateCameraState({ playbackWalkthrough: true });
     }
   }
 
