@@ -166,6 +166,7 @@ class ModelScene {
     Object.assign(this.cameraState, state);
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
+    this.cameraState.resetView = false;
   }
 
   /**
