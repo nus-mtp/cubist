@@ -10,6 +10,8 @@
     "guard-for-in": 0,
 
     /** ES6 **/
+    "arrow-body-style": 0,
+    "prefer-template": 0,
     "max-len": [1, 120, 2, {ignoreComments: true}],
     "camelcase": 1,
     "object-curly-spacing": [2, "always"],

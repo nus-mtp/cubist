@@ -181,7 +181,7 @@ class ModelScene {
     * Run through all meshes in the model object and have threejs calculate their vertex normals
   */
   updateObjectVertexNormals() {
-    this.model.traverse(function (child) {
+    this.model.traverse(child => {
       if (child instanceof THREE.Mesh) {
         child.geometry.computeVertexNormals();
         child.geometry.normalsNeedUpdate = true;
@@ -206,7 +206,7 @@ class ModelScene {
     }
     // Smooth Shading mode
     if (shadingMode === 2) {
-      this.model.traverse(function (child) {
+      this.model.traverse(child => {
         if (child instanceof THREE.Mesh) {
           const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
@@ -220,7 +220,7 @@ class ModelScene {
     }
     // Flat Shading mode
     if (shadingMode === 3) {
-      this.model.traverse(function (child) {
+      this.model.traverse(child => {
         if (child instanceof THREE.Mesh) {
           const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0xc0c0c0,
@@ -234,7 +234,7 @@ class ModelScene {
     }
 
     if (wireframe) {
-      this.model.traverse(function (child) {
+      this.model.traverse(child => {
         if (child instanceof THREE.Mesh) {
           const newMesh = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
             color: 0x00e0c0,

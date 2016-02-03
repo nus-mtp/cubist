@@ -236,7 +236,7 @@ class MaterialCreator {
       texture = new THREE.Texture();
       loader = new THREE.ImageLoader(manager);
       loader.setCrossOrigin(this.crossOrigin);
-      loader.load(url, function (image) {
+      loader.load(url, image => {
         texture.image = ensurePowerOfTwo_(image);
         texture.needsUpdate = true;
         if (onLoad) {
