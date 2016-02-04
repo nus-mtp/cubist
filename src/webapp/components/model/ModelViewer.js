@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
@@ -28,6 +29,22 @@ class ModelViewer extends React.Component {
     dispatch: React.PropTypes.func.isRequired,
     position: React.PropTypes.instanceOf(Immutable.Map)
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      durations: props.walkthroughPoints.map(p => p.get('duration'))
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.walkthroughPoints !== this.props.walkthroughPoints) {
+      this.setState({
+        durations: nextProps.walkthroughPoints.map(p => p.get('duration')).toJS()
+      });
+    }
+  }
 
   _onToggleWireframeButtonClick = () => {
     const { dispatch } = this.props;
@@ -79,6 +96,9 @@ class ModelViewer extends React.Component {
   _onWalkthroughDurationUpdate = (e, index, duration) => {
     e.preventDefault();
     const { dispatch } = this.props;
+    const durations = _.clone(this.state.durations);
+    durations[index] = duration;
+    this.setState(durations);
     dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
@@ -127,7 +147,7 @@ class ModelViewer extends React.Component {
                 </button>
                 { this._renderWalkthroughToggleDisjointButton(index, walkthroughPoint.get('disjointMode')) }
                 { this._renderWalkthroughAnimationDropdown(index, walkthroughPoint) }
-                { this._renderAnimationDurationField(index, walkthroughPoint) }
+                { this._renderAnimationDurationField(index) }
               </div>
             );
           })
@@ -289,13 +309,13 @@ class ModelViewer extends React.Component {
     );
   }
 
-  _renderAnimationDurationField(index, point) {
-    const textValue = point.get('duration');
+  _renderAnimationDurationField(index) {
+    const { durations } = this.state;
 
     return (
       <Input
         type="text"
-        defaultValue={ textValue }
+        defaultValue={ durations[index] }
         placeholder="Enter Text"
         label="Duration"
         help="0.00 to 5.00 seconds"

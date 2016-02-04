@@ -7,9 +7,9 @@ import {
 
 // Take note that each element in the list is Vector3
 const initialState = Immutable.fromJS({
-  position: new Immutable.Map(),
-  up: new Immutable.Map(),
-  lookAt: new Immutable.Map()
+  position: new Immutable.Map({ x: 0, y: 450, z: 450 }),
+  up: new Immutable.Map({ x: 0, y: 1, z: 0 }),
+  lookAt: new Immutable.Map({ x: 0, y: 0, z: 0 })
 });
 
 export default ReducerHelper.createReducer(initialState, {

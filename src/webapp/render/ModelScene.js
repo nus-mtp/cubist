@@ -75,7 +75,7 @@ class ModelScene {
   _initCamera(dimensions) {
     this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
     this.scene.add(this.camera);
-    this.camera.position.set(0, 450, 500);
+    this.camera.position.set(0, 450, 450);
     this.camera.lookAt(this.scene.position);
   }
 
