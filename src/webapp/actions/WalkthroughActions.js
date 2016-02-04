@@ -14,14 +14,12 @@ export default {
     };
   },
 
-  updatePoint(index, coordinate) {
+  updatePoint(index, pos) {
     return {
       type: UPDATE_POINT,
       payload: {
         index,
-        posX: coordinate[0],
-        posY: coordinate[1],
-        posZ: coordinate[2]
+        pos
       }
     };
   },
@@ -54,12 +52,12 @@ export default {
     };
   },
 
-  updateAnimationDuration(index, animationDuration) {
+  updateAnimationDuration(index, duration) {
     return {
       type: UPDATE_DURATION,
       payload: {
         index,
-        animationDuration
+        duration
       }
     };
   }

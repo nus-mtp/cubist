@@ -16,27 +16,22 @@ const initialState = Immutable.fromJS({
 
 export default ReducerHelper.createReducer(initialState, {
   [ADD_POINT]: (state) => {
-    const posX = 0;
-    const posY = 0;
-    const posZ = 0;
+    const pos = { x: 0, y: 0, z: 0 };
     const disjointMode = true;
     const animationMode = 'Stationary';
     const duration = 1.00;
 
     let nextState = state;
-    nextState = nextState.update('points', points =>
-      points.push(new Immutable.Map({ posX, posY, posZ, disjointMode, animationMode, duration })));
+    nextState = nextState.update('points', points => {
+      return points.push(Immutable.fromJS({ pos, disjointMode, animationMode, duration }));
+    });
     return nextState;
   },
 
   [UPDATE_POINT]: (state, { payload }) => {
-    const { posX, posY, posZ } = payload;
-    const disjointMode = state.get('points').get(payload.index).get('disjointMode');
-    const animationMode = state.get('points').get(payload.index).get('animationMode');
-    const duration = state.get('points').get(payload.index).get('duration');
     const nextState = state;
-    return nextState.update('points', points =>
-     points.set(payload.index, new Immutable.Map({ posX, posY, posZ, disjointMode, animationMode, duration })));
+    const { pos, index } = payload;
+    return nextState.setIn(['points', index, 'pos'], Immutable.fromJS(pos));
   },
 
   [DELETE_POINT]: (state, { payload }) => {
@@ -45,48 +40,32 @@ export default ReducerHelper.createReducer(initialState, {
   },
 
   [TOGGLE_DISJOINT]: (state, { payload }) => {
-    const posX = state.get('points').get(payload.index).get('posX');
-    const posY = state.get('points').get(payload.index).get('posY');
-    const posZ = state.get('points').get(payload.index).get('posZ');
-    const disjointMode = !state.get('points').get(payload.index).get('disjointMode');
-    const duration = state.get('points').get(payload.index).get('duration');
+    const nextState = state;
+    const { index } = payload;
+    const disjointMode = !state.get('points').getIn([index, 'disjointMode']);
     let animationMode;
-
     if (disjointMode) {
       animationMode = 'Stationary';
     } else {
       animationMode = state.get('points').get(payload.index).get('animationMode');
     }
 
-    const nextState = state;
-    return nextState.update('points', points =>
-      points.set(payload.index, new Immutable.Map({ posX, posY, posZ, disjointMode, animationMode, duration })));
+    return nextState
+      .setIn(['points', index, 'disjointMode'], disjointMode)
+      .setIn(['points', index, 'animationMode'], animationMode);
   },
 
   [UPDATE_ANIMATION]: (state, { payload }) => {
-    const posX = state.get('points').get(payload.index).get('posX');
-    const posY = state.get('points').get(payload.index).get('posY');
-    const posZ = state.get('points').get(payload.index).get('posZ');
-    const disjointMode = state.get('points').get(payload.index).get('disjointMode');
-    const duration = state.get('points').get(payload.index).get('duration');
-    const animationMode = payload.animationMode;
-
     const nextState = state;
-    return nextState.update('points', points =>
-      points.set(payload.index, new Immutable.Map({ posX, posY, posZ, disjointMode, animationMode, duration })));
+    const { index, animationMode } = payload;
+
+    return nextState.setIn(['points', index, 'animationMode'], animationMode);
   },
 
   [UPDATE_DURATION]: (state, { payload }) => {
-    const posX = state.get('points').get(payload.index).get('posX');
-    const posY = state.get('points').get(payload.index).get('posY');
-    const posZ = state.get('points').get(payload.index).get('posZ');
-    const disjointMode = state.get('points').get(payload.index).get('disjointMode');
-    const animationMode = state.get('points').get(payload.index).get('animationMode');
-    const duration = payload.animationDuration;
-
     const nextState = state;
-    return nextState.update('points', points =>
-      points.set(payload.index, new Immutable.Map({ posX, posY, posZ, disjointMode, animationMode, duration })));
-  }
+    const { index, duration } = payload;
 
+    return nextState.setIn(['points', index, 'duration'], duration);
+  }
 });
