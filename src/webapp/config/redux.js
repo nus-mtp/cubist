@@ -1,5 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { enableBatching } from 'redux-batched-actions';
 let createHistory;
 let reduxReactRouter;
 if (process.env.BROWSER) {
@@ -36,5 +37,5 @@ export default (apiClient, initialData = {}) => {
       routes,
       createHistory
     })
-  )(createStore)(reducer, initialData);
+  )(createStore)(enableBatching(reducer), initialData);
 };

@@ -12,14 +12,15 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
-  [SNAPSHOT_TRIGGER]: function (state, payload) {
+  [SNAPSHOT_TRIGGER]: function (state, { payload }) {
     let nextState = state;
     nextState = nextState.set('snapshotToken', payload);
 
     return nextState;
   },
 
-  [SNAPSHOT_SUCCESS]: function (state, { token, data }) {
+  [SNAPSHOT_SUCCESS]: function (state, { payload }) {
+    const { token, data } = payload;
     let nextState = state;
     nextState = nextState.setIn(['snapshots', token], data);
 
