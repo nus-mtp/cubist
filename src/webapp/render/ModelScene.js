@@ -259,7 +259,7 @@ class ModelScene {
     this.camera.aspect = dimensions.aspectRatio;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(dimensions.width, dimensions.height);
-    this.controls.setDimensions(dimensions.width, dimensions.height);
+    this.controls.setDimensions(dimensions);
   }
 
   onMouseDown(event, callback) {
