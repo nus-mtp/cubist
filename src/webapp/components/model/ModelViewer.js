@@ -3,7 +3,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
-import { DropdownButton, MenuItem, Input } from 'react-bootstrap';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { batchActions } from 'redux-batched-actions';
 
 import { ModelCanvas } from '../render';
@@ -65,12 +65,14 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleResetView());
   };
 
-  _onWalkthroughAdd = () => {
+  _onWalkthroughAdd = (e) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.addPoint());
   };
 
   _onWalkthroughUpdate = (e, index) => {
+    e.preventDefault();
     const { dispatch, position } = this.props;
     const { x, y, z } = position.toJS();
     const snapshotToken = StringHelper.randomToken();
@@ -82,11 +84,13 @@ class ModelViewer extends React.Component {
   };
 
   _onWalkthroughDelete = (e, index) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.deletePoint(index));
   };
 
   _onWalkthroughToggleDisjointMode = (e, index) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.toggleDisjointMode(index));
   };
@@ -133,29 +137,31 @@ class ModelViewer extends React.Component {
       <div>
         <h3>Current Camera Coordinate:</h3>
         <p>{ `${x}, ${y}, ${z}` }</p>
-        {
-          walkthroughPoints.map((walkthroughPoint, index) => {
-            const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
-            return (
-              <div key={ index }>
-                <h4>{ `Point ${index + 1}` }</h4>
-                <p>
-                  { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
-                </p>
-                <button className="btn btn-primary"
-                  onClick={ e => this._onWalkthroughUpdate(e, index) } >
-                  SET
-                </button>
-                <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
-                  DELETE
-                </button>
-                { this._renderWalkthroughToggleDisjointButton(index, walkthroughPoint.get('disjointMode')) }
-                { this._renderWalkthroughAnimationDropdown(index, walkthroughPoint) }
-                { this._renderAnimationDurationField(index) }
-              </div>
-            );
-          })
-        }
+        <form>
+          {
+            walkthroughPoints.map((walkthroughPoint, index) => {
+              const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
+              return (
+                <div key={ index }>
+                  <h4>{ `Point ${index + 1}` }</h4>
+                  <p>
+                    { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
+                  </p>
+                  <button className="btn btn-primary"
+                    onClick={ e => this._onWalkthroughUpdate(e, index) } >
+                    SET
+                  </button>
+                  <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
+                    DELETE
+                  </button>
+                  { this._renderWalkthroughToggleDisjointButton(index, walkthroughPoint.get('disjointMode')) }
+                  { this._renderWalkthroughAnimationDropdown(index, walkthroughPoint) }
+                  { this._renderAnimationDurationField(index) }
+                </div>
+              );
+            })
+          }
+        </form>
         <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
           ADD NEW POINT
         </button>
@@ -317,18 +323,17 @@ class ModelViewer extends React.Component {
     const { durations } = this.state;
 
     return (
-      <Input
-        type="text"
-        defaultValue={ durations[index] }
-        placeholder="Enter Text"
-        label="Duration"
-        help="0.00 to 5.00 seconds"
-        bsStyle="success"
-        hasFeedback
-        ref="input"
-        groupClassName="group-class"
-        labelClassName="label-class"
-        onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+      <div className="form-group">
+        <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
+          Duration
+        </label>
+        <input id={ `walkthrough-point-duration-${index}` }
+          value={ durations[index] }
+          type="text"
+          className="form-control"
+          placeholder="Enter Duration"
+          onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+      </div>
     );
   }
 }
