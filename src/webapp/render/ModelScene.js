@@ -62,7 +62,7 @@ class ModelScene {
   }
 
   _initRenderer(sceneCanvas, dimensions) {
-    this.renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true, preserveDrawingBuffer: true });
     this.renderer.setSize(dimensions.width, dimensions.height);
     this.renderer.setClearColor(0x212121, 0); // Alpha value set to 0 for transparancy
     this.renderer.autoClear = false;
@@ -259,7 +259,7 @@ class ModelScene {
     this.camera.aspect = dimensions.aspectRatio;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(dimensions.width, dimensions.height);
-    this.controls.setDimensions(dimensions.width, dimensions.height);
+    this.controls.setDimensions(dimensions);
   }
 
   onMouseDown(event, callback) {

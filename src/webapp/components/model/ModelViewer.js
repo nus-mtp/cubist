@@ -26,7 +26,8 @@ class ModelViewer extends React.Component {
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired,
-    position: React.PropTypes.instanceOf(Immutable.Map)
+    position: React.PropTypes.instanceOf(Immutable.Map),
+    snapshots: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   constructor(props) {
@@ -144,6 +145,8 @@ class ModelViewer extends React.Component {
               return (
                 <div key={ index }>
                   <h4>{ `Point ${index + 1}` }</h4>
+                  <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
+                    width="240px" height="135px" className="img-thumbnail"></img>
                   <p>
                     { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
                   </p>
