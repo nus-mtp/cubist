@@ -92,7 +92,6 @@ export default connect((state) => {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
-    snapshotTrigger: state.SnapshotStore.get('snapshotTrigger'),
     walkthroughPoints: state.WalkthroughStore.get('points'),
     resetViewToggle: state.RenderStore.get('resetViewToggle'),
     position: state.CameraStore.get('position'),
@@ -100,6 +99,7 @@ export default connect((state) => {
     lookAt: state.CameraStore.get('lookAt'),
     zoom: state.CameraStore.get('zoom'),
     // Snapshot Data
+    snapshots: state.SnapshotStore.get('snapshots'),
     snapshotToken: state.SnapshotStore.get('snapshotToken')
   };
 })(ModelContainer);
