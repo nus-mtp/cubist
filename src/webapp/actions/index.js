@@ -5,5 +5,6 @@ export default {
   ServerActions: require('./ServerActions'),
   WalkthroughActions: require('./WalkthroughActions'),
   ModelActions: require('./ModelActions'),
-  UserActions: require('./UserActions')
+  UserActions: require('./UserActions'),
+  SnapshotActions: require('./SnapshotActions')
 };

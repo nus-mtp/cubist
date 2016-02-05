@@ -1,14 +1,14 @@
 import React from 'react';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { batchActions } from 'redux-batched-actions';
 
 import { ModelCanvas } from '../render';
-import { RenderActions, WalkthroughActions } from 'webapp/actions';
-
-import { DropdownButton } from 'react-bootstrap';
-import { MenuItem } from 'react-bootstrap';
-import { Input } from 'react-bootstrap';
+import { RenderActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
+import { StringHelper } from 'common';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -26,8 +26,24 @@ class ModelViewer extends React.Component {
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
     dispatch: React.PropTypes.func.isRequired,
-    position: React.PropTypes.instanceOf(Immutable.List)
+    position: React.PropTypes.instanceOf(Immutable.Map)
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      durations: props.walkthroughPoints.map(p => p.get('duration'))
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.walkthroughPoints !== this.props.walkthroughPoints) {
+      this.setState({
+        durations: nextProps.walkthroughPoints.map(p => p.get('duration')).toJS()
+      });
+    }
+  }
 
   _onToggleWireframeButtonClick = () => {
     const { dispatch } = this.props;
@@ -49,22 +65,32 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleResetView());
   };
 
-  _onWalkthroughAdd = () => {
+  _onWalkthroughAdd = (e) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.addPoint());
   };
 
-  _onWalkthroughUpdate = (e, index, coordinate) => {
-    const { dispatch } = this.props;
-    dispatch(WalkthroughActions.updatePoint(index, [coordinate[0], coordinate[1], coordinate[2]]));
+  _onWalkthroughUpdate = (e, index) => {
+    e.preventDefault();
+    const { dispatch, position } = this.props;
+    const { x, y, z } = position.toJS();
+    const snapshotToken = StringHelper.randomToken();
+
+    dispatch(batchActions([
+      WalkthroughActions.updatePoint(index, { x, y, z }, snapshotToken),
+      SnapshotActions.triggerSnapshot(snapshotToken)
+    ]));
   };
 
   _onWalkthroughDelete = (e, index) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.deletePoint(index));
   };
 
   _onWalkthroughToggleDisjointMode = (e, index) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.toggleDisjointMode(index));
   };
@@ -78,6 +104,9 @@ class ModelViewer extends React.Component {
   _onWalkthroughDurationUpdate = (e, index, duration) => {
     e.preventDefault();
     const { dispatch } = this.props;
+    const durations = _.clone(this.state.durations);
+    durations[index] = duration;
+    this.setState(durations);
     dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
@@ -103,30 +132,36 @@ class ModelViewer extends React.Component {
 
   _renderWalkthroughSection() {
     const { walkthroughPoints, position } = this.props;
-    const { x, y, z } = position;
+    const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
     return (
       <div>
         <h3>Current Camera Coordinate:</h3>
-        <p>{ `${Math.round(x * 100) / 100}, ${Math.round(y * 100) / 100}, ${Math.round(z * 100) / 100}` }</p>
-        {
-          walkthroughPoints.map((point, index) => (
-            <div key={ index }>
-                <h4>{ `Point ${index + 1}` }</h4>
-                <p>{ `${point.get('posX')}, ${point.get('posY')}, ${point.get('posZ')}` }</p>
-                <button className="btn btn-primary"
-                  onClick={ e => this._onWalkthroughUpdate(e, index,
-                    [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100]) } >
-                  SET
-                </button>
-                <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
-                  DELETE
-                </button>
-                { this._renderWalkthroughToggleDisjointButton(index, point.get('disjointMode')) }
-                { this._renderWalkthroughAnimationDropdown(index, point) }
-                { this._renderAnimationDurationField(index, point) }
-            </div>
-          ))
-        }
+        <p>{ `${x}, ${y}, ${z}` }</p>
+        <form>
+          {
+            walkthroughPoints.map((walkthroughPoint, index) => {
+              const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
+              return (
+                <div key={ index }>
+                  <h4>{ `Point ${index + 1}` }</h4>
+                  <p>
+                    { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
+                  </p>
+                  <button className="btn btn-primary"
+                    onClick={ e => this._onWalkthroughUpdate(e, index) } >
+                    SET
+                  </button>
+                  <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
+                    DELETE
+                  </button>
+                  { this._renderWalkthroughToggleDisjointButton(index, walkthroughPoint.get('disjointMode')) }
+                  { this._renderWalkthroughAnimationDropdown(index, walkthroughPoint) }
+                  { this._renderAnimationDurationField(index) }
+                </div>
+              );
+            })
+          }
+        </form>
         <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
           ADD NEW POINT
         </button>
@@ -147,29 +182,35 @@ class ModelViewer extends React.Component {
   _renderDisjointDropdownMenu(index, point) {
     const buttonTitle = point.get('animationMode');
     return (
-        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
-          Stationary</MenuItem>
-        </DropdownButton>
+      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary
+        </MenuItem>
+      </DropdownButton>
     );
   }
 
   _renderContinuousDropdownMenu(index, point) {
     const buttonTitle = point.get('animationMode');
     return (
-        <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-          <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
-          Stationary</MenuItem>
-          <MenuItem divider />
-          <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
-          Translation</MenuItem>
-          <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
-          Rotation</MenuItem>
-          <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
-          Zooming</MenuItem>
-          <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
-          Translation + Rotation</MenuItem>
-        </DropdownButton>
+      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+          Stationary
+        </MenuItem>
+        <MenuItem divider />
+        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
+          Translation
+        </MenuItem>
+        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
+          Rotation
+        </MenuItem>
+        <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
+          Zooming
+        </MenuItem>
+        <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
+          Translation + Rotation
+        </MenuItem>
+      </DropdownButton>
     );
   }
 
@@ -278,36 +319,23 @@ class ModelViewer extends React.Component {
     );
   }
 
-  _renderAnimationDurationField(index, point) {
-    const textValue = point.get('duration');
+  _renderAnimationDurationField(index) {
+    const { durations } = this.state;
 
     return (
-      <Input
-        type="text"
-        defaultValue={ textValue }
-        placeholder="Enter Text"
-        label="Duration"
-        help="0.00 to 5.00 seconds"
-        bsStyle="success"
-        hasFeedback
-        ref="input"
-        groupClassName="group-class"
-        labelClassName="label-class"
-        onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+      <div className="form-group">
+        <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
+          Duration
+        </label>
+        <input id={ `walkthrough-point-duration-${index}` }
+          value={ durations[index] }
+          type="text"
+          className="form-control"
+          placeholder="Enter Duration"
+          onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+      </div>
     );
   }
 }
 
-export default connect((state) => {
-  return {
-    wireframe: state.RenderStore.get('wireframe'),
-    shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate'),
-    walkthroughPoints: state.WalkthroughStore.get('points'),
-    resetViewToggle: state.RenderStore.get('resetViewToggle'),
-    position: state.CameraStore.get('position'),
-    up: state.CameraStore.get('up'),
-    lookAt: state.CameraStore.get('lookAt'),
-    zoom: state.CameraStore.get('zoom')
-  };
-})(ModelViewer);
+export default connect()(ModelViewer);

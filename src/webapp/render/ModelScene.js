@@ -1,4 +1,5 @@
 import THREE from 'three';
+import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
@@ -74,7 +75,7 @@ class ModelScene {
   _initCamera(dimensions) {
     this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
     this.scene.add(this.camera);
-    this.camera.position.set(0, 450, 500);
+    this.camera.position.set(0, 450, 450);
     this.camera.lookAt(this.scene.position);
   }
 
@@ -282,13 +283,13 @@ class ModelScene {
   }
 
   getCameraOrbit() {
+    const coordinateFields = ['x', 'y', 'z'];
     const lookAt = new THREE.Vector3(0, 0, -1);
     lookAt.applyMatrix4(this.camera.matrixWorld);
     return {
-      position: this.camera.position,
-      up: this.camera.up,
-      lookAt,
-      zoom: this.camera.zoom
+      position: _.pick(this.camera.position, coordinateFields),
+      up: _.pick(this.camera.up, coordinateFields),
+      lookAt: _.pick(this.camera.lookAt, coordinateFields)
     };
   }
 

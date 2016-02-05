@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import Dimensions from 'react-dimensions';
 import _ from 'lodash';
 
-import { CameraActions } from 'webapp/actions';
+import { CameraActions, SnapshotActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
@@ -23,6 +23,7 @@ class ModelCanvas extends React.Component {
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
+    snapshotToken: React.PropTypes.string,
     resetViewToggle: React.PropTypes.bool
   };
 
@@ -68,6 +69,10 @@ class ModelCanvas extends React.Component {
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
     }
+    // Snapshot Trigger
+    if (nextProps.snapshotToken !== this.props.snapshotToken) {
+      this._onSnapshotToken(nextProps.snapshotToken);
+    }
   }
 
   componentWillUnmount() {
@@ -108,6 +113,13 @@ class ModelCanvas extends React.Component {
   _onContextMenu = (event) => {
     event.preventDefault();
   };
+
+  _onSnapshotToken(token) {
+    const { dispatch } = this.props;
+    // Snapshot Data Computation Logic
+    const snapshotData = undefined;
+    dispatch(SnapshotActions.snapshotSuccess(token, snapshotData));
+  }
 
   render() {
     const { containerWidth, aspectRatio } = this.props;
