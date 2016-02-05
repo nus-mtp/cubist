@@ -145,7 +145,7 @@ class ModelViewer extends React.Component {
               return (
                 <div key={ index }>
                   <h4>{ `Point ${index + 1}` }</h4>
-                  <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) } 
+                  <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
                     width="240px" height="135px" className="img-thumbnail"></img>
                   <p>
                     { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }

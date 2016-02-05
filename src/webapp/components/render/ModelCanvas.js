@@ -118,7 +118,6 @@ class ModelCanvas extends React.Component {
     const { dispatch } = this.props;
     // Snapshot Data Computation Logic
     const snapshotData = ReactDOM.findDOMNode(this.refs.sceneCanvas).toDataURL();
-    console.log(snapshotData);
     dispatch(SnapshotActions.snapshotSuccess(token, snapshotData));
   }
 
