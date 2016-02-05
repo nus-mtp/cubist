@@ -7,6 +7,7 @@ import CameraStore from './CameraReducer';
 import WalkthroughStore from './WalkthroughReducer';
 import ModelStore from './ModelReducer';
 import UserStore from './UserReducer';
+import SnapshotStore from './SnapshotReducer';
 
 // Define list of Redux stores
 export default {
@@ -17,5 +18,6 @@ export default {
   CameraStore,
   WalkthroughStore,
   ModelStore,
-  UserStore
+  UserStore,
+  SnapshotStore
 };

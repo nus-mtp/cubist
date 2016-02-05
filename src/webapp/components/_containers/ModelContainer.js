@@ -35,6 +35,10 @@ class ModelContainer extends React.Component {
 
   render() {
     const { object } = this.state;
+    const viewerProps = {
+      object,
+      ...this.props
+    };
 
     return (
       <div className={ CLASS_NAME }>
@@ -43,7 +47,7 @@ class ModelContainer extends React.Component {
         </h2>
         <div className="row">
           <div className="col-md-8">
-            <ModelViewer object={ object } />
+            <ModelViewer { ...viewerProps } />
           </div>
           <div className="col-md-4">
             <div className={ `${CLASS_NAME}-info-bar` }>
@@ -83,6 +87,19 @@ export default connect((state) => {
   const currentId = state.ModelStore.get('modelId');
 
   return {
-    model: state.ModelStore.getIn(['models', currentId])
+    model: state.ModelStore.getIn(['models', currentId]),
+    // Viewer Data
+    wireframe: state.RenderStore.get('wireframe'),
+    shadingMode: state.RenderStore.get('shadingMode'),
+    autoRotate: state.RenderStore.get('autoRotate'),
+    snapshotTrigger: state.SnapshotStore.get('snapshotTrigger'),
+    walkthroughPoints: state.WalkthroughStore.get('points'),
+    resetViewToggle: state.RenderStore.get('resetViewToggle'),
+    position: state.CameraStore.get('position'),
+    up: state.CameraStore.get('up'),
+    lookAt: state.CameraStore.get('lookAt'),
+    zoom: state.CameraStore.get('zoom'),
+    // Snapshot Data
+    snapshotToken: state.SnapshotStore.get('snapshotToken')
   };
 })(ModelContainer);

@@ -14,12 +14,13 @@ export default {
     };
   },
 
-  updatePoint(index, pos) {
+  updatePoint(index, pos, snapshotToken) {
     return {
       type: UPDATE_POINT,
       payload: {
         index,
-        pos
+        pos,
+        snapshotToken
       }
     };
   },
@@ -61,5 +62,4 @@ export default {
       }
     };
   }
-
 };

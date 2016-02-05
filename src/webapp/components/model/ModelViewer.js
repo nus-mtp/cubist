@@ -3,13 +3,12 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
+import { DropdownButton, MenuItem, Input } from 'react-bootstrap';
+import { batchActions } from 'redux-batched-actions';
 
 import { ModelCanvas } from '../render';
-import { RenderActions, WalkthroughActions } from 'webapp/actions';
-
-import { DropdownButton } from 'react-bootstrap';
-import { MenuItem } from 'react-bootstrap';
-import { Input } from 'react-bootstrap';
+import { RenderActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
+import { StringHelper } from 'common';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -74,7 +73,12 @@ class ModelViewer extends React.Component {
   _onWalkthroughUpdate = (e, index) => {
     const { dispatch, position } = this.props;
     const { x, y, z } = position.toJS();
-    dispatch(WalkthroughActions.updatePoint(index, { x, y, z }));
+    const snapshotToken = StringHelper.randomToken();
+
+    dispatch(batchActions([
+      WalkthroughActions.updatePoint(index, { x, y, z }, snapshotToken),
+      SnapshotActions.triggerSnapshot(snapshotToken)
+    ]));
   };
 
   _onWalkthroughDelete = (e, index) => {
@@ -329,16 +333,4 @@ class ModelViewer extends React.Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    wireframe: state.RenderStore.get('wireframe'),
-    shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate'),
-    walkthroughPoints: state.WalkthroughStore.get('points'),
-    resetViewToggle: state.RenderStore.get('resetViewToggle'),
-    position: state.CameraStore.get('position'),
-    up: state.CameraStore.get('up'),
-    lookAt: state.CameraStore.get('lookAt'),
-    zoom: state.CameraStore.get('zoom')
-  };
-})(ModelViewer);
+export default connect()(ModelViewer);

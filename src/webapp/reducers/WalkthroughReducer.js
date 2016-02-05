@@ -2,6 +2,7 @@ import Immutable from 'immutable';
 
 import ReducerHelper from './ReducerHelper';
 import {
+  // Walkthrough Actions
   ADD_POINT,
   UPDATE_POINT,
   DELETE_POINT,
@@ -30,8 +31,10 @@ export default ReducerHelper.createReducer(initialState, {
 
   [UPDATE_POINT]: (state, { payload }) => {
     const nextState = state;
-    const { pos, index } = payload;
-    return nextState.setIn(['points', index, 'pos'], Immutable.fromJS(pos));
+    const { pos, index, snapshotToken } = payload;
+    return nextState
+      .setIn(['points', index, 'pos'], Immutable.fromJS(pos))
+      .setIn(['points', index, 'snapshotToken'], snapshotToken);
   },
 
   [DELETE_POINT]: (state, { payload }) => {
