@@ -93,6 +93,8 @@ export default connect((state) => {
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
     walkthroughPoints: state.WalkthroughStore.get('points'),
+    playbackPoints: state.WalkthroughStore.get('playbackPoints'),
+    walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
     resetViewToggle: state.RenderStore.get('resetViewToggle'),
     position: state.CameraStore.get('position'),
     up: state.CameraStore.get('up'),

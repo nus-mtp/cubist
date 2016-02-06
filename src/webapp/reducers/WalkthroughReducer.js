@@ -8,11 +8,16 @@ import {
   DELETE_POINT,
   TOGGLE_DISJOINT,
   UPDATE_ANIMATION,
-  UPDATE_DURATION
+  UPDATE_DURATION,
+  PLAYBACK_WALKTHROUGH,
+  SET_PLAYBACK_START,
+  SET_PLAYBACK_END
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
-  points: []
+  points: [],
+  playbackPoints: [0, 0],
+  walkthroughToggle: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -70,5 +75,26 @@ export default ReducerHelper.createReducer(initialState, {
     const { index, duration } = payload;
 
     return nextState.setIn(['points', index, 'duration'], duration);
+  },
+
+  [PLAYBACK_WALKTHROUGH]: (state) => {
+    const nextState = state;
+
+    return nextState.set('walkthroughToggle', !state.get('walkthroughToggle'));
+  },
+
+  [SET_PLAYBACK_START]: (state, { payload }) => {
+    const nextState = state;
+    const { startIndex } = payload;
+
+    return nextState.setIn(['playbackPoints', 0], startIndex);
+  },
+
+  [SET_PLAYBACK_END]: (state, { payload }) => {
+    const nextState = state;
+    const { endIndex } = payload;
+
+    return nextState.setIn(['playbackPoints', 1], endIndex);
   }
+
 });

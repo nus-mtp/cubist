@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import Dimensions from 'react-dimensions';
 import _ from 'lodash';
+import Immutable from 'immutable';
 
 import { CameraActions, SnapshotActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
@@ -24,7 +25,10 @@ class ModelCanvas extends React.Component {
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
     snapshotToken: React.PropTypes.string,
-    resetViewToggle: React.PropTypes.bool
+    resetViewToggle: React.PropTypes.bool,
+    playbackPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughToggle: React.PropTypes.bool
   };
 
   static defaultProps = {
@@ -72,6 +76,12 @@ class ModelCanvas extends React.Component {
     // Snapshot Trigger
     if (nextProps.snapshotToken !== this.props.snapshotToken) {
       this._onSnapshotToken(nextProps.snapshotToken);
+    }
+    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && this.modelScene) {
+      this.modelScene.updateCameraState({ walkthroughToggle: nextProps.walkthroughToggle });
+    }
+    if (nextProps.playbackPoints !== this.props.playbackPoints && this.modelScene) {
+      this.modelScene.updateCameraState({ playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
   }
 

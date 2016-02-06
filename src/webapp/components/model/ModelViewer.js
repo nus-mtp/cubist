@@ -3,7 +3,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
-import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
 import { batchActions } from 'redux-batched-actions';
 
 import { ModelCanvas } from '../render';
@@ -22,6 +22,8 @@ class ModelViewer extends React.Component {
     autoRotate: React.PropTypes.bool,
     modelData: React.PropTypes.object,
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    playbackPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughToggle: React.PropTypes.bool,
     cameraCoordinate: React.PropTypes.object,
     resetViewToggle: React.PropTypes.bool,
     object: React.PropTypes.object,
@@ -111,6 +113,22 @@ class ModelViewer extends React.Component {
     dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
+  _onWalkthroughSetStart = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.setPlaybackStart(index));
+  };
+
+  _onWalkthroughSetEnd = (e, index) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.setPlaybackEnd(index));
+  };
+
+  _onWalkthroughPlayback = (e) => {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.playbackWalkthrough());
+  };
+
 
   render() {
     return (
@@ -126,6 +144,7 @@ class ModelViewer extends React.Component {
         </div>
         <div>
           { this._renderWalkthroughSection() }
+          { this._renderWalkthroughPlaybackSection() }
         </div>
       </div>
     );
@@ -144,7 +163,7 @@ class ModelViewer extends React.Component {
               const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
               return (
                 <div key={ index }>
-                  <h4>{ `Point ${index + 1}` }</h4>
+                  <h3>{ `Point ${index + 1}` }</h3>
                   <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
                     width="240px" height="135px" className="img-thumbnail"></img>
                   <p>
@@ -239,6 +258,42 @@ class ModelViewer extends React.Component {
       { buttonTitle }
       </button>
     );
+  }
+
+  _renderWalkthroughPlaybackSection() {
+    const { walkthroughPoints, playbackPoints } = this.props;
+    const startIndex = playbackPoints.first();
+    const endIndex = playbackPoints.last();
+
+    if (walkthroughPoints.count() > 0) {
+      return (
+        <div><p></p>
+        Playback From
+         <SplitButton title={ `${startIndex + 1}` } pullRight id="split-button-pull-right" >
+          { walkthroughPoints.map((walkthroughPoint, index) =>
+            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+              onClick={ e => this._onWalkthroughSetStart(e, index) } >
+              { `${index + 1}` }
+            </MenuItem>
+          ) }
+        </SplitButton>
+         To
+        <SplitButton title={ `${endIndex + 1}` } pullRight id="split-button-pull-right" >
+          { walkthroughPoints.map((walkthroughPoint, index) =>
+            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+              onClick={ e => this._onWalkthroughSetEnd(e, index) } >
+              { `${index + 1}` }
+            </MenuItem>
+          ) }
+        </SplitButton>
+        <p>
+          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) } >
+          Play Walkthrough
+          </button>
+        </p>
+        </div>
+      );
+    }
   }
 
   _renderWireframeButton() {

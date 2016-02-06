@@ -3,6 +3,8 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
+// let TWEEN;
+
 class ModelScene {
   // Renderer of the Scene
   renderer = undefined;
@@ -33,13 +35,14 @@ class ModelScene {
     resetView: false
   };
 
-  /*
-  cameraCoordinate = {
-    pos_x: 0,
-    pos_y: 0,
-    pos_z: 0
+  tween = undefined;
+
+  walkthroughCoordinate = {
+    points: [],
+    index: [0, 0]
   };
-  */
+
+  walkthroughToggle = false;
 
   /**
    * Constructor function of the scene
@@ -57,8 +60,19 @@ class ModelScene {
     this._initBackground();
     this._initLight();
     this._initControls(dimensions);
+    this._initTween(this.camera.position, this.camera.position);
 
     this._animate();
+  }
+
+  _initTween(origin, destination) {
+    if (process.env.BROWSER) {
+      this.TWEEN = require('tween.js');
+    }
+    // this.TWEEN.removeAll();
+    // this.tween = new TWEEN.tween(origin);
+    // this.tween.to(destination, 2000);
+    // this.tween.start();
   }
 
   _initRenderer(sceneCanvas, dimensions) {
@@ -117,6 +131,9 @@ class ModelScene {
    */
   _animate() {
     requestAnimationFrame(this._animate.bind(this));
+    if (this.walkthroughToggle) {
+      this._playbackWalkthrough();
+    }
     this.controls.update();
     this._render();
   }
@@ -129,6 +146,10 @@ class ModelScene {
     // Render background first so that the model appears in front
     this.renderer.render(this.backgroundScene, this.backgroundCamera);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  _playbackWalkthrough() {
+    //this.camera.position = this.TWEEN.update();
   }
 
   /**
@@ -168,6 +189,15 @@ class ModelScene {
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
     this.cameraState.resetView = false;
+    this.walkthroughToggle = state.walkthroughToggle;
+    this.walkthroughCoordinate.points = state.walkthroughPoints;
+    this.walkthroughCoordinate.index = state.playbackPoints;
+
+    const { x, y, z } = this.walkthroughCoordinate.points.get(this.walkthroughCoordinate.index.get(0)).get('pos');
+    console.log('origin: ', x, y, z);
+
+    // this._initTween(this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'),
+    //                this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'));
   }
 
   /**

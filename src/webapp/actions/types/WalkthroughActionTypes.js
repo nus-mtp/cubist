@@ -7,7 +7,10 @@ const normalTypes = {
   DELETE_POINT: null,
   TOGGLE_DISJOINT: null,
   UPDATE_ANIMATION: null,
-  UPDATE_DURATION: null
+  UPDATE_DURATION: null,
+  PLAYBACK_WALKTHROUGH: null,
+  SET_PLAYBACK_START: null,
+  SET_PLAYBACK_END: null
 };
 
 // Promise Action Types

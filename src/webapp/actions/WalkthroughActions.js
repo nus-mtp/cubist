@@ -4,7 +4,10 @@ import {
   DELETE_POINT,
   TOGGLE_DISJOINT,
   UPDATE_ANIMATION,
-  UPDATE_DURATION
+  UPDATE_DURATION,
+  PLAYBACK_WALKTHROUGH,
+  SET_PLAYBACK_START,
+  SET_PLAYBACK_END
 } from './types';
 
 export default {
@@ -61,5 +64,30 @@ export default {
         duration
       }
     };
+  },
+
+  playbackWalkthrough() {
+    return {
+      type: PLAYBACK_WALKTHROUGH
+    };
+  },
+
+  setPlaybackStart(startIndex) {
+    return {
+      type: SET_PLAYBACK_START,
+      payload: {
+        startIndex
+      }
+    };
+  },
+
+  setPlaybackEnd(endIndex) {
+    return {
+      type: SET_PLAYBACK_END,
+      payload: {
+        endIndex
+      }
+    };
   }
+
 };
