@@ -29,7 +29,9 @@ const User = new Schema({
     index: true,
     lowercase: true,
     trim: true
-  }
+  },
+  createdAt: { type: Date, index: true, default: Date.now },
+  updatedAt: { type: Date, index: true, default: Date.now }
 });
 
 // ----------------------------------------------------------------------------//

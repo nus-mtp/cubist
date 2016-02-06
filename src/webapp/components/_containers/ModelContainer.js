@@ -1,6 +1,7 @@
 import React from 'react';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
+import PureComponent from 'react-pure-render/component';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
@@ -8,7 +9,7 @@ import { ModelActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-ctn-model';
 
-class ModelContainer extends React.Component {
+class ModelContainer extends PureComponent {
   static fetchData({ dispatch, params }) {
     return dispatch(ModelActions.getModel(params.modelId));
   }
@@ -69,7 +70,8 @@ class ModelContainer extends React.Component {
   loadObj(model) {
     const loader = new OBJLoader();
     const urls = model.get('urls').map(u => `/models/${u}`);
-    loader.load(urls.get(0), m => {
+    const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
+    loader.load(objUrl, m => {
       this.setState({ model: m });
     });
   }
@@ -77,7 +79,9 @@ class ModelContainer extends React.Component {
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
     const urls = model.get('urls').map(u => `/models/${u}`);
-    loader.load(urls.get(0), urls.get(1), m => {
+    const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
+    const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
+    loader.load(objUrl, mtlUrl, m => {
       this.setState({ object: m });
     });
   }

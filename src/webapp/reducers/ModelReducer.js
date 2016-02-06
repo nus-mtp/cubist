@@ -3,7 +3,8 @@ import Immutable from 'immutable';
 import { Constants } from 'common';
 import ReducerHelper from './ReducerHelper';
 import {
-  REQ_GET_MODEL
+  REQ_GET_MODEL,
+  REQ_POST_CREATE_MODEL
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -14,6 +15,18 @@ const initialState = Immutable.fromJS({
 
 export default ReducerHelper.createReducer(initialState, {
   [REQ_GET_MODEL](state, { promiseState, res }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const model = Immutable.fromJS(res.body);
+      nextState = nextState
+        .setIn(['models', model.get('_id')], model)
+        .set('modelId', model.get('_id'));
+    }
+
+    return nextState;
+  },
+
+  [REQ_POST_CREATE_MODEL](state, { promiseState, res }) {
     let nextState = state;
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const model = Immutable.fromJS(res.body);

@@ -7,7 +7,8 @@ const normalTypes = {
 
 // Promise Action Types
 const promiseTypes = {
-  REQ_GET_MODEL: null
+  REQ_GET_MODEL: null,
+  REQ_POST_CREATE_MODEL: null
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

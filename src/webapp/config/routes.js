@@ -3,11 +3,13 @@ import { Route, IndexRoute } from 'react-router';
 
 import {
   AppContainer,
+  AuthorisationContainer,
   HomeContainer,
   LoginContainer,
   RegisterContainer,
   ResetPasswordContainer,
   ModelContainer,
+  UploadContainer,
   RootContainer,
   ErrorContainer
 } from 'webapp/components';
@@ -17,6 +19,9 @@ export default (
     <Route path="/" component={ AppContainer }>
       <IndexRoute component={ HomeContainer } />
       <Route path="model/:modelId" component={ ModelContainer } />
+      <Route component={ AuthorisationContainer }>
+        <Route path="upload" component={ UploadContainer } />
+      </Route>
     </Route>
     <Route path="/login" component={ LoginContainer } />
     <Route path="/register" component={ RegisterContainer } />

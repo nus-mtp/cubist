@@ -8,7 +8,7 @@ export default {
       .metadata()
       .then(metaData => {
         return image
-          .resize(metaData.width / resizeFactor)
+          .resize(parseInt(metaData.width / resizeFactor, 10))
           .toFile(imageDestPath);
       });
   }

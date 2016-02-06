@@ -1,5 +1,6 @@
 import superagent from 'superagent-bluebird-promise';
 import Qs from 'qs';
+import _ from 'lodash';
 
 import Settings from 'webapp/server/config/settings';
 
@@ -30,6 +31,16 @@ class ApiClient {
         if (options && options.body) {
           request.send(options.body);
         }
+        // Check for multipart requests
+        if (options && options.attachments) {
+          options.attachments.forEach((attachment) => {
+            request.attach(attachment.field, attachment.file, attachment.file.name);
+          });
+        }
+        if (options && options.fields) {
+          _.forIn(options.fields, (value, key) => request.field(key, value));
+        }
+
         return request.promise();
       };
     });

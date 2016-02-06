@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { pushState } from 'redux-router';
+import PureComponent from 'react-pure-render/component';
 
 import { Logger } from 'common';
 import { UserActions, ServerActions } from 'webapp/actions';
@@ -12,12 +13,12 @@ import { REQ_POST_USER_LOGIN } from 'webapp/actions/types';
 
 const DEBUG_ENV = 'login-container';
 // All authentication containers will have class name under this class
-const CLASS_NAME = 'cb-auth';
+const CLASS_NAME = 'cb-ctn-auth';
 
 const EMAIL_FIELD = 'email';
 const PASSWORD_FIELD = 'password';
 
-class LoginContainer extends React.Component {
+class LoginContainer extends PureComponent {
   static fetchData({ dispatch }) {
     Logger.info('Fetch data', DEBUG_ENV);
     return dispatch(UserActions.me());

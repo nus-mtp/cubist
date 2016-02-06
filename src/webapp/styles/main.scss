@@ -12,6 +12,7 @@
 @import 'common/anchor';
 @import 'common/button';
 @import 'common/utils';
+@import 'common/image';
 
 // Import Subcomponents
 @import 'model/ModelCard';
@@ -21,6 +22,7 @@
 // Import Containers
 @import '_containers/RootContainer';
 @import '_containers/AppContainer';
-@import '_containers/AuthContainer';
+@import '_containers/AuthenticationContainer';
 @import '_containers/HomeContainer';
 @import '_containers/ModelContainer';
+@import '_containers/UploadContainer';

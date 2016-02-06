@@ -1,4 +1,5 @@
 import React from 'react';
+import PureComponent from 'react-pure-render/component';
 
 if (process.env.BROWSER) {
   require('webapp/styles/main.scss');
@@ -6,7 +7,7 @@ if (process.env.BROWSER) {
 
 const CLASS_NAME = 'cb-ctn-root';
 
-class RootContainer extends React.Component {
+class RootContainer extends PureComponent {
   static propTypes = {
     children: React.PropTypes.node
   };
