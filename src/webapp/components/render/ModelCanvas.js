@@ -73,17 +73,15 @@ class ModelCanvas extends React.Component {
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
     }
+
     // Snapshot Trigger
-    if (nextProps.snapshotToken !== this.props.snapshotToken) {
+    if (nextProps.snapshotToken !== this.props.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && this.modelScene) {
       this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
       playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
-    // if (nextProps.playbackPoints !== this.props.playbackPoints && this.modelScene) {
-    //   this.modelScene.updateWalkthroughState({ playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
-    // }
   }
 
   componentWillUnmount() {

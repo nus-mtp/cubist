@@ -35,7 +35,20 @@ class ModelScene {
   // Camera State
   cameraState = {
     autoRotate: false,
-    resetView: false
+    resetView: false,
+    playbackWalkthrough: false
+  };
+
+  target = {
+    x: 100,
+    y: 450,
+    z: 500
+  };
+
+  source = {
+    x: 0,
+    y: 450,
+    z: 500
   };
 
   tween = undefined;
@@ -194,6 +207,7 @@ class ModelScene {
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
     this.cameraState.resetView = false;
+    this.controls.playbackWalkthrough = this.cameraState.playbackWalkthrough;
   }
 
   updateWalkthroughState(state) {

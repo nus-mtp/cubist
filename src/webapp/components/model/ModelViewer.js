@@ -120,15 +120,16 @@ class ModelViewer extends React.Component {
   };
 
   _onWalkthroughSetEnd = (e, index) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.setPlaybackEnd(index));
   };
 
   _onWalkthroughPlayback = (e) => {
+    e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.playbackWalkthrough());
   };
-
 
   render() {
     return (
@@ -280,7 +281,7 @@ class ModelViewer extends React.Component {
          To
         <SplitButton title={ `${endIndex + 1}` } pullRight id="split-button-pull-right" >
           { walkthroughPoints.map((walkthroughPoint, index) =>
-            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+            <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
               onClick={ e => this._onWalkthroughSetEnd(e, index) } >
               { `${index + 1}` }
             </MenuItem>
