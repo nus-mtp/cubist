@@ -62,7 +62,6 @@ class ModelScene {
     this._initBackground();
     this._initLight();
     this._initControls(dimensions);
-    //this._initTween(this.camera.position, this.camera.position);
 
     this._animate();
   }
@@ -122,11 +121,10 @@ class ModelScene {
     TWEEN.removeAll();
     this.tween = new TWEEN.Tween(origin)
     .to(destination, 2000);
-    this.tween.onUpdate(function () {
-      console.log(origin.x, origin.y, origin.z);
-      // this.camera.position.set(origin.x, origin.y, origin.z);
+    this.tween.onUpdate(() => {
+      this.camera.position.set(origin.x, origin.y, origin.z);
     });
-    this.tween.onComplete(function () {
+    this.tween.onComplete(() => {
       this._toggleStartPlayback();
     });
   }
@@ -153,12 +151,6 @@ class ModelScene {
     // Render background first so that the model appears in front
     this.renderer.render(this.backgroundScene, this.backgroundCamera);
     this.renderer.render(this.scene, this.camera);
-  }
-
-  _playbackWalkthrough(targetX, targetY, targetZ) {
-    this.camera.position.x = targetX;
-    this.camera.position.y = targetY;
-    this.camera.position.z = targetZ;
   }
 
   _toggleStartPlayback() {
@@ -211,7 +203,7 @@ class ModelScene {
     this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
 
     const { x, y, z } = this.walkthroughState.points[this.walkthroughState.index[0]].pos;
-    const origin = { x: x, y: y, z: z };
+    const origin = { x, y, z };
 
     const xDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.x;
     const yDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.y;
