@@ -78,11 +78,12 @@ class ModelCanvas extends React.Component {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && this.modelScene) {
-      this.modelScene.updateCameraState({ walkthroughToggle: nextProps.walkthroughToggle });
+      this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
+      playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
-    if (nextProps.playbackPoints !== this.props.playbackPoints && this.modelScene) {
-      this.modelScene.updateCameraState({ playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
-    }
+    // if (nextProps.playbackPoints !== this.props.playbackPoints && this.modelScene) {
+    //   this.modelScene.updateWalkthroughState({ playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
+    // }
   }
 
   componentWillUnmount() {

@@ -3,7 +3,10 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
-// let TWEEN;
+let TWEEN;
+if (process.env.BROWSER) {
+  TWEEN = require('tween.js');
+}
 
 class ModelScene {
   // Renderer of the Scene
@@ -37,12 +40,11 @@ class ModelScene {
 
   tween = undefined;
 
-  walkthroughCoordinate = {
+  walkthroughState = {
+    startPlayback: false,
     points: [],
     index: [0, 0]
   };
-
-  walkthroughToggle = false;
 
   /**
    * Constructor function of the scene
@@ -60,19 +62,9 @@ class ModelScene {
     this._initBackground();
     this._initLight();
     this._initControls(dimensions);
-    this._initTween(this.camera.position, this.camera.position);
+    //this._initTween(this.camera.position, this.camera.position);
 
     this._animate();
-  }
-
-  _initTween(origin, destination) {
-    if (process.env.BROWSER) {
-      this.TWEEN = require('tween.js');
-    }
-    // this.TWEEN.removeAll();
-    // this.tween = new TWEEN.tween(origin);
-    // this.tween.to(destination, 2000);
-    // this.tween.start();
   }
 
   _initRenderer(sceneCanvas, dimensions) {
@@ -126,16 +118,31 @@ class ModelScene {
     this.controls = new OrbitControls(this.camera, dimensions);
   }
 
+  _initTween(origin, destination) {
+    TWEEN.removeAll();
+    this.tween = new TWEEN.Tween(origin)
+    .to(destination, 2000);
+    this.tween.onUpdate(function () {
+      console.log(origin.x, origin.y, origin.z);
+      // this.camera.position.set(origin.x, origin.y, origin.z);
+    });
+    this.tween.onComplete(function () {
+      this._toggleStartPlayback();
+    });
+  }
+
+
   /**
    * Frame updater function
    */
   _animate() {
     requestAnimationFrame(this._animate.bind(this));
-    if (this.walkthroughToggle) {
-      this._playbackWalkthrough();
-    }
     this.controls.update();
     this._render();
+
+    if (this.walkthroughState.startPlayback) {
+      TWEEN.update();
+    }
   }
 
   /**
@@ -148,8 +155,14 @@ class ModelScene {
     this.renderer.render(this.scene, this.camera);
   }
 
-  _playbackWalkthrough() {
-    //this.camera.position = this.TWEEN.update();
+  _playbackWalkthrough(targetX, targetY, targetZ) {
+    this.camera.position.x = targetX;
+    this.camera.position.y = targetY;
+    this.camera.position.z = targetZ;
+  }
+
+  _toggleStartPlayback() {
+    this.walkthroughState.startPlayback = !this.walkthroughState.startPlayback;
   }
 
   /**
@@ -189,12 +202,27 @@ class ModelScene {
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
     this.cameraState.resetView = false;
-    this.walkthroughToggle = state.walkthroughToggle;
-    this.walkthroughCoordinate.points = state.walkthroughPoints;
-    this.walkthroughCoordinate.index = state.playbackPoints;
+  }
 
-    const { x, y, z } = this.walkthroughCoordinate.points.get(this.walkthroughCoordinate.index.get(0)).get('pos');
-    console.log('origin: ', x, y, z);
+  updateWalkthroughState(state) {
+    Object.assign(this.walkthroughState, state);
+    this.walkthroughState.startPlayback = state.walkthroughToggle;
+    this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
+    this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
+
+    const { x, y, z } = this.walkthroughState.points[this.walkthroughState.index[0]].pos;
+    const origin = { x: x, y: y, z: z };
+
+    const xDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.x;
+    const yDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.y;
+    const zDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.z;
+    const destination = { x: xDest, y: yDest, z: zDest };
+
+    this._initTween(origin, destination);
+
+    if (this.walkthroughState.startPlayback) {
+      this.tween.start();
+    }
 
     // this._initTween(this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'),
     //                this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'));
