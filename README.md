@@ -41,6 +41,10 @@ $ npm run webapp-prod
 ```
 
 ## Project Initialization
+* If your system is OS X: 
+  + `brew install homebrew/science/vips`
+  + `sudo chown -R $(whoami):admin /usr/local`
+  + `brew update && brew upgrade`
 * Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
 * Go to team's Google Drive and download `models.zip`
 * Extract to copy the `models` folder into the repo folder
