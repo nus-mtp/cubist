@@ -144,8 +144,8 @@ class ModelViewer extends React.Component {
           </div>
         </div>
         <div>
-          { this._renderWalkthroughSection() }
           { this._renderWalkthroughPlaybackSection() }
+          { this._renderWalkthroughSection() }
         </div>
       </div>
     );

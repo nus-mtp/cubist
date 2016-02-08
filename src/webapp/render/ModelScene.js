@@ -39,19 +39,7 @@ class ModelScene {
     playbackWalkthrough: false
   };
 
-  target = {
-    x: 100,
-    y: 450,
-    z: 500
-  };
-
-  source = {
-    x: 0,
-    y: 450,
-    z: 500
-  };
-
-  tween = undefined;
+  tweenList = [];
 
   walkthroughState = {
     startPlayback: false,
@@ -131,15 +119,18 @@ class ModelScene {
   }
 
   _initTween(origin, destination) {
+    console.log('ENTER!!!!', origin, destination);
     TWEEN.removeAll();
-    this.tween = new TWEEN.Tween(origin)
-    .to(destination, 2000);
-    this.tween.onUpdate(() => {
+    this.tweenA = new TWEEN.Tween(origin)
+    .to(destination, 2000)
+    .easing(TWEEN.Easing.Quadratic.In)
+    .onUpdate(() => {
       this.camera.position.set(origin.x, origin.y, origin.z);
-    });
-    this.tween.onComplete(() => {
+    })
+    .onComplete(() => {
       this._toggleStartPlayback();
-    });
+    })
+    .start();
   }
 
 
@@ -216,22 +207,52 @@ class ModelScene {
     this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
     this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
 
-    const { x, y, z } = this.walkthroughState.points[this.walkthroughState.index[0]].pos;
-    const origin = { x, y, z };
+    // Analyse how many Tween Obj is require
+    const numTweenObjRequire = this.walkthroughState.index[1] - this.walkthroughState.index[0];
 
-    const xDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.x;
-    const yDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.y;
-    const zDest = this.walkthroughState.points[this.walkthroughState.index[1]].pos.z;
-    const destination = { x: xDest, y: yDest, z: zDest };
+    if (numTweenObjRequire > 0) {
+      let firstIndex = this.walkthroughState.index[0];
+      let nextIndex;
 
-    this._initTween(origin, destination);
+      // Create Tween Obj
+      for (let i = 0; i < numTweenObjRequire; i++) {
+        firstIndex = firstIndex + i;
+        nextIndex = firstIndex + 1;
 
-    if (this.walkthroughState.startPlayback) {
-      this.tween.start();
+        const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
+        const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
+        const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
+        const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
+
+        const xDest = this.walkthroughState.points[nextIndex].pos.x;
+        const yDest = this.walkthroughState.points[nextIndex].pos.y;
+        const zDest = this.walkthroughState.points[nextIndex].pos.z;
+        const destination = { x: xDest, y: yDest, z: zDest };
+
+        this.tweenList[i] = new TWEEN.Tween(origin)
+        .to(destination, 2000)
+        .easing(TWEEN.Easing.Quadratic.In)
+        .onUpdate(() => {
+          this.camera.position.set(origin.x, origin.y, origin.z);
+        })
+        .onComplete(() => {
+          this._toggleStartPlayback();
+        });
+
+        firstIndex = 0;
+      }
+
+      // Chain up playback node
+      if (numTweenObjRequire > 1) {
+        for (let i = 1; i < numTweenObjRequire; i++) {
+          this.tweenList[i - 1].chain(this.tweenList[i]);
+        }
+      }
     }
 
-    // this._initTween(this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'),
-    //                this.walkthroughCoordinate.points[this.walkthroughCoordinate.index[0]].get('pos'));
+    if (numTweenObjRequire > 0) {
+      this.tweenList[0].start();
+    }
   }
 
   /**
