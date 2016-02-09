@@ -126,6 +126,7 @@ class ModelScene {
       TWEEN.removeAll();
       let firstIndex = this.walkthroughState.index[0];
       let nextIndex;
+      let duration;
 
       // Create Tween Obj
       for (let i = 0; i < numTweenObjRequire; i++) {
@@ -142,9 +143,11 @@ class ModelScene {
         const zDest = this.walkthroughState.points[nextIndex].pos.z;
         const destination = { x: xDest, y: yDest, z: zDest };
 
+        duration = this.walkthroughState.points[firstIndex].duration * 1000;
+
         this.tweenList[i] = new TWEEN.Tween(origin)
-        .to(destination, 2000)
-        .easing(TWEEN.Easing.Quadratic.In)
+        .to(destination, duration)
+        .easing(TWEEN.Easing.Linear.None)
         .onUpdate(() => {
           this.camera.position.set(origin.x, origin.y, origin.z);
         });
@@ -197,6 +200,10 @@ class ModelScene {
 
   _toggleStartPlayback() {
     this.walkthroughState.startPlayback = !this.walkthroughState.startPlayback;
+
+    // return {
+    //   walkthroughToggle: this.walkthroughState.startPlayback
+    // };
   }
 
   /**
