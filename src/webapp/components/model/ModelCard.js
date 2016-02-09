@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import Immutable from 'immutable';
 
+import { GravatarHelper } from 'webapp/helpers';
+
 const CLASS_NAME = 'cb-model-card';
 
 class ModelCard extends React.Component {
@@ -24,9 +26,8 @@ class ModelCard extends React.Component {
           </div>
         </Link>
         <figcaption className={ `${CLASS_NAME}-caption` }>
-          <div className={ `${CLASS_NAME}-caption-avatar` }>
-            <i className={ `${CLASS_NAME}-caption-avatar-icon fa fa-user` } />
-          </div>
+          <img className={ `${CLASS_NAME}-caption-avatar` }
+            src={ GravatarHelper.getGravatarUrl(model.getIn(['uploader', 'email'])) } />
           <div className={ `${CLASS_NAME}-caption-info` }>
             <div className={ `${CLASS_NAME}-caption-info-title` }>
               { model.get('title') }

@@ -62,7 +62,7 @@ Model.statics.validateFilePaths = function (filePaths) {
 };
 
 Model.statics.getModelById = function (modelId) {
-  return MongooseHelper.findOne(this, { _id: modelId });
+  return MongooseHelper.findOne(this, { _id: modelId }, { populate: 'uploader' });
 };
 
 Model.statics.getLatestModels = function () {
@@ -71,7 +71,8 @@ Model.statics.getLatestModels = function () {
     {},
     {
       limit: 20,
-      sort: '-updatedAt'
+      sort: '-updatedAt',
+      populate: 'uploader'
     }
   );
 };

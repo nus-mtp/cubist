@@ -36,6 +36,6 @@ export default (apiClient, initialData = {}) => {
       routes,
       createHistory
     }),
-    applyMiddleware(...middlewares)    
+    applyMiddleware(...middlewares)
   )(createStore)(enableBatching(reducer), initialData);
 };

@@ -13,7 +13,7 @@ class ModelEditContainer extends React.Component {
   }
 }
 
-export default connect(state => {
+export default connect(() => {
   return {
 
   };

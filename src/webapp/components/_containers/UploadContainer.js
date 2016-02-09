@@ -1,15 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
-import { Link } from 'react-router';
 import { pushState } from 'redux-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
 import Dropzone from 'react-dropzone';
-import md5 from 'md5';
 
 import { ModelActions } from 'webapp/actions';
 import { REQ_POST_CREATE_MODEL } from 'webapp/actions/types';
+import { GravatarHelper } from 'webapp/helpers';
 
 const CLASS_NAME = 'cb-ctn-upload';
 
@@ -73,32 +72,20 @@ class UploadContainer extends PureComponent {
               { this._renderDropzone() }
             </div>
             <div className="col-sm-6 col-md-4">
+              <button type="submit"
+                className="btn btn-success btn-block cb-margin-bottom-10px">
+                UPLOAD
+              </button>
+              {
+                err &&
+                <div className="alert alert-danger cb-margin-bottom-10px">
+                  { err.get('message') }
+                </div>
+              }
               { this._renderUserCard() }
               { this._renderModelInfoCard() }
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-3 col-md-4">
-              <Link to="/" className="btn btn-default btn-block">
-                CANCEL
-              </Link>
-            </div>
-            <div className="col-sm-3 col-md-4">
-              <button type="submit" className="btn btn-success btn-block">
-                UPLOAD
-              </button>
-            </div>
-          </div>
-          {
-            err &&
-            <div className="row">
-              <div className="col-sm-6 col-md-8">
-                <div className={ `${CLASS_NAME}-message alert alert-danger` }>
-                  { err.get('message') }
-                </div>
-              </div>
-            </div>
-          }
         </form>
       </div>
     );
@@ -141,7 +128,7 @@ class UploadContainer extends PureComponent {
 
   _renderUserCard() {
     const { user } = this.props;
-    const avatarUrl = `http://www.gravatar.com/avatar/${md5(user.get('email'))}?d=retro`;
+    const avatarUrl = GravatarHelper.getGravatarUrl(user.get('email'));
 
     return (
       <div className={ `${CLASS_NAME}-user-card panel panel-default` }>

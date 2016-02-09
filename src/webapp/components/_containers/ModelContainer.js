@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
@@ -6,6 +7,7 @@ import PureComponent from 'react-pure-render/component';
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
 import { ModelActions } from 'webapp/actions';
+import { GravatarHelper } from 'webapp/helpers';
 
 const CLASS_NAME = 'cb-ctn-model';
 
@@ -15,7 +17,8 @@ class ModelContainer extends PureComponent {
   }
 
   static propTypes = {
-    model: React.PropTypes.instanceOf(Immutable.Map)
+    model: React.PropTypes.instanceOf(Immutable.Map),
+    user: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   state = {
@@ -35,25 +38,48 @@ class ModelContainer extends PureComponent {
   }
 
   render() {
+    const { model, user } = this.props;
     const { object } = this.state;
     const viewerProps = {
       object,
       ...this.props
     };
+    const isUploader = model.getIn(['uploader', '_id']) === user.get('_id');
 
     return (
       <div className={ CLASS_NAME }>
         <h2 className={ `${CLASS_NAME}-title` }>
-          Model Name
+          { model.get('title') }
         </h2>
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
           </div>
           <div className="col-md-4">
-            <div className={ `${CLASS_NAME}-info-bar` }>
-            </div>
+            {
+              isUploader &&
+              <Link to={ `/model/${model.get('_id')}/edit` }
+                className="btn btn-info btn-block cb-margin-bottom-10px">
+                EDIT MODEL
+              </Link>
+            }
+            { this._renderUploaderCard() }
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  _renderUploaderCard() {
+    const { model } = this.props;
+    const avatarUrl = GravatarHelper.getGravatarUrl(model.getIn(['uploader', 'email']));
+
+    return (
+      <div className={ `${CLASS_NAME}-user-card panel panel-default` }>
+        <div className="panel-body cb-text-center">
+          <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+          <hr />
+          <h4>{ model.getIn(['uploader', 'name']) }</h4>
         </div>
       </div>
     );
@@ -91,7 +117,9 @@ export default connect((state) => {
   const currentId = state.ModelStore.get('modelId');
 
   return {
+    // Model Info
     model: state.ModelStore.getIn(['models', currentId]),
+
     // Viewer Data
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
@@ -102,6 +130,7 @@ export default connect((state) => {
     up: state.CameraStore.get('up'),
     lookAt: state.CameraStore.get('lookAt'),
     zoom: state.CameraStore.get('zoom'),
+
     // Snapshot Data
     snapshots: state.SnapshotStore.get('snapshots'),
     snapshotToken: state.SnapshotStore.get('snapshotToken')
