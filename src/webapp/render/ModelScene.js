@@ -127,6 +127,7 @@ class ModelScene {
       let firstIndex = this.walkthroughState.index[0];
       let nextIndex;
       let duration;
+      let destination;
 
       // Create Tween Obj
       for (let i = 0; i < numTweenObjRequire; i++) {
@@ -138,23 +139,28 @@ class ModelScene {
         const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
         const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
 
+        duration = this.walkthroughState.points[firstIndex].duration * 1000;
+
         const xDest = this.walkthroughState.points[nextIndex].pos.x;
         const yDest = this.walkthroughState.points[nextIndex].pos.y;
         const zDest = this.walkthroughState.points[nextIndex].pos.z;
-        const destination = { x: xDest, y: yDest, z: zDest };
-
-        duration = this.walkthroughState.points[firstIndex].duration * 1000;
+        destination = { x: xDest, y: yDest, z: zDest };
 
         this.tweenList[i] = new TWEEN.Tween(origin)
         .to(destination, duration)
-        .easing(TWEEN.Easing.Linear.None)
-        .onUpdate(() => {
-          this.camera.position.set(origin.x, origin.y, origin.z);
-        });
+        .easing(TWEEN.Easing.Linear.None);
 
-        if (i === this.walkthroughState.index[1]) {
-          this.tweenList[i].onComplete(() => {
-            this._toggleStartPlayback();
+        // if Second Point is disjoint, do not UPDATE tween to next Point.
+        if (this.walkthroughState.points[nextIndex].disjointMode === true) {
+          this.tweenList[i].onStart(() => {
+            this.camera.position.set(origin.x, origin.y, origin.z);
+          })
+          .onComplete(() => {
+            this.camera.position.set(destination.x, destination.y, destination.z);
+          });
+        } else {
+          this.tweenList[i].onUpdate(() => {
+            this.camera.position.set(origin.x, origin.y, origin.z);
           });
         }
 
@@ -168,6 +174,12 @@ class ModelScene {
         }
       }
     }
+
+    // const lastTweenIndex = this.tweenList.length;
+    // this.tweenList[lastTweenIndex - 1].onComplete(() => {
+    //   console.log('Complete');
+    //   this._toggleStartPlayback();
+    // });
 
     if (numTweenObjRequire > 0) {
       this.tweenList[0].start();
