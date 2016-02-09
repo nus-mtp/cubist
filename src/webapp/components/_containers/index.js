@@ -6,6 +6,7 @@ export default {
   RegisterContainer: require('./RegisterContainer'),
   ResetPasswordContainer: require('./ResetPasswordContainer'),
   ModelContainer: require('./ModelContainer'),
+  ModelEditContainer: require('./ModelEditContainer'),
   UploadContainer: require('./UploadContainer'),
   RootContainer: require('./RootContainer'),
   ErrorContainer: require('./ErrorContainer')

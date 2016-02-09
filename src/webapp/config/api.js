@@ -38,7 +38,9 @@ class ApiClient {
           });
         }
         if (options && options.fields) {
-          _.forIn(options.fields, (value, key) => request.field(key, value));
+          _.forIn(options.fields, (value, key) => {
+            request.field(key, value);
+          });
         }
 
         return request.promise();

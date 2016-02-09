@@ -11,8 +11,11 @@ const Model = new Schema({
   category: { type: String, required: true, default: 'Misc', index: true },
   description: { type: String, trim: true, default: '' },
   tags: [{ type: String, trim: true }],
-  uploader: { type: ObjectId, ref: '_User', required: true, index: true },
+  uploader: { type: ObjectId, ref: 'User', required: true, index: true },
   urls: [{ type: String }],
+  socialData: {
+    favorites: { type: Number, default: 0 }
+  },
   metaData: {
     vertices: { type: Number, default: 0 },
     faces: { type: Number, default: 0 },
@@ -58,9 +61,52 @@ Model.statics.validateFilePaths = function (filePaths) {
   return null;
 };
 
+Model.statics.getModelById = function (modelId) {
+  return MongooseHelper.findOne(this, { _id: modelId });
+};
+
+Model.statics.getLatestModels = function () {
+  return MongooseHelper.find(
+    this,
+    {},
+    {
+      limit: 20,
+      sort: '-updatedAt'
+    }
+  );
+};
+
+Model.statics.getTopModels = function () {
+  return MongooseHelper.find(
+    this,
+    {},
+    {
+      limit: 9,
+      sort: '-socialData.favorites',
+      populate: 'uploader'
+    }
+  );
+};
+
 Model.statics.createModel = function (model) {
-  const fields = ['title', 'category', 'description', 'tags', 'metaData', 'uploader', 'urls', 'imageUrls'];
-  return MongooseHelper.create(this, _.pick(model, fields));
+  const fields = [
+    'title',
+    'category',
+    'description',
+    'tags',
+    'socialData',
+    'metaData',
+    'uploader',
+    'urls',
+    'imageUrls'
+  ];
+  const modelInfo = _.pick(model, fields);
+  // Split tags into array
+  if (modelInfo.tags) {
+    modelInfo.tags = modelInfo.tags.split(',').map(tag => tag.trim());
+  }
+
+  return MongooseHelper.create(this, modelInfo);
 };
 
 export default mongoose.model('Model', Model, 'Model');

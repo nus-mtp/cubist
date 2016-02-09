@@ -20,6 +20,8 @@ export default (app) => {
 
   // Model
   app.get('/model/:modelId', ModelController.request.getModel);
+  app.get('/models/top', ModelController.request.getTopModels);
+  app.get('/models/latest', ModelController.request.getLatestModels);
 
   app.post(
     '/model',

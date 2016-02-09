@@ -127,9 +127,9 @@ class AppContainer extends PureComponent {
             <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
             </button>
-            <a href="/" className={ classnames(navBrandClasses) }>
+            <Link to="/" className={ classnames(navBrandClasses) }>
               Cubist
-            </a>
+            </Link>
           </div>
           <div className={ classnames(collapseClasses) }>
             {

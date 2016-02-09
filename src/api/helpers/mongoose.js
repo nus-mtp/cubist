@@ -96,6 +96,12 @@ export default {
     if (options.lean) {
       request.lean();
     }
+    if (options.limit) {
+      request.limit(options.limit);
+    }
+    if (options.sort) {
+      request.sort(options.sort);
+    }
 
     return Promise.resolve(request.exec());
   },
@@ -110,6 +116,12 @@ export default {
     }
     if (options.lean) {
       request.lean();
+    }
+    if (options.limit) {
+      request.limit(options.limit);
+    }
+    if (options.sort) {
+      request.sort(options.sort);
     }
 
     return Promise.resolve(request.exec());

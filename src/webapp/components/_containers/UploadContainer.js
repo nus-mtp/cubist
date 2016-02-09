@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { Link } from 'react-router';
+import { pushState } from 'redux-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
@@ -35,6 +36,13 @@ class UploadContainer extends PureComponent {
       [MODEL_TAGS_FIELD]: ''
     }
   };
+
+  componentWillReceiveProps(nextProps) {
+    const { dispatch } = this.props;
+    if (nextProps.success && nextProps.model.get('_id')) {
+      dispatch(pushState(null, `/model/${nextProps.model.get('_id')}/edit`));
+    }
+  }
 
   _onModelFileDrop = (files) => {
     this.setState({ files });

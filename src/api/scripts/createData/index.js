@@ -37,7 +37,8 @@ connectDb()
         title: m.title,
         uploader: nameIdMap[m.uploader],
         urls: m.urls,
-        imageUrls: m.imageUrls
+        imageUrls: m.imageUrls,
+        socialData: m.socialData
       }))
     );
   })

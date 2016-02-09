@@ -16,20 +16,33 @@ const ModelController = {
 
 // ---------------------------------------------------------------------------- //
 ModelController.request.getModel = function (req, res) {
-  ModelController.promise.getModel(req)
-    .then(model => ResponseHelper.success(res, model))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(ModelController.promise.getModel, req, res, DEBUG_ENV);
+};
+
+ModelController.request.getLatestModels = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getLatestModels, req, res, DEBUG_ENV);
+};
+
+ModelController.request.getTopModels = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getTopModels, req, res, DEBUG_ENV);
 };
 
 ModelController.request.createModel = function (req, res) {
-  ModelController.promise.createModel(req)
-    .then(model => ResponseHelper.success(res, model))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(ModelController.promise.createModel, req, res, DEBUG_ENV);
 };
 
 // ---------------------------------------------------------------------------- //
-ModelController.promise.getModel = function () {
-  return Promise.resolve(Model.findOne().exec());
+ModelController.promise.getModel = function (req) {
+  const { modelId } = req.params;
+  return Model.getModelById(modelId);
+};
+
+ModelController.promise.getTopModels = function () {
+  return Model.getTopModels();
+};
+
+ModelController.promise.getLatestModels = function () {
+  return Model.getLatestModels();
 };
 
 ModelController.promise.createModel = function (req) {

@@ -1,19 +1,17 @@
+import Promise from 'bluebird';
+import Immutable from 'immutable';
 import classnames from 'classnames';
 import React from 'react';
+import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PureComponent from 'react-pure-render/component';
 import Trianglify from 'trianglify';
 
 import { TrianglifyCanvas } from '../common';
 import { ModelCard } from '../model';
+import { ModelActions } from 'webapp/actions';
 import { requireServerJson } from 'webapp/utils';
 
-const randomModels = process.env.BROWSER
-  ? require('webapp/assets/model-random.json')
-  : requireServerJson(__dirname, '../../assets/model-random.json');
-const topModels = process.env.BROWSER
-  ? require('webapp/assets/model-top.json')
-  : requireServerJson(__dirname, '../../assets/model-top.json');
 const categories = process.env.BROWSER
   ? require('webapp/assets/model-category.json')
   : requireServerJson(__dirname, '../../assets/model-category.json');
@@ -23,6 +21,18 @@ const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
 class HomeContainer extends PureComponent {
+  static fetchData({ dispatch }) {
+    return Promise.all([
+      dispatch(ModelActions.getTopModels()),
+      dispatch(ModelActions.getLatestModels())
+    ]);
+  }
+
+  static propTypes = {
+    latestModels: React.PropTypes.instanceOf(Immutable.List),
+    topModels: React.PropTypes.instanceOf(Immutable.List)
+  };
+
   state = {
     ...Trianglify.defaults,
     width: process.env.BROWSER ? window.innerWidth : DEFAULT_WIDTH,
@@ -90,18 +100,19 @@ class HomeContainer extends PureComponent {
             Your open-source 3D web gallery
           </p>
           <div className={ `${CLASS_NAME}-hero-random row` }>
-            { this._renderRandomModels() }
+            { this._renderLatestModels() }
           </div>
         </div>
       </div>
     );
   }
 
-  _renderRandomModels() {
+  _renderLatestModels() {
+    const { latestModels } = this.props;
     let rowIndex = 0;
     let rowItems = 4;
 
-    return randomModels.map((model, i) => {
+    return latestModels.map((model, i) => {
       if (rowIndex === rowItems) {
         rowIndex = 0;
         rowItems = rowItems === 4 ? 6 : 4;
@@ -122,7 +133,7 @@ class HomeContainer extends PureComponent {
         ];
       }
       const style = {
-        backgroundImage: `url(${model.image_url})`
+        backgroundImage: `url(${model.getIn(['imageUrls', 0])})`
       };
 
       return (
@@ -155,6 +166,7 @@ class HomeContainer extends PureComponent {
   }
 
   _renderPopularModels() {
+    const { topModels } = this.props;
     return topModels.map((model, i) => (
       <div className={ `${CLASS_NAME}-popular-item col-md-4 col-sm-6 col-xs-12` } key={ i }>
         <ModelCard model={ model } />
@@ -198,4 +210,13 @@ class HomeContainer extends PureComponent {
   }
 }
 
-export default HomeContainer;
+export default connect(state => {
+  const latestModelIds = state.ModelStore.get('latestModelIds');
+  const topModelIds = state.ModelStore.get('topModelIds');
+  const models = state.ModelStore.get('models');
+
+  return {
+    latestModels: latestModelIds.map(id => models.get(id)),
+    topModels: topModelIds.map(id => models.get(id))
+  };
+})(HomeContainer);

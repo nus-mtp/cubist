@@ -9,6 +9,7 @@ import {
   RegisterContainer,
   ResetPasswordContainer,
   ModelContainer,
+  ModelEditContainer,
   UploadContainer,
   RootContainer,
   ErrorContainer
@@ -21,6 +22,7 @@ export default (
       <Route path="model/:modelId" component={ ModelContainer } />
       <Route component={ AuthorisationContainer }>
         <Route path="upload" component={ UploadContainer } />
+        <Route path="model/:modelId/edit" component={ ModelEditContainer } />
       </Route>
     </Route>
     <Route path="/login" component={ LoginContainer } />

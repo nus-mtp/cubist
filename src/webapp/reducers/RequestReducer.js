@@ -1,7 +1,6 @@
 import Immutable from 'immutable';
 
-import { Constants } from 'common';
-import { StringHelper } from 'webapp/helpers';
+import { Constants, StringHelper } from 'common';
 import { NAVIGATE_START, NAVIGATE_COMPLETE } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
