@@ -8,16 +8,16 @@ describe('Snapshot Reducer', () => {
   it('Should return the initial state', () => {
     expect(reducer(undefined, {})).to.equal(Map({
       snapshotToken: undefined,
-		snapshots: new Map()
+      snapshots: new Map()
     }));
   });
 
   describe('#Action: SNAPSHOT_TRIGGER', () => {
     it('Should store token on SNAPSHOT_TRIGGER', () => {
       expect(
-        reducer(Map({ snapshotToken: "foo" }), { type: SNAPSHOT_TRIGGER, payload: "bar" })
+        reducer(Map({ snapshotToken: 'foo' }), { type: SNAPSHOT_TRIGGER, payload: 'bar' })
       ).to.equal(
-        Map({ snapshotToken: "bar" })
+        Map({ snapshotToken: 'bar' })
       );
     });
   });
@@ -25,9 +25,9 @@ describe('Snapshot Reducer', () => {
   describe('#Action: SNAPSHOT_SUCCESS', () => {
     it('Should store new mapping of token to data on SNAPSHOT_SUCCESS', () => {
       expect(
-        reducer(Map({ snapshots: new Map() }), { type: SNAPSHOT_SUCCESS, payload: { token: "foo", data: "bar" } })
+        reducer(Map({ snapshots: new Map() }), { type: SNAPSHOT_SUCCESS, payload: { token: 'foo', data: 'bar' } })
       ).to.equal(
-        Map({ snapshots: Map({ foo: "bar"}) })
+        Map({ snapshots: Map({ foo: 'bar' }) })
       );
     });
   });
