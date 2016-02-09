@@ -88,6 +88,11 @@ class ModelCanvas extends React.Component {
     this.modelScene.dispose();
   }
 
+  // _onPlaybackCompleted = (event) => {
+  //   const { dispatch } = this.props;
+  //   dispatch(WalkthroughActions.playbackWalkthrough());
+  // };
+
   _onCameraOrbit(camera) {
     const { dispatch } = this.props;
     dispatch(CameraActions.orbitCamera(camera));

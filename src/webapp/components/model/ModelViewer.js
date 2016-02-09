@@ -262,11 +262,21 @@ class ModelViewer extends React.Component {
   }
 
   _renderWalkthroughPlaybackSection() {
-    const { walkthroughPoints, playbackPoints } = this.props;
+    const { walkthroughPoints, playbackPoints, walkthroughToggle } = this.props;
     const startIndex = playbackPoints.first();
     const endIndex = playbackPoints.last();
+    let disableStatus = false;
+    let buttonTitle = 'Play Walkthrough';
 
-    if (walkthroughPoints.count() > 0) {
+    if (walkthroughToggle) {
+      buttonTitle = 'Stop Walkthrough';
+    }
+
+    if (startIndex === endIndex || startIndex > endIndex) {
+      disableStatus = true;
+    }
+
+    if (walkthroughPoints.count() > 1) {
       return (
         <div><p></p>
         Playback From
@@ -288,8 +298,9 @@ class ModelViewer extends React.Component {
           ) }
         </SplitButton>
         <p>
-          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) } >
-          Play Walkthrough
+          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) }
+            disabled={ disableStatus } >
+          { buttonTitle }
           </button>
         </p>
         </div>

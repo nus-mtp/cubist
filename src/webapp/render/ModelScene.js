@@ -148,14 +148,14 @@ class ModelScene {
 
         this.tweenList[i] = new TWEEN.Tween(origin)
         .to(destination, duration)
+        .onStart(() => {
+          this.camera.position.set(origin.x, origin.y, origin.z);
+        })
         .easing(TWEEN.Easing.Linear.None);
 
         // if Second Point is disjoint, do not UPDATE tween to next Point.
         if (this.walkthroughState.points[nextIndex].disjointMode === true) {
-          this.tweenList[i].onStart(() => {
-            this.camera.position.set(origin.x, origin.y, origin.z);
-          })
-          .onComplete(() => {
+          this.tweenList[i].onComplete(() => {
             this.camera.position.set(destination.x, destination.y, destination.z);
           });
         } else {
@@ -175,17 +175,10 @@ class ModelScene {
       }
     }
 
-    // const lastTweenIndex = this.tweenList.length;
-    // this.tweenList[lastTweenIndex - 1].onComplete(() => {
-    //   console.log('Complete');
-    //   this._toggleStartPlayback();
-    // });
-
     if (numTweenObjRequire > 0) {
       this.tweenList[0].start();
     }
   }
-
 
   /**
    * Frame updater function
@@ -211,6 +204,7 @@ class ModelScene {
   }
 
   _toggleStartPlayback() {
+    // callback(ModelCanvas._onPlaybackCompleted());
     this.walkthroughState.startPlayback = !this.walkthroughState.startPlayback;
 
     // return {
