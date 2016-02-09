@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Open Source 3D Model Web Gallery",
   "scripts": {
-    "lint": "eslint src/** || true",
-    "lint-ci": "eslint src/**",
+    "lint": "eslint src/** tests/** || true",
+    "lint-ci": "eslint src/** tests/**",
     "sasslint": "sass-lint \"src/webapp/app/styles/**/*.scss\" -v || true",
     "sasslint-ci": "sass-lint \"src/webapp/app/styles/**/*.scss\"",
     "test": "NODE_PATH=src mocha tests/**/*.spec.js --compilers js:babel-register --recursive --reporter spec --require tests/init.js || true",
