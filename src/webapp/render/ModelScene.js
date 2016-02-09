@@ -118,19 +118,57 @@ class ModelScene {
     this.controls = new OrbitControls(this.camera, dimensions);
   }
 
-  _initTween(origin, destination) {
-    console.log('ENTER!!!!', origin, destination);
-    TWEEN.removeAll();
-    this.tweenA = new TWEEN.Tween(origin)
-    .to(destination, 2000)
-    .easing(TWEEN.Easing.Quadratic.In)
-    .onUpdate(() => {
-      this.camera.position.set(origin.x, origin.y, origin.z);
-    })
-    .onComplete(() => {
-      this._toggleStartPlayback();
-    })
-    .start();
+  _initTween() {
+// Analyse how many Tween Obj is require
+    const numTweenObjRequire = this.walkthroughState.index[1] - this.walkthroughState.index[0];
+
+    if (numTweenObjRequire > 0) {
+      TWEEN.removeAll();
+      let firstIndex = this.walkthroughState.index[0];
+      let nextIndex;
+
+      // Create Tween Obj
+      for (let i = 0; i < numTweenObjRequire; i++) {
+        firstIndex = firstIndex + i;
+        nextIndex = firstIndex + 1;
+
+        const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
+        const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
+        const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
+        const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
+
+        const xDest = this.walkthroughState.points[nextIndex].pos.x;
+        const yDest = this.walkthroughState.points[nextIndex].pos.y;
+        const zDest = this.walkthroughState.points[nextIndex].pos.z;
+        const destination = { x: xDest, y: yDest, z: zDest };
+
+        this.tweenList[i] = new TWEEN.Tween(origin)
+        .to(destination, 2000)
+        .easing(TWEEN.Easing.Quadratic.In)
+        .onUpdate(() => {
+          this.camera.position.set(origin.x, origin.y, origin.z);
+        });
+
+        if (i === this.walkthroughState.index[1]) {
+          this.tweenList[i].onComplete(() => {
+            this._toggleStartPlayback();
+          });
+        }
+
+        firstIndex = 0;
+      }
+
+      // Chain up playback node
+      if (numTweenObjRequire > 1) {
+        for (let i = 1; i < numTweenObjRequire; i++) {
+          this.tweenList[i - 1].chain(this.tweenList[i]);
+        }
+      }
+    }
+
+    if (numTweenObjRequire > 0) {
+      this.tweenList[0].start();
+    }
   }
 
 
@@ -207,52 +245,7 @@ class ModelScene {
     this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
     this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
 
-    // Analyse how many Tween Obj is require
-    const numTweenObjRequire = this.walkthroughState.index[1] - this.walkthroughState.index[0];
-
-    if (numTweenObjRequire > 0) {
-      let firstIndex = this.walkthroughState.index[0];
-      let nextIndex;
-
-      // Create Tween Obj
-      for (let i = 0; i < numTweenObjRequire; i++) {
-        firstIndex = firstIndex + i;
-        nextIndex = firstIndex + 1;
-
-        const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
-        const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
-        const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
-        const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
-
-        const xDest = this.walkthroughState.points[nextIndex].pos.x;
-        const yDest = this.walkthroughState.points[nextIndex].pos.y;
-        const zDest = this.walkthroughState.points[nextIndex].pos.z;
-        const destination = { x: xDest, y: yDest, z: zDest };
-
-        this.tweenList[i] = new TWEEN.Tween(origin)
-        .to(destination, 2000)
-        .easing(TWEEN.Easing.Quadratic.In)
-        .onUpdate(() => {
-          this.camera.position.set(origin.x, origin.y, origin.z);
-        })
-        .onComplete(() => {
-          this._toggleStartPlayback();
-        });
-
-        firstIndex = 0;
-      }
-
-      // Chain up playback node
-      if (numTweenObjRequire > 1) {
-        for (let i = 1; i < numTweenObjRequire; i++) {
-          this.tweenList[i - 1].chain(this.tweenList[i]);
-        }
-      }
-    }
-
-    if (numTweenObjRequire > 0) {
-      this.tweenList[0].start();
-    }
+    this._initTween();
   }
 
   /**
