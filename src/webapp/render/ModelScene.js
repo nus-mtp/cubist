@@ -40,11 +40,13 @@ class ModelScene {
   };
 
   tweenList = [];
+  tweenLook = [];
 
   walkthroughState = {
     startPlayback: false,
     points: [],
-    index: [0, 0]
+    index: [0, 0],
+    viewIndex: -1
   };
 
   /**
@@ -127,7 +129,6 @@ class ModelScene {
       let firstIndex = this.walkthroughState.index[0];
       let nextIndex;
       let duration;
-      let destination;
 
       // Create Tween Obj
       for (let i = 0; i < numTweenObjRequire; i++) {
@@ -144,7 +145,18 @@ class ModelScene {
         const xDest = this.walkthroughState.points[nextIndex].pos.x;
         const yDest = this.walkthroughState.points[nextIndex].pos.y;
         const zDest = this.walkthroughState.points[nextIndex].pos.z;
-        destination = { x: xDest, y: yDest, z: zDest };
+        const destination = { x: xDest, y: yDest, z: zDest };
+
+        const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
+        const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
+        const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
+        const originLook = { x: xOrig, y: yOrig, z: zOrig };
+
+        const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
+        const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
+        const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
+        const destL = { x: xDestL, y: yDestL, z: zDestL };
+
 
         this.tweenList[i] = new TWEEN.Tween(origin)
         .to(destination, duration)
@@ -153,14 +165,31 @@ class ModelScene {
         })
         .easing(TWEEN.Easing.Linear.None);
 
+        this.tweenLook[i] = new TWEEN.Tween(originLook)
+        .to(destL, duration)
+        .onStart(() => {
+          const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+          this.controls.constraint.target = lookTarget;
+          //this.camera.lookAt(lookTarget);
+        })
+        .easing(TWEEN.Easing.Linear.None);
+
         // if Second Point is disjoint, do not UPDATE tween to next Point.
         if (this.walkthroughState.points[nextIndex].disjointMode === true) {
           this.tweenList[i].onComplete(() => {
             this.camera.position.set(destination.x, destination.y, destination.z);
+            const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
+            this.controls.constraint.target = lookTarget;
+            //this.camera.lookAt(lookTarget);
           });
         } else {
           this.tweenList[i].onUpdate(() => {
             this.camera.position.set(origin.x, origin.y, origin.z);
+            console.log('pos', origin);
+          });
+          this.tweenLook[i].onUpdate(() => {
+            const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+            this.controls.constraint.target = lookTarget;
           });
         }
 
@@ -171,12 +200,14 @@ class ModelScene {
       if (numTweenObjRequire > 1) {
         for (let i = 1; i < numTweenObjRequire; i++) {
           this.tweenList[i - 1].chain(this.tweenList[i]);
+          this.tweenLook[i - 1].chain(this.tweenLook[i]);
         }
       }
     }
 
     if (numTweenObjRequire > 0) {
       this.tweenList[0].start();
+      this.tweenLook[0].start();
     }
   }
 
@@ -191,6 +222,10 @@ class ModelScene {
     if (this.walkthroughState.startPlayback) {
       TWEEN.update();
     }
+
+    if (this.camera.position - this.walkthroughState.points[this.walkthroughState.index[1]] < 0.5) {
+      this._onPlaybackCompleted();
+    }
   }
 
   /**
@@ -203,9 +238,13 @@ class ModelScene {
     this.renderer.render(this.scene, this.camera);
   }
 
-  _toggleStartPlayback() {
+  _onPlaybackCompleted() {
+    console.log('Completed');
+    console.log('start state: ', this.walkthroughState.startPlayback);
     // callback(ModelCanvas._onPlaybackCompleted());
-    this.walkthroughState.startPlayback = !this.walkthroughState.startPlayback;
+    this.walkthroughState.startPlayback = false;
+    console.log('End state: ', this.walkthroughState.startPlayback);
+
 
     // return {
     //   walkthroughToggle: this.walkthroughState.startPlayback
@@ -259,6 +298,20 @@ class ModelScene {
     this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
 
     this._initTween();
+  }
+
+  updateWalkthroughViewIndex(state) {
+    Object.assign(this.walkthroughState, state);
+    this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
+    this.walkthroughState.viewIndex = state.viewIndex;
+
+    if (this.walkthroughState.viewIndex !== -1) {
+      const { pos } = this.walkthroughState.points[this.walkthroughState.viewIndex];
+      const { lookAt } = this.walkthroughState.points[this.walkthroughState.viewIndex];
+
+      this.camera.position.set(pos.x, pos.y, pos.z);
+      this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+    }
   }
 
   /**
@@ -375,12 +428,12 @@ class ModelScene {
 
   getCameraOrbit() {
     const coordinateFields = ['x', 'y', 'z'];
-    const lookAt = new THREE.Vector3(0, 0, -1);
-    lookAt.applyMatrix4(this.camera.matrixWorld);
+    const lookAt = this.controls.constraint.target;
+    // lookAt.applyMatrix4(this.camera.matrixWorld);
     return {
       position: _.pick(this.camera.position, coordinateFields),
       up: _.pick(this.camera.up, coordinateFields),
-      lookAt: _.pick(this.camera.lookAt, coordinateFields)
+      lookAt: _.pick(lookAt, coordinateFields)
     };
   }
 

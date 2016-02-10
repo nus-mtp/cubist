@@ -35,7 +35,9 @@ class ModelEditContainer extends PureComponent {
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     playbackPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughToggle: React.PropTypes.bool,
+    viewIndex: React.PropTypes.number,
     position: React.PropTypes.instanceOf(Immutable.Map),
+    lookAt: React.PropTypes.instanceOf(Immutable.Map),
     snapshots: React.PropTypes.instanceOf(Immutable.Map)
   };
 
@@ -106,12 +108,14 @@ class ModelEditContainer extends PureComponent {
 
   _onWalkthroughUpdate = (e, index) => {
     e.preventDefault();
-    const { dispatch, position } = this.props;
+    const { dispatch, position, lookAt } = this.props;
     const { x, y, z } = position.toJS();
+
+    const lookAtList = lookAt.toJS();
     const snapshotToken = StringHelper.randomToken();
 
     dispatch(batchActions([
-      WalkthroughActions.updatePoint(index, { x, y, z }, snapshotToken),
+      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, snapshotToken),
       SnapshotActions.triggerSnapshot(snapshotToken)
     ]));
   };
@@ -163,6 +167,12 @@ class ModelEditContainer extends PureComponent {
     dispatch(WalkthroughActions.playbackWalkthrough());
   };
 
+  _onWalkthroughViewPoint = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.viewWalkthroughPoint(index));
+  };
+
   render() {
     const { model, user, err, success } = this.props;
     const { object } = this.state;
@@ -180,8 +190,8 @@ class ModelEditContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            { this._renderWalkthroughSection() }
             { this._renderWalkthroughPlaybackSection() }
+            { this._renderWalkthroughSection() }
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
@@ -296,12 +306,14 @@ class ModelEditContainer extends PureComponent {
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { walkthroughPoints, position } = this.props;
+    const { walkthroughPoints, position, lookAt } = this.props;
     const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
     return (
       <div>
         <h3>Current Camera Coordinate:</h3>
         <p>{ `${x}, ${y}, ${z}` }</p>
+        <h3>Current Camera lookAt:</h3>
+        <p>{ `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }</p>
         <form>
           {
             walkthroughPoints.map((walkthroughPoint, index) => {
@@ -311,6 +323,7 @@ class ModelEditContainer extends PureComponent {
                   <h4>{ `Point ${index + 1}` }</h4>
                   <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
                     width="240px" height="135px" className="img-thumbnail"></img>
+                    { this._renderViewPointButton(index, walkthroughPoint) }
                   <p>
                     { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
                   </p>
@@ -334,6 +347,22 @@ class ModelEditContainer extends PureComponent {
         </button>
       </div>
     );
+  }
+
+  _renderViewPointButton(index, point) {
+    let canRender = true;
+
+    if (point.get('snapshotToken') === undefined) {
+      canRender = false;
+    }
+
+    if (canRender) {
+      return (
+        <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e, index) } >
+        View Point
+        </button>
+      );
+    }
   }
 
   _renderWalkthroughAnimationDropdown(index, point) {
@@ -524,6 +553,7 @@ export default connect((state) => {
     walkthroughPoints: state.WalkthroughStore.get('points'),
     playbackPoints: state.WalkthroughStore.get('playbackPoints'),
     walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
+    viewIndex: state.WalkthroughStore.get('viewIndex'),
 
     // Snapshot Data
     snapshots: state.SnapshotStore.get('snapshots'),

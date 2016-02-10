@@ -125,6 +125,7 @@ export default connect((state) => {
     walkthroughPoints: state.WalkthroughStore.get('points'),
     playbackPoints: state.WalkthroughStore.get('playbackPoints'),
     walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
+    viewIndex: state.WalkthroughStore.get('viewIndex'),
     resetViewToggle: state.RenderStore.get('resetViewToggle'),
     position: state.CameraStore.get('position'),
     up: state.CameraStore.get('up'),

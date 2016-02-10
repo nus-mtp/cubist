@@ -10,7 +10,8 @@ const normalTypes = {
   UPDATE_DURATION: null,
   PLAYBACK_WALKTHROUGH: null,
   SET_PLAYBACK_START: null,
-  SET_PLAYBACK_END: null
+  SET_PLAYBACK_END: null,
+  VIEW_WALKTHROUGH_POINT: null
 };
 
 // Promise Action Types

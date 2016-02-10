@@ -158,7 +158,7 @@ class OrbitConstraint {
     this.camera.position.copy(this.target).add(offset);
 
     this.camera.lookAt(this.target);
-
+    
     this._thetaDelta *= (1 - this.dampingFactor);
     this._phiDelta *= (1 - this.dampingFactor);
 
