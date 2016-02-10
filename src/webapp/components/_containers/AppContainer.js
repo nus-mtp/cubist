@@ -133,7 +133,7 @@ class AppContainer extends PureComponent {
           </div>
           <div className={ classnames(collapseClasses) }>
             {
-              user
+              user && user.get('_id')
               ? this._renderUserHeader()
               : this._renderPublicHeader()
             }
@@ -220,6 +220,6 @@ export default connect(state => {
   const users = state.UserStore.get('users');
 
   return {
-    user: users.get(currentUserId)
+    user: users.get(currentUserId, new Immutable.Map())
   };
 })(AppContainer);

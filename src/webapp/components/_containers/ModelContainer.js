@@ -25,8 +25,6 @@ class ModelContainer extends PureComponent {
     object: {}
   };
 
-  // This is only for testing
-  // Currently we are loading the model JSON data from the rendering server instead of storage service
   componentDidMount() {
     this.refreshModel(this.props.model);
   }
