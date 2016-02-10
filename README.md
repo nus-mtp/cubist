@@ -26,7 +26,7 @@ $ git clone git@github.com:nus-mtp/cubist.git
 $ npm install
 ```
 
-###For develoment environment
+###For development environment
 
 ```
 $ npm run api-dev
