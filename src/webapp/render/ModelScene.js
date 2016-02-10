@@ -179,7 +179,6 @@ class ModelScene {
             this.camera.position.set(destination.x, destination.y, destination.z);
             const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
             this.controls.constraint.target = lookTarget;
-            console.log('complete disjoint');
           });
         } else {
           this.tweenList[i].onUpdate(() => {
@@ -189,10 +188,6 @@ class ModelScene {
             const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
             this.controls.constraint.target = lookTarget;
           });
-
-          if (i === numTweenObjRequire - 1) {
-            console.log('complete');
-          }
         }
 
         firstIndex = 0;
@@ -247,11 +242,11 @@ class ModelScene {
   }
 
   _onPlaybackCompleted() {
-    console.log('Completed');
-    console.log('start state: ', this.walkthroughState.startPlayback);
+   // console.log('Completed');
+    // console.log('start state: ', this.walkthroughState.startPlayback);
     // callback(ModelCanvas._onPlaybackCompleted());
     this.walkthroughState.startPlayback = false;
-    console.log('End state: ', this.walkthroughState.startPlayback);
+    // console.log('End state: ', this.walkthroughState.startPlayback);
 
 
     // return {
