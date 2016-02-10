@@ -435,21 +435,24 @@ class ModelEditContainer extends PureComponent {
   }
 
   _renderAnimationDurationField(index) {
+    const { walkthroughPoints } = this.props;
     const { durations } = this.state;
 
-    return (
-      <div className="form-group">
-        <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
-          Duration
-        </label>
-        <input id={ `walkthrough-point-duration-${index}` }
-          value={ durations[index] }
-          type="text"
-          className="form-control"
-          placeholder="Enter Duration"
-          onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
-      </div>
-    );
+    if (index !== (walkthroughPoints.size - 1)) {
+      return (
+        <div className="form-group">
+          <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
+            Duration
+          </label>
+          <input id={ `walkthrough-point-duration-${index}` }
+            value={ durations[index] }
+            type="text"
+            className="form-control"
+            placeholder="Enter Duration"
+            onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+        </div>
+      );
+    }
   }
 
   _renderWalkthroughPlaybackSection() {

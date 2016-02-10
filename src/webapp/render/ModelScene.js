@@ -170,7 +170,6 @@ class ModelScene {
         .onStart(() => {
           const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
           this.controls.constraint.target = lookTarget;
-          //this.camera.lookAt(lookTarget);
         })
         .easing(TWEEN.Easing.Linear.None);
 
@@ -180,17 +179,20 @@ class ModelScene {
             this.camera.position.set(destination.x, destination.y, destination.z);
             const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
             this.controls.constraint.target = lookTarget;
-            //this.camera.lookAt(lookTarget);
+            console.log('complete disjoint');
           });
         } else {
           this.tweenList[i].onUpdate(() => {
             this.camera.position.set(origin.x, origin.y, origin.z);
-            console.log('pos', origin);
           });
           this.tweenLook[i].onUpdate(() => {
             const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
             this.controls.constraint.target = lookTarget;
           });
+
+          if (i === numTweenObjRequire - 1) {
+            console.log('complete');
+          }
         }
 
         firstIndex = 0;
@@ -209,6 +211,12 @@ class ModelScene {
       this.tweenList[0].start();
       this.tweenLook[0].start();
     }
+
+    // if (numTweenObjRequire > 0) {
+    //   this.tweenList[0].onComplete(() => {
+    //     console.log('Completed');
+    //   });
+    // }
   }
 
   /**
@@ -223,9 +231,9 @@ class ModelScene {
       TWEEN.update();
     }
 
-    if (this.camera.position - this.walkthroughState.points[this.walkthroughState.index[1]] < 0.5) {
-      this._onPlaybackCompleted();
-    }
+    // if (this.camera.position - this.walkthroughState.points[this.walkthroughState.index[1]] < 0.5) {
+    //   this._onPlaybackCompleted();
+    // }
   }
 
   /**
@@ -310,7 +318,8 @@ class ModelScene {
       const { lookAt } = this.walkthroughState.points[this.walkthroughState.viewIndex];
 
       this.camera.position.set(pos.x, pos.y, pos.z);
-      this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+      const lookTarget = new THREE.Vector3(lookAt.x, lookAt.y, lookAt.z);
+      this.controls.constraint.target = lookTarget;
     }
   }
 

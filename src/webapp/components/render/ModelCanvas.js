@@ -81,7 +81,8 @@ class ModelCanvas extends React.Component {
     }
 
     // Walkthrough Trigger
-    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && this.modelScene) {
+    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && nextProps.walkthroughToggle === true && this.modelScene) {
+      console.log('test');
       this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
       playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
