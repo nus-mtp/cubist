@@ -30,4 +30,6 @@ export default (app) => {
     modelUpload.array('modelFiles'),
     ModelController.request.createModel
   );
+
+  app.put('/model/:modelId/info', Authorisation.requireUser, ModelController.request.updateModelInfo);
 };

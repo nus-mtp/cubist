@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import { GravatarHelper } from 'webapp/helpers';
 
 const CLASS_NAME = 'cb-model-card';
+const fallBackImage = 'https://d13yacurqjgara.cloudfront.net/users/532989/screenshots/1700135/cube_1x.jpg';
 
 class ModelCard extends React.Component {
   static propTypes = {
@@ -14,7 +15,7 @@ class ModelCard extends React.Component {
   render() {
     const { model } = this.props;
     const thumbnailStyle = {
-      backgroundImage: `url(${model.getIn(['imageUrls', 0])})`
+      backgroundImage: `url(${model.getIn(['imageUrls', 0], fallBackImage)})`
     };
 
     return (

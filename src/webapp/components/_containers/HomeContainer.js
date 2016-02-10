@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import Immutable from 'immutable';
 import classnames from 'classnames';
 import React from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import PureComponent from 'react-pure-render/component';
@@ -17,6 +18,7 @@ const categories = process.env.BROWSER
   : requireServerJson(__dirname, '../../assets/model-category.json');
 
 const CLASS_NAME = 'cb-ctn-home';
+const fallBackImage = 'https://d13yacurqjgara.cloudfront.net/users/532989/screenshots/1700135/cube_1x.jpg';
 const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
@@ -133,14 +135,17 @@ class HomeContainer extends PureComponent {
         ];
       }
       const style = {
-        backgroundImage: `url(${model.getIn(['imageUrls', 0])})`
+        backgroundImage: `url(${model.getIn(['imageUrls', 0], fallBackImage)})`
       };
 
       return (
-        <div className={ classnames(itemClasses) } style={ style } key={ i }>
+        <Link to={ `/model/${model.get('_id')}` }
+          className={ classnames(itemClasses) }
+          style={ style }
+          key={ i }>
           <div className={ `${CLASS_NAME}-hero-random-item-overlay` }>
           </div>
-        </div>
+        </Link>
       );
     });
   }

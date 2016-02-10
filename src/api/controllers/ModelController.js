@@ -3,7 +3,7 @@ import _ from 'lodash';
 import path from 'path';
 
 import { ClientError, Constants, StringHelper } from 'common';
-import { ResponseHelper, TextureHelper, ModelHelper } from 'api/helpers';
+import { MongooseHelper, ResponseHelper, TextureHelper, ModelHelper } from 'api/helpers';
 import { Model, User } from 'api/models';
 
 const DEBUG_ENV = 'UserController';
@@ -31,10 +31,14 @@ ModelController.request.createModel = function (req, res) {
   ResponseHelper.handle(ModelController.promise.createModel, req, res, DEBUG_ENV);
 };
 
+ModelController.request.updateModelInfo = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.updateModelInfo, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 ModelController.promise.getModel = function (req) {
   const { modelId } = req.params;
-  return Model.getModelById(modelId);
+  return Model.getModelById(modelId, { populate: 'uploader' });
 };
 
 ModelController.promise.getTopModels = function () {
@@ -94,6 +98,27 @@ ModelController.promise.createModel = function (req) {
         metaData
       });
     });
+};
+
+ModelController.promise.updateModelInfo = function (req) {
+  const fields = ['title', 'category', 'description', 'tags'];
+  const { modelId } = req.params;
+  const modelInfo = _.pick(req.body, fields);
+
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate(modelInfo, { title: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.getModelById(modelId)
+    .then(MongooseHelper.checkExists)
+    .then(model => {
+      if (!model.uploader === req.user._id) {
+        return Promise.reject(new ClientError(Constants.ERROR_MODEL_NOT_OWNER));
+      }
+    })
+    .then(() => Model.updateModelInfo(modelId, modelInfo));
 };
 
 ModelController.helper.resizeTextures = function (files) {

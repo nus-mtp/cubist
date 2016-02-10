@@ -11,8 +11,14 @@ import { ModelViewer } from '../model';
 import { StringHelper } from 'common';
 import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
+import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
 const CLASS_NAME = 'cb-ctn-model';
+
+const MODEL_TITLE_FIELD = 'title';
+const MODEL_DESC_FIELD = 'description';
+const MODEL_CATEGORY_FIELD = 'category';
+const MODEL_TAGS_FIELD = 'tags';
 
 class ModelEditContainer extends PureComponent {
   static fetchData({ dispatch, params }) {
@@ -21,7 +27,10 @@ class ModelEditContainer extends PureComponent {
 
   static propTypes = {
     model: React.PropTypes.instanceOf(Immutable.Map),
-    user: React.PropTypes.instanceOf(Immutable.Map)
+    user: React.PropTypes.instanceOf(Immutable.Map),
+    err: React.PropTypes.instanceOf(Immutable.Map),
+    success: React.PropTypes.bool,
+    dispatch: React.PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -29,6 +38,16 @@ class ModelEditContainer extends PureComponent {
 
     this.state = {
       object: {},
+
+      // Model Info
+      modelInfoData: {
+        [MODEL_TITLE_FIELD]: props.model.get(MODEL_TITLE_FIELD),
+        [MODEL_DESC_FIELD]: props.model.get(MODEL_DESC_FIELD),
+        [MODEL_CATEGORY_FIELD]: props.model.get(MODEL_CATEGORY_FIELD, ''),
+        [MODEL_TAGS_FIELD]: props.model.get(MODEL_TAGS_FIELD).toJS().join(', ')
+      },
+
+      // Walkthrough
       durations: props.walkthroughPoints.map(p => p.get('duration'))
     };
   }
@@ -47,7 +66,31 @@ class ModelEditContainer extends PureComponent {
         durations: nextProps.walkthroughPoints.map(p => p.get('duration')).toJS()
       });
     }
+
+    if (nextProps.model !== this.props.model) {
+      this.setState({
+        modelInfoData: {
+          [MODEL_TITLE_FIELD]: nextProps.model.get(MODEL_TITLE_FIELD),
+          [MODEL_DESC_FIELD]: nextProps.model.get(MODEL_DESC_FIELD),
+          [MODEL_CATEGORY_FIELD]: nextProps.model.get(MODEL_CATEGORY_FIELD),
+          [MODEL_TAGS_FIELD]: nextProps.model.get(MODEL_TAGS_FIELD).toJS().join(', ')
+        }
+      });
+    }
   }
+
+  _onModelInfoInputChange = (fieldId, value) => {
+    const modelInfoData = _.cloneDeep(this.state.modelInfoData);
+    modelInfoData[fieldId] = value;
+    this.setState({ modelInfoData });
+  };
+
+  _onModelInfoUpdateFormSubmit = (e) => {
+    e.preventDefault();
+    const { dispatch, model } = this.props;
+    const { modelInfoData } = this.state;
+    dispatch(ModelActions.updateModelInfo(model.get('_id'), modelInfoData));
+  };
 
   _onWalkthroughAdd = (e) => {
     e.preventDefault();
@@ -95,7 +138,7 @@ class ModelEditContainer extends PureComponent {
   };
 
   render() {
-    const { model, user } = this.props;
+    const { model, user, err, success } = this.props;
     const { object } = this.state;
     const viewerProps = {
       object,
@@ -114,34 +157,117 @@ class ModelEditContainer extends PureComponent {
             { this._renderWalkthroughSection() }
           </div>
           <div className="col-md-4">
-            {
-              isUploader &&
-              <button className="btn btn-success btn-block cb-margin-bottom-10px">
-                SAVE
-              </button>
-            }
-            { this._renderUploaderCard() }
+            <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
+              {
+                err &&
+                <div className="alert alert-danger cb-margin-bottom-10px">
+                  { err.get('message') }
+                </div>
+              }
+              {
+                success &&
+                <div className="alert alert-success cb-margin-bottom-10px">
+                  Update Successfully
+                </div>
+              }
+              {
+                isUploader &&
+                <button type="submit" className="btn btn-success btn-block cb-margin-bottom-10px">
+                  SAVE
+                </button>
+              }
+              { this._renderUploaderCard() }
+              { this._renderModelInfoCard() }
+            </form>
           </div>
         </div>
       </div>
     );
   }
 
+  // -----------------------------------------------------
+  // -----------------MODEL INFO RENDER-------------------
+  // -----------------------------------------------------
   _renderUploaderCard() {
-    const { model } = this.props;
-    const avatarUrl = GravatarHelper.getGravatarUrl(model.getIn(['uploader', 'email']));
+    const { user } = this.props;
+    const avatarUrl = GravatarHelper.getGravatarUrl(user.get('email'));
 
     return (
       <div className={ `${CLASS_NAME}-user-card panel panel-default` }>
         <div className="panel-body cb-text-center">
           <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
           <hr />
-          <h4>{ model.getIn(['uploader', 'name']) }</h4>
+          <h4>{ user.get('name') }</h4>
         </div>
       </div>
     );
   }
 
+  _renderModelInfoCard() {
+    const { modelInfoData } = this.state;
+
+    return (
+      <div className={ `${CLASS_NAME}-model-info-card panel panel-default` }>
+        <div className="panel-body">
+          <h3>ABOUT THIS MODEL</h3>
+          <div className="form-group">
+            <label className="control-label" htmlFor={ `model-${MODEL_TITLE_FIELD}` }>
+              Model Name *
+            </label>
+            <input id={ `model-${MODEL_TITLE_FIELD}` }
+              type="text"
+              className="form-control"
+              placeholder="Model Name"
+              value={ modelInfoData[MODEL_TITLE_FIELD] }
+              onChange={ (e) => this._onModelInfoInputChange(MODEL_TITLE_FIELD, e.target.value) } />
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor={ `model-${MODEL_DESC_FIELD}` }>
+              Model Description
+            </label>
+            <textarea id={ `model-${MODEL_DESC_FIELD}` }
+              rows="8"
+              className="form-control"
+              value={ modelInfoData[MODEL_DESC_FIELD] }
+              onChange={ (e) => this._onModelInfoInputChange(MODEL_DESC_FIELD, e.target.value) } />
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor={ `model-${MODEL_CATEGORY_FIELD}` }>
+              Model Category
+            </label>
+            <select onChange={ e => this._onModelInfoInputChange(MODEL_CATEGORY_FIELD, e.target.value) }
+              value={ modelInfoData[MODEL_CATEGORY_FIELD] }
+              className="form-control"
+              id={ `model-${MODEL_CATEGORY_FIELD}` }>
+              <option value="">Select One</option>
+              <option value="character">Character</option>
+              <option value="game">Game</option>
+              <option value="animal">Animal</option>
+              <option value="scene">Scene</option>
+              <option value="vehicle">Vehicle</option>
+              <option value="object">Object</option>
+              <option value="architecture">Architecture</option>
+              <option value="misc">Misc</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor={ `model-${MODEL_TAGS_FIELD}` }>
+              Model Tags
+            </label>
+            <textarea id={ `model-${MODEL_TAGS_FIELD}` }
+              rows="3"
+              className="form-control"
+              value={ modelInfoData[MODEL_TAGS_FIELD] }
+              onChange={ (e) => this._onModelInfoInputChange(MODEL_TAGS_FIELD, e.target.value) } />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // -----------------------------------------------------
+  // ----------------- WALKTHROUGH RENDER-----------------
+  // -----------------------------------------------------
   _renderWalkthroughSection() {
     const { walkthroughPoints, position } = this.props;
     const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
@@ -270,6 +396,9 @@ class ModelEditContainer extends PureComponent {
     );
   }
 
+  // -----------------------------------------------------
+  // -----------------MODEL LOADER------------------------
+  // -----------------------------------------------------
   refreshModel(model) {
     if (model.get('urls').size > 1) {
       this.loadObjMtl(model);
@@ -304,6 +433,8 @@ export default connect((state) => {
   return {
     // Model Info
     model: state.ModelStore.getIn(['models', currentId]),
+    err: state.RequestStore.getIn(['err', REQ_PUT_UPDATE_MODEL_INFO]),
+    success: state.RequestStore.getIn(['success', REQ_PUT_UPDATE_MODEL_INFO]),
 
     // Viewer Data
     wireframe: state.RenderStore.get('wireframe'),

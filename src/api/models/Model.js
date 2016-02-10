@@ -8,7 +8,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 const Model = new Schema({
   title: { type: String, required: true, trim: true, index: true },
-  category: { type: String, required: true, default: 'Misc', index: true },
+  category: { type: String, required: true, default: 'misc', index: true },
   description: { type: String, trim: true, default: '' },
   tags: [{ type: String, trim: true }],
   uploader: { type: ObjectId, ref: 'User', required: true, index: true },
@@ -61,8 +61,8 @@ Model.statics.validateFilePaths = function (filePaths) {
   return null;
 };
 
-Model.statics.getModelById = function (modelId) {
-  return MongooseHelper.findOne(this, { _id: modelId }, { populate: 'uploader' });
+Model.statics.getModelById = function (modelId, options = {}) {
+  return MongooseHelper.findOne(this, { _id: modelId }, options);
 };
 
 Model.statics.getLatestModels = function () {
@@ -108,6 +108,17 @@ Model.statics.createModel = function (model) {
   }
 
   return MongooseHelper.create(this, modelInfo);
+};
+
+Model.statics.updateModelInfo = function (modelId, info) {
+  const fields = ['title', 'category', 'description', 'tags'];
+  const modelInfo = _.pick(info, fields);
+  // Split tags into array
+  if (modelInfo.tags) {
+    modelInfo.tags = modelInfo.tags.split(',').map(tag => tag.trim());
+  }
+
+  return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
 };
 
 export default mongoose.model('Model', Model, 'Model');

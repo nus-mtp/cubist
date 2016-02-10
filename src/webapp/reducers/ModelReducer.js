@@ -6,7 +6,8 @@ import {
   REQ_GET_MODEL,
   REQ_GET_TOP_MODELS,
   REQ_GET_LATEST_MODELS,
-  REQ_POST_CREATE_MODEL
+  REQ_POST_CREATE_MODEL,
+  REQ_PUT_UPDATE_MODEL_INFO
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -75,6 +76,18 @@ export default ReducerHelper.createReducer(initialState, {
   },
 
   [REQ_POST_CREATE_MODEL](state, { promiseState, res }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const model = Immutable.fromJS(res.body);
+      nextState = nextState
+        .setIn(['models', model.get('_id')], model)
+        .set('modelId', model.get('_id'));
+    }
+
+    return nextState;
+  },
+
+  [REQ_PUT_UPDATE_MODEL_INFO](state, { promiseState, res }) {
     let nextState = state;
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const model = Immutable.fromJS(res.body);

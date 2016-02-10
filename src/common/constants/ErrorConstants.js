@@ -37,6 +37,7 @@ const ErrorConstants = {
   ERROR_MODEL_TITLE_REQUIRED: 'Model title is required',
   ERROR_MODEL_TITLE_MIN_LENGTH: `Model title length should be at least ${FieldRanges.MODEL_TITLE_MIN_LENGTH}`,
   ERROR_MODEL_TITLE_MAX_LENGTH: `Model title length should be at most ${FieldRanges.MODEL_TITLE_MAX_LENGTH}`,
+  ERROR_MODEL_NOT_OWNER: 'Model is not owned by this user account',
   ERROR_MODEL_OBJ_FILE_NOT_UNIQUE: 'There can only be one OBJ file',
   ERROR_MODEL_MTL_FILE_NOT_UNIQUE: 'There can only be one MTL file',
   ERROR_MODEL_MTL_TEXTURE_MISSING: 'Model MTL file misses some required textures',
