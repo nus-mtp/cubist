@@ -10,7 +10,8 @@ describe('Render Reducer', () => {
       wireframe: false,
       shadingMode: 0,
       autoRotate: false,
-      resetViewToggle: false
+      resetViewToggle: false,
+      playbackWalkthroughToggle: false
     }));
   });
 

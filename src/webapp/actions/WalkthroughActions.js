@@ -4,7 +4,11 @@ import {
   DELETE_POINT,
   TOGGLE_DISJOINT,
   UPDATE_ANIMATION,
-  UPDATE_DURATION
+  UPDATE_DURATION,
+  PLAYBACK_WALKTHROUGH,
+  SET_PLAYBACK_START,
+  SET_PLAYBACK_END,
+  VIEW_WALKTHROUGH_POINT
 } from './types';
 
 export default {
@@ -14,12 +18,13 @@ export default {
     };
   },
 
-  updatePoint(index, pos, snapshotToken) {
+  updatePoint(index, pos, lookAt, snapshotToken) {
     return {
       type: UPDATE_POINT,
       payload: {
         index,
         pos,
+        lookAt,
         snapshotToken
       }
     };
@@ -61,5 +66,39 @@ export default {
         duration
       }
     };
+  },
+
+  playbackWalkthrough() {
+    return {
+      type: PLAYBACK_WALKTHROUGH
+    };
+  },
+
+  setPlaybackStart(startIndex) {
+    return {
+      type: SET_PLAYBACK_START,
+      payload: {
+        startIndex
+      }
+    };
+  },
+
+  setPlaybackEnd(endIndex) {
+    return {
+      type: SET_PLAYBACK_END,
+      payload: {
+        endIndex
+      }
+    };
+  },
+
+  viewWalkthroughPoint(index) {
+    return {
+      type: VIEW_WALKTHROUGH_POINT,
+      payload: {
+        index
+      }
+    };
   }
+
 };

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
-import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
 import { batchActions } from 'redux-batched-actions';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
@@ -30,7 +30,15 @@ class ModelEditContainer extends PureComponent {
     user: React.PropTypes.instanceOf(Immutable.Map),
     err: React.PropTypes.instanceOf(Immutable.Map),
     success: React.PropTypes.bool,
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: React.PropTypes.func.isRequired,
+
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    playbackPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughToggle: React.PropTypes.bool,
+    viewIndex: React.PropTypes.number,
+    position: React.PropTypes.instanceOf(Immutable.Map),
+    lookAt: React.PropTypes.instanceOf(Immutable.Map),
+    snapshots: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   constructor(props) {
@@ -100,19 +108,23 @@ class ModelEditContainer extends PureComponent {
 
   _onWalkthroughUpdate = (e, index) => {
     e.preventDefault();
-    const { dispatch, position } = this.props;
+    const { dispatch, position, lookAt } = this.props;
     const { x, y, z } = position.toJS();
+
+    const lookAtList = lookAt.toJS();
     const snapshotToken = StringHelper.randomToken();
 
     dispatch(batchActions([
-      WalkthroughActions.updatePoint(index, { x, y, z }, snapshotToken),
+      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, snapshotToken),
       SnapshotActions.triggerSnapshot(snapshotToken)
     ]));
   };
 
   _onWalkthroughDelete = (e, index) => {
     e.preventDefault();
+    const lol = this.props.walkthroughPoints;
     const { dispatch } = this.props;
+    dispatch(lol);
     dispatch(WalkthroughActions.deletePoint(index));
   };
 
@@ -137,6 +149,30 @@ class ModelEditContainer extends PureComponent {
     dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
   };
 
+  _onWalkthroughSetStart = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.setPlaybackStart(index));
+  };
+
+  _onWalkthroughSetEnd = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.setPlaybackEnd(index));
+  };
+
+  _onWalkthroughPlayback = (e) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.playbackWalkthrough());
+  };
+
+  _onWalkthroughViewPoint = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.viewWalkthroughPoint(index));
+  };
+
   render() {
     const { model, user, err, success } = this.props;
     const { object } = this.state;
@@ -154,6 +190,7 @@ class ModelEditContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
+            { this._renderWalkthroughPlaybackSection() }
             { this._renderWalkthroughSection() }
           </div>
           <div className="col-md-4">
@@ -269,12 +306,14 @@ class ModelEditContainer extends PureComponent {
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { walkthroughPoints, position } = this.props;
+    const { walkthroughPoints, position, lookAt } = this.props;
     const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
     return (
       <div>
         <h3>Current Camera Coordinate:</h3>
         <p>{ `${x}, ${y}, ${z}` }</p>
+        <h3>Current Camera lookAt:</h3>
+        <p>{ `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }</p>
         <form>
           {
             walkthroughPoints.map((walkthroughPoint, index) => {
@@ -284,6 +323,7 @@ class ModelEditContainer extends PureComponent {
                   <h4>{ `Point ${index + 1}` }</h4>
                   <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
                     width="240px" height="135px" className="img-thumbnail"></img>
+                    { this._renderViewPointButton(index, walkthroughPoint) }
                   <p>
                     { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
                   </p>
@@ -307,6 +347,22 @@ class ModelEditContainer extends PureComponent {
         </button>
       </div>
     );
+  }
+
+  _renderViewPointButton(index, point) {
+    let canRender = true;
+
+    if (point.get('snapshotToken') === undefined) {
+      canRender = false;
+    }
+
+    if (canRender) {
+      return (
+        <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e, index) } >
+        View Point
+        </button>
+      );
+    }
   }
 
   _renderWalkthroughAnimationDropdown(index, point) {
@@ -379,21 +435,71 @@ class ModelEditContainer extends PureComponent {
   }
 
   _renderAnimationDurationField(index) {
+    const { walkthroughPoints } = this.props;
     const { durations } = this.state;
 
-    return (
-      <div className="form-group">
-        <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
-          Duration
-        </label>
-        <input id={ `walkthrough-point-duration-${index}` }
-          value={ durations[index] }
-          type="text"
-          className="form-control"
-          placeholder="Enter Duration"
-          onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
-      </div>
-    );
+    if (index !== (walkthroughPoints.size - 1)) {
+      return (
+        <div className="form-group">
+          <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
+            Duration
+          </label>
+          <input id={ `walkthrough-point-duration-${index}` }
+            value={ durations[index] }
+            type="text"
+            className="form-control"
+            placeholder="Enter Duration"
+            onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+        </div>
+      );
+    }
+  }
+
+  _renderWalkthroughPlaybackSection() {
+    const { walkthroughPoints, playbackPoints, walkthroughToggle } = this.props;
+    const startIndex = playbackPoints.first();
+    const endIndex = playbackPoints.last();
+    let disableStatus = false;
+    let buttonTitle = 'Play Walkthrough';
+
+    if (walkthroughToggle) {
+      buttonTitle = 'Stop Walkthrough';
+    }
+
+    if (startIndex === endIndex || startIndex > endIndex) {
+      disableStatus = true;
+    }
+
+    if (walkthroughPoints.count() > 1) {
+      return (
+        <div><p></p>
+        Playback From
+         <SplitButton title={ `${startIndex + 1}` } pullRight id="split-button-pull-right" >
+          { walkthroughPoints.map((walkthroughPoint, index) =>
+            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+              onClick={ e => this._onWalkthroughSetStart(e, index) } >
+              { `${index + 1}` }
+            </MenuItem>
+          ) }
+        </SplitButton>
+         To
+        <SplitButton title={ `${endIndex + 1}` } pullRight id="split-button-pull-right" >
+          { walkthroughPoints.map((walkthroughPoint, index) =>
+            <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
+              onClick={ e => this._onWalkthroughSetEnd(e, index) } >
+              { `${index + 1}` }
+            </MenuItem>
+          ) }
+        </SplitButton>
+        <p>
+          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) }
+            disabled={ disableStatus } >
+          { buttonTitle }
+          </button>
+        </p>
+        </div>
+      );
+    }
   }
 
   // -----------------------------------------------------
@@ -448,6 +554,9 @@ export default connect((state) => {
 
     // Walkthrough Data
     walkthroughPoints: state.WalkthroughStore.get('points'),
+    playbackPoints: state.WalkthroughStore.get('playbackPoints'),
+    walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
+    viewIndex: state.WalkthroughStore.get('viewIndex'),
 
     // Snapshot Data
     snapshots: state.SnapshotStore.get('snapshots'),

@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import Dimensions from 'react-dimensions';
 import _ from 'lodash';
+import Immutable from 'immutable';
 
-import { CameraActions, SnapshotActions } from 'webapp/actions';
+import { CameraActions, SnapshotActions, WalkthroughActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
@@ -24,7 +25,11 @@ class ModelCanvas extends React.Component {
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
     snapshotToken: React.PropTypes.string,
-    resetViewToggle: React.PropTypes.bool
+    resetViewToggle: React.PropTypes.bool,
+    playbackPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
+    walkthroughToggle: React.PropTypes.bool,
+    viewIndex: React.PropTypes.number
   };
 
   static defaultProps = {
@@ -69,15 +74,37 @@ class ModelCanvas extends React.Component {
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
     }
+
     // Snapshot Trigger
-    if (nextProps.snapshotToken !== this.props.snapshotToken) {
+    if (nextProps.snapshotToken !== this.props.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
+
+    // Walkthrough Trigger
+    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && nextProps.walkthroughToggle === true && this.modelScene) {
+      console.log('test');
+      this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
+      playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
+    }
+    if (nextProps.viewIndex !== this.props.viewIndex && this.modelScene) {
+      const { dispatch } = this.props;
+      this.modelScene.updateWalkthroughViewIndex({ walkthroughPoints: nextProps.walkthroughPoints, viewIndex: nextProps.viewIndex });
+      dispatch(WalkthroughActions.viewWalkthroughPoint(-1));
+    }
+
+    // this.modelScene._onPlaybackCompleted(() => {
+    //   this._onPlaybackCompleted();
+    // });
   }
 
   componentWillUnmount() {
     this.modelScene.dispose();
   }
+
+  // _onPlaybackCompleted = (event) => {
+  //   const { dispatch } = this.props;
+  //   dispatch(WalkthroughActions.playbackWalkthrough());
+  // };
 
   _onCameraOrbit(camera) {
     const { dispatch } = this.props;
@@ -119,6 +146,12 @@ class ModelCanvas extends React.Component {
     // Snapshot Data Computation Logic
     const snapshotData = ReactDOM.findDOMNode(this.refs.sceneCanvas).toDataURL();
     dispatch(SnapshotActions.snapshotSuccess(token, snapshotData));
+  }
+
+  _onPlaybackCompleted() {
+    console.log(this.modelScene.walkthroughState.startPlayback);
+    // const { dispatch } = this.props;
+    // dispatch(WalkthroughActions.playbackWalkthrough());
   }
 
   render() {
