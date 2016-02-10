@@ -1,7 +1,6 @@
 import Immutable from 'immutable';
 
-import { Constants } from 'common';
-import { StringHelper } from 'webapp/helpers';
+import { Constants, StringHelper } from 'common';
 import { NAVIGATE_START, NAVIGATE_COMPLETE } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -24,11 +23,14 @@ export default function (state = initialState, action) {
     const id = StringHelper.randomToken();
     return currentState
       .set('navigateId', id)
-      .update('navigateMap', m => m.set(id, new Immutable.List()));
+      .set('pendings', new Immutable.Map())
+      .set('success', new Immutable.Map())
+      .set('err', new Immutable.Map())
+      .setIn(['navigateMap', id], new Immutable.List());
   } else if (action.type === NAVIGATE_COMPLETE) {
     return currentState
       .set('navigateId', null)
-      .update('navigateMap', m => m.clear());
+      .set('navigateMap', new Immutable.Map());
   }
 
   // Return current state if it is not a request action
@@ -42,22 +44,23 @@ export default function (state = initialState, action) {
     nextState = nextState
       .updateIn(
         ['navigateMap', navigateId],
-        l => l.push({ ...rest, promiseState: Constants.PROMISE_STATE_SUCCESS }));
+        l => l.push({ ...rest, promiseState: Constants.PROMISE_STATE_SUCCESS })
+      );
   } else if (action.promiseState === Constants.PROMISE_STATE_PENDING) {
     nextState = nextState
-      .update('pendings', map => map.set(action.type, true))
-      .update('success', map => map.delete(action.type))
-      .update('err', map => map.delete(action.type));
+      .setIn(['pendings', action.type], true)
+      .deleteIn(['success', action.type])
+      .deleteIn(['err', action.type]);
   } else if (action.promiseState === Constants.PROMISE_STATE_SUCCESS) {
     nextState = nextState
-      .update('pendings', map => map.delete(action.type))
-      .update('success', map => map.set(action.type, true))
-      .update('err', map => map.delete(action.type));
+      .setIn(['success', action.type], true)
+      .deleteIn(['pendings', action.type])
+      .deleteIn(['err', action.type]);
   } else if (action.promiseState === Constants.PROMISE_STATE_FAILURE) {
     nextState = nextState
-      .update('pendings', map => map.delete(action.type))
-      .update('success', map => map.delete(action.type))
-      .update('err', map => map.set(action.type, Immutable.fromJS(action.res.body)));
+      .setIn(['err', action.type], Immutable.fromJS(action.res.body))
+      .deleteIn(['pendings', action.type])
+      .deleteIn(['success', action.type]);
   }
 
   if (!Immutable.Map.isMap(nextState) && !Immutable.List.isList(nextState)) {

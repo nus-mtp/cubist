@@ -1,6 +1,6 @@
 .cb-ctn-app {
-  height: 100%;
   position: relative;
+  height: 100%;
 }
 
 // NavBar
@@ -9,12 +9,12 @@
 }
 
 .cb-ctn-app-navbar-home {
-  transition: background-color .3s ease;
+  transition: background-color .15s ease;
 }
 
 .cb-ctn-app-navbar-home-top {
-  background-color: transparent;
   border: 0;
+  background-color: transparent;
 }
 
 // NavBar Brand
@@ -28,8 +28,32 @@
 
 // NavBar Button
 .cb-ctn-app-navbar-login {
-  margin-left: 10px;
   margin-right: 10px;
+  margin-left: 10px;
+}
+
+// NavBar Dropdown
+.cb-ctn-app-navbar-dropdown {
+  .dropdown-toggle span {
+    color: $cb-default;
+  }
+}
+
+.cb-ctn-app-navbar-dropdown-hometop {
+  &:hover,
+  &.open {
+    .dropdown-toggle {
+      background-color: rgba(0, 0, 0, 0.2) !important;
+    }
+  }
+
+  .dropdown-toggle:focus {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .dropdown-toggle span {
+    color: #fff;
+  }
 }
 
 // App Content

@@ -32,10 +32,10 @@ export default (apiClient, initialData = {}) => {
   }
 
   return compose(
-    applyMiddleware(...middlewares),
     reduxReactRouter({
       routes,
       createHistory
-    })
+    }),
+    applyMiddleware(...middlewares)
   )(createStore)(enableBatching(reducer), initialData);
 };

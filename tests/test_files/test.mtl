@@ -1,0 +1,50 @@
+# Blender MTL File: 'None'
+# Material Count: 4
+
+newmtl base1
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.588235 0.588235 0.588235
+Ks 0.115000 0.115000 0.115000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka empty1.jpg
+map_Kd empty2.jpg
+map_Ks somewhere/empty0.jpg
+
+newmtl frame1
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.584314 0.584314 0.584314
+Ks 0.055000 0.055000 0.055000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ks empty3.jpg
+map_ns empty4.jpg
+
+newmtl legs1
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.588235 0.588235 0.588235
+Ks 0.449020 0.449020 0.449020
+Ni 1.000000
+d 1.000000
+illum 2
+map_d empty5.jpg
+map_Bump empty6.jpg
+
+newmtl seat1
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.937255 0.658824 0.658824
+Ks 0.080000 0.080000 0.080000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ks empty7.jpg
+map_ns empty7.jpg
+disp empty7.jpg
+decal -o empty8.jpg
+bump empty9.jpg

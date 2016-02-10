@@ -2,6 +2,26 @@
   display: block;
 }
 
+.cb-relative {
+  position: relative;
+}
+
+.cb-text-center {
+  text-align: center;
+}
+
 .cb-align-right {
   float: right;
+}
+
+.cb-height-full {
+  height: 100%;
+}
+
+.cb-margin-right-10px {
+  margin-right: 10px !important;
+}
+
+.cb-margin-bottom-10px {
+  margin-bottom: 10px !important;
 }

@@ -20,7 +20,7 @@ describe('Reducer Helper', () => {
       expect(reducer(Map({ foo: 'bar' }), {})).to.equal(Map({ foo: 'bar' }));
     });
 
-    it('Should create a reducer map the current state to the next Immutable state', function() {
+    it('Should create a reducer map the current state to the next Immutable state', () => {
       const action = {
         type: 'TEST_ACTION'
       };

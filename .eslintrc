@@ -8,6 +8,7 @@
     "no-param-reassign": [2, { "props": false }],
     "no-cond-assign": 0,
     "guard-for-in": 0,
+    "no-loop-func": 0,
 
     /** ES6 **/
     "arrow-body-style": 0,

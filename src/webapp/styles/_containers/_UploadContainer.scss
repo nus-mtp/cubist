@@ -1,0 +1,15 @@
+.cb-ctn-upload {
+  min-height: 100%;
+  padding: 15px 50px;
+  background: $cb-light-gray;
+}
+
+.cb-ctn-upload-model-dropzone {
+  min-height: 500px;
+  margin-bottom: 25px;
+  padding: 50px 25px;
+  border-width: 2px;
+  border-style: dashed;
+  border-color: #666;
+  border-radius: 5px;
+}
