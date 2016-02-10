@@ -3,10 +3,12 @@ import _ from 'lodash';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { NavDropdown, MenuItem } from 'react-bootstrap';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 
 import { Logger } from 'common';
+import { GravatarHelper } from 'webapp/helpers';
 import { UserActions } from 'webapp/actions';
 
 const DEBUG_ENV = 'app-container';
@@ -72,7 +74,7 @@ class AppContainer extends PureComponent {
   }
 
   _renderBody() {
-    const { children, location } = this.props;
+    const { children, location, user } = this.props;
     const isHomePage = location.pathname === '/';
     const contentClasses = [
       'container-fluid',
@@ -84,7 +86,7 @@ class AppContainer extends PureComponent {
 
     return (
       <div className={ classnames(contentClasses) }>
-        { children }
+        { React.cloneElement(children, { user }) }
       </div>
     );
   }
@@ -125,13 +127,13 @@ class AppContainer extends PureComponent {
             <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
             </button>
-            <a href="/" className={ classnames(navBrandClasses) }>
+            <Link to="/" className={ classnames(navBrandClasses) }>
               Cubist
-            </a>
+            </Link>
           </div>
           <div className={ classnames(collapseClasses) }>
             {
-              user
+              user && user.get('_id')
               ? this._renderUserHeader()
               : this._renderPublicHeader()
             }
@@ -157,41 +159,58 @@ class AppContainer extends PureComponent {
     ];
 
     return (
-      <div className="navbar-right">
+      <ul className="nav navbar-nav navbar-right">
         <Link to="/register" className={ classnames(signUpClasses) }>
           SIGN UP
         </Link>
         <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
           LOG IN
         </Link>
-      </div>
+      </ul>
     );
   }
 
   _renderUserHeader() {
-    const { location, user } = this.props;
+    const { location } = this.props;
     const { isAtTop } = this.state;
     const isHomePage = location.pathname === '/';
 
-    const userClasses = [
-      'btn',
-      'navbar-btn',
-      `${CLASS_NAME}-navbar-user`,
+    const dropDownClasses = [
+      `${CLASS_NAME}-navbar-dropdown`,
       {
-        'btn-transparent': !(isHomePage && isAtTop),
-        'btn-transparent-alt': isHomePage & isAtTop
+        [`${CLASS_NAME}-navbar-dropdown-hometop`]: isHomePage & isAtTop
       }
     ];
 
-    return (
-      <div className="navbar-right">
-        <button className={ `${CLASS_NAME}-navbar-upload btn btn-success navbar-btn` }>
+    return [
+      <ul className="nav navbar-nav navbar-right" key={ 1 }>
+        <NavDropdown className={ classnames(dropDownClasses) }
+          title={ this._renderUserAvatar() } id="registeredDropdown">
+          <MenuItem eventKey="2">
+            Manage Profile
+          </MenuItem>
+          <MenuItem eventKey="2">
+            Settings
+          </MenuItem>
+          <MenuItem divider />
+          <MenuItem eventKey="3">
+            Log Out
+          </MenuItem>
+        </NavDropdown>
+      </ul>,
+      <ul className="nav navbar-nav navbar-right cb-margin-right-10px" key={ 2 }>
+        <Link to="/upload" className={ `${CLASS_NAME}-navbar-upload btn btn-success navbar-btn` }>
           UPLOAD
-        </button>
-        <button className={ classnames(userClasses) }>
-          { user.get('name') }
-        </button>
-      </div>
+        </Link>
+      </ul>
+    ];
+  }
+
+  _renderUserAvatar() {
+    const { user } = this.props;
+
+    return (
+      <img className="image-round" src={ GravatarHelper.getGravatarUrl(user.get('email')) } height="25" />
     );
   }
 }
@@ -201,6 +220,6 @@ export default connect(state => {
   const users = state.UserStore.get('users');
 
   return {
-    user: users.get(currentUserId)
+    user: users.get(currentUserId, new Immutable.Map())
   };
 })(AppContainer);

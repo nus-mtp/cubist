@@ -3,5 +3,6 @@ export default {
   ResponseHelper: require('./response'),
   SendgridHelper: require('./sendgrid'),
   TextureHelper: require('./texture'),
-  ModelHelper: require('./model')
+  ModelHelper: require('./model'),
+  StorageHelper: require('./storage')
 };

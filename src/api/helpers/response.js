@@ -1,6 +1,11 @@
 import { Logger, Constants } from 'common';
 
 export default {
+  handle(handler, req, res, debugEnv) {
+    handler(req)
+      .then(result => this.success(res, result))
+      .catch(err => this.error(res, err, debugEnv));
+  },
   // Error Server Response
   error: (res, err, debugEnv) => {
     Logger.error(err.stack, debugEnv);

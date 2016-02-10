@@ -8,7 +8,7 @@ describe('Model Helper', () => {
     it('Should give the right count when supplied with file url', () => {
       return ModelHelper.objVertexFaceCounter('tests/test_files/test.obj')
         .then(metaData => {
-          expect(metaData).deep.equal({ vertex: 8, face: 6 });
+          expect(metaData).deep.equal({ vertices: 8, faces: 6 });
         });
     });
   });
@@ -57,7 +57,7 @@ describe('Model Helper', () => {
         );
       return ModelHelper.mtlTexturesAvailable('foo.mtl', ['somewhere/empty.jpg'])
         .then(payload => {
-          expect(payload).deep.equal({ allAvailable: true, filenamesArr: ['somewhere/empty.jpg'] });
+          expect(payload).deep.equal({ hasRequiredTextures: true, hasRedundantTextures: false });
         });
     });
 
@@ -70,7 +70,7 @@ describe('Model Helper', () => {
       );
       return ModelHelper.mtlTexturesAvailable('foo.mtl', ['empty.jpg'])
         .then(payload => {
-          expect(payload).deep.equal({ allAvailable: false, filenamesArr: ['somewhere/empty.jpg'] });
+          expect(payload).deep.equal({ hasRequiredTextures: false, hasRedundantTextures: true });
         });
     });
   });

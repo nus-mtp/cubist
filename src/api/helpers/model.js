@@ -1,12 +1,13 @@
 import Promise from 'bluebird';
 import fs from 'fs';
 import readline from 'readline';
+import _ from 'lodash';
 
 export default {
   objVertexFaceCounter(objFilePath) {
     const metadata = {
-      vertex: 0,
-      face: 0
+      vertices: 0,
+      faces: 0
     };
     const rl = readline.createInterface({
       input: fs.createReadStream(objFilePath)
@@ -14,9 +15,9 @@ export default {
     rl.on('line', line => {
       const splitLine = line.split(' ');
       if (splitLine[0] === 'v') {
-        metadata.vertex += 1;
+        metadata.vertices += 1;
       } else if (splitLine[0] === 'f') {
-        metadata.face += 1;
+        metadata.faces += 1;
       }
     });
 
@@ -78,18 +79,27 @@ export default {
  * }
  */
   mtlTexturesAvailable(mtlFilePath, relativeTextureFilePaths) {
-    return this.mtlTexturePaths(mtlFilePath).then(filenames => {
+    return this.mtlTexturePaths(mtlFilePath).then(filePaths => {
       return new Promise(resolve => {
         const payload = {
-          allAvailable: true,
-          filenamesArr: filenames
+          hasRequiredTextures: true,
+          hasRedundantTextures: false
         };
-        for (let i = 0; i < filenames.length; i++) {
-          if (relativeTextureFilePaths.indexOf(filenames[i]) === -1) {
-            payload.allAvailable = false;
-            break;
+        const filePathMap = filePaths.reduce((map, filePath) => {
+          map[filePath] = true;
+          return map;
+        }, {});
+        relativeTextureFilePaths.forEach(textureFilePath => {
+          if (filePathMap[textureFilePath]) {
+            delete filePathMap[textureFilePath];
+          } else {
+            payload.hasRedundantTextures = true;
           }
+        });
+        if (!_.isEmpty(filePathMap)) {
+          payload.hasRequiredTextures = false;
         }
+
         resolve(payload);
       });
     });

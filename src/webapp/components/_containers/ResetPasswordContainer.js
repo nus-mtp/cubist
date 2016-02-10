@@ -5,17 +5,18 @@ import Immutable from 'immutable';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
+import PureComponent from 'react-pure-render/component';
 
 import { Logger } from 'common';
 import { UserActions, ServerActions } from 'webapp/actions';
 import { REQ_POST_USER_RESET_PASSWORD } from 'webapp/actions/types';
 
 const DEBUG_ENV = 'forget-password-container';
-const CLASS_NAME = 'cb-auth';
+const CLASS_NAME = 'cb-ctn-auth';
 
 const EMAIL_FIELD = 'email';
 
-class ResetPassword extends React.Component {
+class ResetPassword extends PureComponent {
   static fetchData({ dispatch }) {
     Logger.info('Fetch data', DEBUG_ENV);
     return dispatch(UserActions.me());

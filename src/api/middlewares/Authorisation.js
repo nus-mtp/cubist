@@ -7,7 +7,7 @@ import settings from 'api/config/settings';
 const DEBUG_ENV = 'Authorisation';
 
 export default {
-  checkUser: (req, res, next) => {
+  checkUser(req, res, next) {
     const token = req.cookies[Constants.TOKEN_KEY];
     if (token) {
       jwt.verify(token, settings.JWT_SECRET, (err, decoded) => {
@@ -21,7 +21,7 @@ export default {
     }
   },
 
-  requireUser: (req, res, next) => {
+  requireUser(req, res, next) {
     const token = req.cookies[Constants.TOKEN_KEY];
     if (!token) {
       ResponseHelper.error(
@@ -45,7 +45,7 @@ export default {
     }
   },
 
-  requireAdmin: (req, res, next) => {
+  requireAdmin(req, res, next) {
     const token = req.cookies[Constants.TOKEN_KEY];
     if (!token) {
       ResponseHelper.error(

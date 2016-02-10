@@ -8,22 +8,22 @@ export default {
     return mongoose.Types.ObjectId.isValid(str);
   },
 
-  checkExists: (obj) => {
+  checkExists: (obj, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) => {
     return new Promise((resolve, reject) => {
       if (obj) {
         resolve(obj);
       } else {
-        reject(new ClientError(Constants.ERROR_MONGOOSE_DID_NOT_EXIST));
+        reject(new ClientError(errorMessage));
       }
     });
   },
 
-  checkNil: (obj) => {
+  checkNil: (obj, errorMessage = Constants.ERROR_MONGOOSE_DID_EXIST) => {
     return new Promise((resolve, reject) => {
       if (!obj) {
         resolve();
       } else {
-        reject(new ClientError(Constants.ERROR_MONGOOSE_DID_EXIST));
+        reject(new ClientError(errorMessage));
       }
     });
   },
@@ -38,22 +38,22 @@ export default {
     });
   },
 
-  checkNotEmpty: (count) => {
+  checkNotEmpty: (count, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) => {
     return new Promise((resolve, reject) => {
       if (count > 0) {
         resolve();
       } else {
-        reject(new ClientError(Constants.ERROR_MONGOOSE_DID_NOT_EXIST));
+        reject(new ClientError(errorMessage));
       }
     });
   },
 
-  toObject: (obj) => {
+  toObject: (obj, errorMessage = Constants.ERROR_NOT_MONGOOSE_OBJECT) => {
     return new Promise((resolve, reject) => {
       if (obj.toObject) {
         resolve(obj.toObject());
       } else {
-        reject(new ClientError(Constants.ERROR_NOT_MONGOOSE_OBJECT));
+        reject(new ClientError(errorMessage));
       }
     });
   },
@@ -96,6 +96,12 @@ export default {
     if (options.lean) {
       request.lean();
     }
+    if (options.limit) {
+      request.limit(options.limit);
+    }
+    if (options.sort) {
+      request.sort(options.sort);
+    }
 
     return Promise.resolve(request.exec());
   },
@@ -110,6 +116,12 @@ export default {
     }
     if (options.lean) {
       request.lean();
+    }
+    if (options.limit) {
+      request.limit(options.limit);
+    }
+    if (options.sort) {
+      request.sort(options.sort);
     }
 
     return Promise.resolve(request.exec());

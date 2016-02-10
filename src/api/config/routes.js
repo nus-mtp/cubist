@@ -1,5 +1,10 @@
-import { Authorisation } from 'api/middlewares';
+import multer from 'multer';
+
+import { Authorisation, Util } from 'api/middlewares';
 import { UserController, ModelController } from 'api/controllers';
+import { StorageHelper } from 'api/helpers';
+
+const modelUpload = multer({ storage: StorageHelper.getModelStorage() });
 
 export default (app) => {
   // Authentication
@@ -15,4 +20,16 @@ export default (app) => {
 
   // Model
   app.get('/model/:modelId', ModelController.request.getModel);
+  app.get('/models/top', ModelController.request.getTopModels);
+  app.get('/models/latest', ModelController.request.getLatestModels);
+
+  app.post(
+    '/model',
+    Authorisation.requireUser,
+    Util.attachToken,
+    modelUpload.array('modelFiles'),
+    ModelController.request.createModel
+  );
+
+  app.put('/model/:modelId/info', Authorisation.requireUser, ModelController.request.updateModelInfo);
 };
