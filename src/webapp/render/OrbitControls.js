@@ -283,7 +283,7 @@ class OrbitControl extends Three.EventDispatcher {
         this._rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
         break;
 
-      case 2: // two-fingered touch: dolly
+      case 2: { // two-fingered touch: dolly
         if (this.enableZoom === false) {
           return;
         }
@@ -293,7 +293,7 @@ class OrbitControl extends Three.EventDispatcher {
         const distance = Math.sqrt(dx * dx + dy * dy);
         this._dollyStart.set(0, distance);
         break;
-
+      }
       case 3: // three-fingered touch: pan
         if (this.enablePan === false) {
           return;
@@ -341,7 +341,7 @@ class OrbitControl extends Three.EventDispatcher {
         this.update();
         break;
 
-      case 2: // two-fingered touch: dolly
+      case 2: {// two-fingered touch: dolly
         if (this.enableZoom === false) {
           return;
         }
@@ -366,7 +366,7 @@ class OrbitControl extends Three.EventDispatcher {
 
         this.update();
         break;
-
+      }
       case 3: // three-fingered touch: pan
 
         if (this.enablePan === false) {
