@@ -41,7 +41,7 @@ class AppContainer extends PureComponent {
     window.removeEventListener('scroll', this._onScrollThrottle);
   }
 
-  _onScrollThrottle = _.throttle(this._onScroll.bind(this), 50);
+  _onScrollThrottle = _.throttle(this._onScroll.bind(this), 250);
 
   _onScroll() {
     const { location } = this.props;
