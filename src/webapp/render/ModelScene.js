@@ -3,6 +3,8 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
+const TEXTURE_SUFFIX = '_small';
+
 let TWEEN;
 if (process.env.BROWSER) {
   TWEEN = require('tween.js');
@@ -29,8 +31,8 @@ class ModelScene {
   // Current Rendering State
   renderingState = {
     wireframe: false,
-    resizedTexture: false,
     shadingMode: 0,
+    resizedTexture: false,
     shading: THREE.SmoothShading
   };
   // Camera State
@@ -319,11 +321,6 @@ class ModelScene {
     }
   }
 
-  updateTextureState(state) {
-    // Object.assign(this.resizedTexture, state);
-    // this.updateSceneObjects();
-  }
-
   /**
    * Remove objects (models/meshes) currently displayed in the scene
    */
@@ -349,7 +346,7 @@ class ModelScene {
    */
   _getDisplayObjects() {
     const objects = [];
-    const { wireframe, shadingMode } = this.renderingState;
+    const { wireframe, shadingMode, resizedTexture } = this.renderingState;
     // Default Shading Mode
     if (shadingMode === 0 || 1) {
       objects.push(this.model);
@@ -402,6 +399,43 @@ class ModelScene {
         }
       });
     }
+
+    if (!resizedTexture) { // Texture is at original resolution
+      this.model.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          if (child.material.name) {
+            // Check suffix
+            const texturePath = child.material.map.image.src;
+            const endIndex = texturePath.lastIndexOf('.');
+            const suffix = texturePath.substring(endIndex - 6, endIndex);
+            // Replace texture if suffix match
+            // Precondition: every texture image has a resized version named with the same suffix
+            if (suffix === TEXTURE_SUFFIX) {
+              const newPath = texturePath.substring(0, endIndex - 6) + texturePath.substring(endIndex);
+              child.material.map.image.src = newPath;
+            }
+          }
+        }
+      });
+    } else {
+      this.model.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          if (child.material.name) {
+            // Check suffix
+            const texturePath = child.material.map.image.src;
+            const endIndex = texturePath.lastIndexOf('.');
+            const suffix = texturePath.substring(endIndex - 6, endIndex);
+            // Replace texture if suffix match
+            // Precondition: every texture image has a resized version named with the same suffix
+            if (suffix !== TEXTURE_SUFFIX) {
+              const newPath = texturePath.substring(0, endIndex) + TEXTURE_SUFFIX + texturePath.substring(endIndex);
+              child.material.map.image.src = newPath;
+            }
+          }
+        }
+      });
+    }
+
     return objects;
   }
 

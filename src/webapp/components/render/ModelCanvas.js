@@ -76,7 +76,7 @@ class ModelCanvas extends React.Component {
       this.modelScene.updateCameraState({ resetView: true });
     }
     if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
-      this.modelScene.updateTextureState({ resizedTexture: nextProps.resizedTexture });
+      this.modelScene.updateRenderingState({ resizedTexture: nextProps.resizedTexture });
     }
 
     // Snapshot Trigger
