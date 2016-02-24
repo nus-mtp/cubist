@@ -32,4 +32,6 @@ export default (app) => {
   );
 
   app.put('/model/:modelId/info', Authorisation.requireUser, ModelController.request.updateModelInfo);
+
+  app.get('/search', ModelController.request.searchModels);
 };

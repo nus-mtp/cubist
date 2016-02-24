@@ -12,7 +12,8 @@ import {
   ModelEditContainer,
   UploadContainer,
   RootContainer,
-  ErrorContainer
+  ErrorContainer,
+  SearchContainer
 } from 'webapp/components';
 
 export default (
@@ -20,6 +21,7 @@ export default (
     <Route path="/" component={ AppContainer }>
       <IndexRoute component={ HomeContainer } />
       <Route path="model/:modelId" component={ ModelContainer } />
+      <Route path="search" component={ SearchContainer } />
       <Route component={ AuthorisationContainer }>
         <Route path="upload" component={ UploadContainer } />
         <Route path="model/:modelId/edit" component={ ModelEditContainer } />

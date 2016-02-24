@@ -121,4 +121,16 @@ Model.statics.updateModelInfo = function (modelId, info) {
   return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
 };
 
+Model.statics.searchModels = function (searchString) {
+  const searchWords = searchString.split(/[ ,]+/);
+  const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
+  return MongooseHelper.find(
+    this,
+    {
+      title: { $regex: regExp }
+    },
+    {}
+  );
+};
+
 export default mongoose.model('Model', Model, 'Model');

@@ -9,5 +9,6 @@ export default {
   ModelEditContainer: require('./ModelEditContainer'),
   UploadContainer: require('./UploadContainer'),
   RootContainer: require('./RootContainer'),
-  ErrorContainer: require('./ErrorContainer')
+  ErrorContainer: require('./ErrorContainer'),
+  SearchContainer: require('./SearchContainer')
 };

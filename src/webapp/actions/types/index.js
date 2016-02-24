@@ -6,5 +6,6 @@ export default {
   ...require('./WalkthroughActionTypes'),
   ...require('./ModelActionTypes'),
   ...require('./UserActionTypes'),
-  ...require('./SnapshotActionTypes')
+  ...require('./SnapshotActionTypes'),
+  ...require('./SearchActionTypes')
 };
