@@ -1,5 +1,4 @@
 import { ROUTER_DID_CHANGE } from 'redux-router/lib/constants';
-import Qs from 'qs';
 import { batchActions } from 'redux-batched-actions';
 
 import { getDataDependencies, compareLocations } from 'webapp/utils';
@@ -17,7 +16,7 @@ export default store => next => action => {
   }
 
   const { components, location, params } = action.payload;
-  const query = Qs.parse(location.search);
+  const query = location.query;
 
   next({ type: NAVIGATE_START });
   // TODO: Add action to handle request pending and request failure
