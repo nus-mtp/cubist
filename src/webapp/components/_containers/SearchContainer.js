@@ -20,6 +20,7 @@ class SearchContainer extends PureComponent {
   };
 
   render() {
+    const { location } = this.props;
     const searchString = qs.parse(location.search.substring(1)).searchString;
     return (
       <div className={ CLASS_NAME }>
