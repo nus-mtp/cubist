@@ -21,6 +21,7 @@ class ModelCanvas extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
+    resizedTexture: React.PropTypes.bool,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
@@ -73,6 +74,9 @@ class ModelCanvas extends React.Component {
     }
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
+    }
+    if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
+      this.modelScene.updateTextureState({ resizedTexture: nextProps.resizedTexture });
     }
 
     // Snapshot Trigger

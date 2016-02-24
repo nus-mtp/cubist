@@ -29,6 +29,7 @@ class ModelScene {
   // Current Rendering State
   renderingState = {
     wireframe: false,
+    resizedTexture: false,
     shadingMode: 0,
     shading: THREE.SmoothShading
   };
@@ -316,6 +317,11 @@ class ModelScene {
       const lookTarget = new THREE.Vector3(lookAt.x, lookAt.y, lookAt.z);
       this.controls.constraint.target = lookTarget;
     }
+  }
+
+  updateTextureState(state) {
+    // Object.assign(this.resizedTexture, state);
+    // this.updateSceneObjects();
   }
 
   /**

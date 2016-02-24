@@ -6,7 +6,8 @@ import {
   SHADING_TOGGLE,
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
-  PLAY_WALKTHROUGH
+  PLAY_WALKTHROUGH,
+  TEXTURE_TOGGLE
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -14,7 +15,8 @@ const initialState = Immutable.fromJS({
   shadingMode: 0,
   autoRotate: false,
   resetViewToggle: false,
-  playbackWalkthroughToggle: false
+  playbackWalkthroughToggle: false,
+  resizedTexture: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -49,6 +51,13 @@ export default ReducerHelper.createReducer(initialState, {
   [PLAY_WALKTHROUGH]: (state) => {
     let nextState = state;
     nextState = nextState.set('playbackWalkthroughToggle', !nextState.get('playbackWalkthroughToggle'));
+
+    return nextState;
+  },
+
+  [TEXTURE_TOGGLE]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('resizedTexture', !nextState.get('resizedTexture'));
 
     return nextState;
   }
