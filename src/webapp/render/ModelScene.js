@@ -110,12 +110,12 @@ class ModelScene {
 
   _initLight() {
     // Main front light
-    this.frontLight = new THREE.PointLight(0xdddddd);
+    this.frontLight = new THREE.PointLight(0xaaaaaa);
     this.frontLight.castShadow = true;
     this.camera.add(this.frontLight);
 
     // Ambient light
-    const ambientLight = new THREE.AmbientLight(0x444444);
+    const ambientLight = new THREE.AmbientLight(0xaaaaaa);
     this.scene.add(ambientLight);
   }
 
@@ -341,6 +341,30 @@ class ModelScene {
       }
     });
   }
+
+  /**
+    * appends or remove the suffix for the resized texture
+  */
+  modifySuffix(texturePath, isAppend){
+    // Check suffix
+    const endIndex = texturePath.lastIndexOf('.');
+    const suffix = texturePath.substring(endIndex - 6, endIndex);
+    var newPath = texturePath;
+    // Replace texture if suffix match
+    // Precondition: every texture image has a resized version named with the same suffix
+    if (isAppend === false){
+      if (suffix === TEXTURE_SUFFIX) {
+        newPath = texturePath.substring(0, endIndex - 6) + texturePath.substring(endIndex);
+      }
+    } else {
+      if (suffix !== TEXTURE_SUFFIX) {
+        newPath = texturePath.substring(0, endIndex) + TEXTURE_SUFFIX + texturePath.substring(endIndex);
+      }
+    }
+    console.log('new path is: ', newPath);
+    return newPath;
+  }  
+
   /**
    * Get the objects to display based on this.model and rendering state
    */
@@ -404,15 +428,49 @@ class ModelScene {
       this.model.traverse(child => {
         if (child instanceof THREE.Mesh) {
           if (child.material.name) {
-            // Check suffix
-            const texturePath = child.material.map.image.src;
-            const endIndex = texturePath.lastIndexOf('.');
-            const suffix = texturePath.substring(endIndex - 6, endIndex);
-            // Replace texture if suffix match
-            // Precondition: every texture image has a resized version named with the same suffix
-            if (suffix === TEXTURE_SUFFIX) {
-              const newPath = texturePath.substring(0, endIndex - 6) + texturePath.substring(endIndex);
-              child.material.map.image.src = newPath;
+            // loop through each type of mapped image
+            for (let mapType = 0; mapType < 10; mapType++) {
+              switch (mapType) {
+                case 0: // texture map
+                  child.material.map.image.src = this.modifySuffix(child.material.map.image.src, false);
+                case 1: // bumpMap
+                  if (child.material.bumpMap)
+                    child.material.bumpMap.image.src = this.modifySuffix(child.material.bumpMap.image.src, false);
+                  break;
+                case 2: // normalMap
+                  if (child.material.normalMap)
+                    child.material.normalMap.image.src = this.modifySuffix(child.material.normalMap.image.src, false);
+                  break;
+                case 3: // lightMap
+                  if (child.material.lightMap)
+                    child.material.lightMap.image.src = this.modifySuffix(child.material.lightMap.image.src, false);
+                  break;
+                case 4: // ambient occlusion Map
+                  if (child.material.aoMap)
+                    child.material.aoMap.image.src = this.modifySuffix(child.material.aoMap.image.src, false);
+                  break;
+                case 5: // emissiveMap
+                  if (child.material.emissiveMap)
+                    child.material.emissiveMap.image.src = this.modifySuffix(child.material.emissiveMap.image.src, false);
+                  break;
+                case 6: // specularMap
+                  if (child.material.specularMap)
+                    child.material.specularMap.image.src = this.modifySuffix(child.material.specularMap.image.src, false);
+                  break;
+                case 7: // alphaMap
+                  if (child.material.alphaMap)
+                    child.material.alphaMap.image.src = this.modifySuffix(child.material.alphaMap.image.src, false);
+                  break;
+                case 8: // displacementMap
+                  if (child.material.displacementMap)
+                    child.material.displacementMap.image.src = this.modifySuffix(child.material.displacementMap.image.src, false);
+                  break;
+                case 9: // enviroment Map
+                  if (child.material.envMap)
+                    child.material.envMap.image.src = this.modifySuffix(child.material.envMap.image.src, false);
+                  break;
+                default:
+              }
             }
           }
         }
@@ -421,21 +479,54 @@ class ModelScene {
       this.model.traverse(child => {
         if (child instanceof THREE.Mesh) {
           if (child.material.name) {
-            // Check suffix
-            const texturePath = child.material.map.image.src;
-            const endIndex = texturePath.lastIndexOf('.');
-            const suffix = texturePath.substring(endIndex - 6, endIndex);
-            // Replace texture if suffix match
-            // Precondition: every texture image has a resized version named with the same suffix
-            if (suffix !== TEXTURE_SUFFIX) {
-              const newPath = texturePath.substring(0, endIndex) + TEXTURE_SUFFIX + texturePath.substring(endIndex);
-              child.material.map.image.src = newPath;
+            // loop through each type of mapped image
+            for (let mapType = 0; mapType < 10; mapType++) {
+              switch (mapType) {
+                case 0: // texture map
+                  child.material.map.image.src = this.modifySuffix(child.material.map.image.src, true);
+                case 1: // bumpMap
+                  if (child.material.bumpMap)
+                    child.material.bumpMap.image.src = this.modifySuffix(child.material.bumpMap.image.src, true);
+                  break;
+                case 2: // normalMap
+                  if (child.material.normalMap)
+                    child.material.normalMap.image.src = this.modifySuffix(child.material.normalMap.image.src, true);
+                  break;
+                case 3: // lightMap
+                  if (child.material.lightMap)
+                    child.material.lightMap.image.src = this.modifySuffix(child.material.lightMap.image.src, true);
+                  break;
+                case 4: // ambient occlusion Map
+                  if (child.material.aoMap)
+                    child.material.aoMap.image.src = this.modifySuffix(child.material.aoMap.image.src, true);
+                  break;
+                case 5: // emissiveMap
+                  if (child.material.emissiveMap)
+                    child.material.emissiveMap.image.src = this.modifySuffix(child.material.emissiveMap.image.src, true);
+                  break;
+                case 6: // specularMap
+                  if (child.material.specularMap)
+                    child.material.specularMap.image.src = this.modifySuffix(child.material.specularMap.image.src, true);
+                  break;
+                case 7: // alphaMap
+                  if (child.material.alphaMap)
+                    child.material.alphaMap.image.src = this.modifySuffix(child.material.alphaMap.image.src, true);
+                  break;
+                case 8: // displacementMap
+                  if (child.material.displacementMap)
+                    child.material.displacementMap.image.src = this.modifySuffix(child.material.displacementMap.image.src, true);
+                  break;
+                case 9: // enviroment Map
+                  if (child.material.envMap)
+                    child.material.envMap.image.src = this.modifySuffix(child.material.envMap.image.src, true);
+                  break;
+                default:
+              }
             }
           }
         }
       });
     }
-
     return objects;
   }
 
