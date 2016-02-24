@@ -62,6 +62,7 @@ class ModelContainer extends PureComponent {
               </Link>
             }
             { this._renderUploaderCard() }
+            { this._renderModelInfoCard() }
           </div>
         </div>
       </div>
@@ -74,10 +75,62 @@ class ModelContainer extends PureComponent {
 
     return (
       <div className={ `${CLASS_NAME}-user-card panel panel-default` }>
-        <div className="panel-body cb-text-center">
-          <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+        <div className="panel-body">
+          <h3>Uploader </h3>
           <hr />
-          <h4>{ model.getIn(['uploader', 'name']) }</h4>
+          <div className="cb-text-center">
+            <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+            <h4>{ model.getIn(['uploader', 'name']) }</h4>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  _renderModelInfoCard() {
+    const { model } = this.props;
+
+    return (
+      <div className={ `${CLASS_NAME}-info-card panel panel-default` }>
+        <div className="panel-body">
+          <h3>Model Info</h3>
+          <hr />
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Model Name
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('title') }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Faces
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'faces']) }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Vertices
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'vertices']) }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            External Texture
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'hasExternalTexture']) ? 'Yes' : 'No' }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Description
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('description') }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Category
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('category') }
+          </p>
         </div>
       </div>
     );
