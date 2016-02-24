@@ -15,6 +15,7 @@ class ModelViewer extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
+    resizedTexture: React.PropTypes.bool,
     dispatch: React.PropTypes.func.isRequired
   };
 
@@ -38,12 +39,18 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleResetView());
   };
 
+  _onToggleTextureButtonClick = () => {
+    const { dispatch } = this.props;
+    dispatch(RenderActions.toggleTexture());
+  };
+
   render() {
     return (
       <div className={ CLASS_NAME }>
         <div className="cb-relative">
           <ModelCanvas { ...this.props } />
           <div className={ `${CLASS_NAME}-options` }>
+            { this._renderTextureButton() }
             { this._renderShadingButton() }
             { this._renderAutoRotatebutton() }
             { this._renderWireframeButton() }
@@ -51,6 +58,25 @@ class ModelViewer extends React.Component {
           </div>
         </div>
       </div>
+    );
+  }
+
+  _renderTextureButton() {
+    const { resizedTexture } = this.props;
+    let buttonTitle;
+    // console.log('resizedTexture bool: ', resizedTexture);
+    if (resizedTexture === true) {
+      buttonTitle = 'HD';
+    } else { // if (resizedTexture === false)
+      buttonTitle = 'LD';
+    }
+
+    return (
+      <button type="button"
+        className="btn btn-transparent-alt"
+        onClick={ this._onToggleTextureButtonClick }>
+        { buttonTitle }
+      </button>
     );
   }
 
