@@ -10,6 +10,8 @@ class OBJMTLLoader {
     const mtlLoader = new MTLLoader(this.manager);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
+    // console.log('mtlurl: ', mtlurl);
+    // mtlLoader.load('/models/2x8h7z/test2.mtl', materials => {
     mtlLoader.load(mtlurl, materials => {
       const materialsCreator = materials;
       materialsCreator.preload();

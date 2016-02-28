@@ -1,4 +1,3 @@
-import Qs from 'qs';
 import Promise from 'bluebird';
 import React from 'react';
 import { ReduxRouter } from 'redux-router';
@@ -11,7 +10,7 @@ const DEBUG_ENV = 'app-render';
 
 export default (routerState, store) => {
   const { components, location, params } = routerState;
-  const query = Qs.parse(location.search);
+  const query = location.query;
   const dispatch = store.dispatch;
 
   return Promise.all(getDataDependencies(components, { dispatch, params, query }))
