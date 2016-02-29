@@ -1,5 +1,7 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
+import JSZip from 'jszip';
+import fs from 'fs';
 import path from 'path';
 
 import { ClientError, Constants, StringHelper } from 'common';
@@ -15,6 +17,7 @@ const ModelController = {
 };
 
 // ---------------------------------------------------------------------------- //
+
 ModelController.request.getModel = function (req, res) {
   ResponseHelper.handle(ModelController.promise.getModel, req, res, DEBUG_ENV);
 };
@@ -40,6 +43,7 @@ ModelController.request.searchModels = function (req, res) {
 };
 
 // ---------------------------------------------------------------------------- //
+
 ModelController.promise.getModel = function (req) {
   const { modelId } = req.params;
   return Model.getModelById(modelId, { populate: 'uploader' });
@@ -54,14 +58,18 @@ ModelController.promise.getLatestModels = function () {
 };
 
 ModelController.promise.createModel = function (req) {
+  const userId = req.user._id;
   const infoFields = ['title', 'category', 'description', 'tags'];
   const modelInfo = _.pick(req.body, infoFields);
   const filePaths = req.files.map(file => file.path);
+
+  // Extract urls to be saved in Model document
   const urls = req.files
     .filter(file => file.fieldname === 'modelFiles')
     .map(file => file.path.replace(`${path.resolve(__dirname, '../../../models')}/`, ''));
-  const userId = req.user._id;
+  const zipFilePath = path.resolve(__dirname, `../../../models/${req.requestToken}/model.zip`);
 
+  // Validate data error
   const error = User.validate({ _id: userId }, { _id: true })
     || Model.validate(modelInfo, { title: true })
     || Model.validateFilePaths(filePaths);
@@ -69,36 +77,18 @@ ModelController.promise.createModel = function (req) {
     return Promise.reject(new ClientError(error));
   }
 
-  return ModelController.helper.resizeTextures(req.files)
-    .then(() => {
-      const objMetaPromise = ModelController.helper.getObjMeta(
-        filePaths.filter(filePath => filePath.endsWith('.obj'))[0]
-      );
-      const mtlFiles = filePaths.filter(filePath => filePath.endsWith('.mtl'));
-      const textureFiles = filePaths.filter(filePath => {
-        return !filePath.endsWith('.mtl') && !filePath.endsWith('.obj');
-      });
-      if (mtlFiles.length === 0) {
-        return objMetaPromise;
-      }
-
-      return Promise.all([
-        objMetaPromise,
-        ModelController.helper.getMtlMeta(mtlFiles[0], textureFiles)
-      ]);
-    })
+  return Promise.all([
+    ModelController.helper.resizeTextures(req.files),
+    ModelController.helper.extractMeta(filePaths),
+    ModelController.helper.zipModel(req.files, zipFilePath)
+  ])
     .then(res => {
-      if (Array.isArray(res)) {
-        return res.reduce((m, e) => Object.assign(m, e), {});
-      }
-
-      return res;
-    })
-    .then(metaData => {
+      const metaData = res[1];
       return Model.createModel({
         ...modelInfo,
         uploader: userId,
         urls,
+        zipUrl: `${req.requestToken}/model.zip`,
         metaData
       });
     });
@@ -125,15 +115,90 @@ ModelController.promise.updateModelInfo = function (req) {
     .then(() => Model.updateModelInfo(modelId, modelInfo));
 };
 
-ModelController.helper.resizeTextures = function (files) {
+ModelController.promise.searchModels = function (req) {
+  return Model.searchModels(req.query.searchString);
+};
+
+// ----------------------------------------------------------------------------//
+
+ModelController.helper.zipModel = function (files, zipFilePath) {
+  const zip = new JSZip();
+  const modelFiles = files.filter(file => {
+    return file.fieldname === 'modelFiles';
+  });
+
   return Promise.all(
-    files
-      .filter(file => file.fieldname === 'modelFiles' && StringHelper.isImagePath(file.path))
-      .map(file => {
-        const ext = path.extname(file.path);
-        return TextureHelper.resize(2, file.path, file.path.replace(`${ext}`, `@2${ext}`));
+    modelFiles.map(file => {
+      return new Promise((resolve, reject) => {
+        fs.readFile(file.path, (err, data) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(data);
+        });
       })
+        .then(fileData => {
+          return zip.file(file.filename, fileData);
+        });
+    })
+  )
+    .then(() => {
+      const buffer = zip.generate({ type: 'nodebuffer' });
+      return new Promise((resolve, reject) => {
+        fs.writeFile(zipFilePath, buffer, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+    });
+};
+
+ModelController.helper.resizeTextures = function (files) {
+  const textureFiles = files.filter(file => {
+    return file.fieldname === 'modelFiles' && StringHelper.isImagePath(file.path);
+  });
+  return Promise.all(
+    _.flatten(
+      textureFiles.map(file => {
+        const ext = path.extname(file.path);
+        return [
+          TextureHelper.resize(2, file.path, file.path.replace(`${ext}`, `@2${ext}`)),
+          TextureHelper.resize(3, file.path, file.path.replace(`${ext}`, `@3${ext}`)),
+          TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `@4${ext}`))
+        ];
+      })
+    )
   );
+};
+
+ModelController.helper.extractMeta = function (filePaths) {
+  let promise;
+  const objMetaPromise = ModelController.helper.getObjMeta(
+    filePaths.filter(filePath => filePath.endsWith('.obj'))[0]
+  );
+  const mtlFiles = filePaths.filter(filePath => filePath.endsWith('.mtl'));
+  const textureFiles = filePaths.filter(filePath => {
+    return !filePath.endsWith('.mtl') && !filePath.endsWith('.obj');
+  });
+  if (mtlFiles.length === 0) {
+    promise = objMetaPromise;
+  } else {
+    promise = Promise.all([
+      objMetaPromise,
+      ModelController.helper.getMtlMeta(mtlFiles[0], textureFiles)
+    ]);
+  }
+
+  return promise
+    .then(res => {
+      if (Array.isArray(res)) {
+        return res.reduce((m, e) => Object.assign(m, e), {});
+      }
+
+      return res;
+    });
 };
 
 ModelController.helper.getObjMeta = function (objFile) {
@@ -158,10 +223,6 @@ ModelController.helper.getMtlMeta = function (mtlFile, textureFiles) {
         hasExternalTexture: textureFiles.length > 0
       };
     });
-};
-
-ModelController.promise.searchModels = function (req) {
-  return Model.searchModels(req.query.searchString);
 };
 
 export default ModelController;

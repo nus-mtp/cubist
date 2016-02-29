@@ -3807,6 +3807,11 @@
         }
       }
     },
+    "jszip": {
+      "version": "2.5.0",
+      "from": "jszip@latest",
+      "resolved": "https://registry.npmjs.org/jszip/-/jszip-2.5.0.tgz"
+    },
     "jwa": {
       "version": "1.1.1",
       "from": "jwa@>=1.1.0 <2.0.0",

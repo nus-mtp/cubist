@@ -13,7 +13,9 @@ const Model = new Schema({
   tags: [{ type: String, trim: true }],
   uploader: { type: ObjectId, ref: 'User', required: true, index: true },
   urls: [{ type: String }],
+  zipUrl: { type: String },
   socialData: {
+    views: { type: Number, default: 0 },
     favorites: { type: Number, default: 0 }
   },
   metaData: {
@@ -98,6 +100,7 @@ Model.statics.createModel = function (model) {
     'socialData',
     'metaData',
     'uploader',
+    'zipUrl',
     'urls',
     'imageUrls'
   ];
