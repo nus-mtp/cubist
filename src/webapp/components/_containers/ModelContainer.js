@@ -63,6 +63,7 @@ class ModelContainer extends PureComponent {
             }
             { this._renderUploaderCard() }
             { this._renderModelInfoCard() }
+            { this._renderModelDownloadLink() }
           </div>
         </div>
       </div>
@@ -133,6 +134,16 @@ class ModelContainer extends PureComponent {
           </p>
         </div>
       </div>
+    );
+  }
+
+  _renderModelDownloadLink() {
+    const { model } = this.props;
+
+    return (
+      <a href={ `/models/${model.get('zipUrl')}` } className="btn btn-success btn-block">
+        DOWNLOAD MODEL
+      </a>
     );
   }
 
