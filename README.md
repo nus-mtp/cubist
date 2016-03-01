@@ -20,13 +20,14 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 * Install **MongoDB 3.0.0**
 
 ## Setup Instructions
-Clone the Github repository
+### Project Initialization
+ * Clone the Github repository
 
 ```
 $ git clone git@github.com:nus-mtp/cubist.git
 $ npm install
 ```
-### Project Initialization
+
 * If your system is OS X: 
   + `brew install homebrew/science/vips`
   + `sudo chown -R $(whoami):admin /usr/local`
