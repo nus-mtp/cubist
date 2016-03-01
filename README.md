@@ -19,12 +19,24 @@ With advances in 3D printing and 3D scanning technologies, there is an increasin
 * Install **NodeJS 5.2+**
 * Install **MongoDB 3.0.0**
 
-## Setup Instruction
+## Setup Instructions
+Clone the Github repository
 
 ```
 $ git clone git@github.com:nus-mtp/cubist.git
 $ npm install
 ```
+### Project Initialization
+* If your system is OS X: 
+  + `brew install homebrew/science/vips`
+  + `sudo chown -R $(whoami):admin /usr/local`
+  + `brew update && brew upgrade`
+* Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
+* Go to team's Google Drive and download `models.zip`
+* Extract to copy the `models` folder into the repo folder
+* Clear MongoDB database for `cubist-api-development` (if necessary)
+* Install Gulp globally by running: `npm install gulp -g`
+* Run script: `gulp script --path src/api/scripts/createData/index.js`
 
 ###For development environment
 
@@ -40,19 +52,7 @@ $ npm run api-prod
 $ npm run webapp-prod
 ```
 
-## Project Initialization
-* If your system is OS X: 
-  + `brew install homebrew/science/vips`
-  + `sudo chown -R $(whoami):admin /usr/local`
-  + `brew update && brew upgrade`
-* Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
-* Go to team's Google Drive and download `models.zip`
-* Extract to copy the `models` folder into the repo folder
-* Clear MongoDB database for `cubist-api-development` (if necessary)
-* Install Gulp globally by running: `npm install gulp -g`
-* Run script: `gulp script --path src/api/scripts/createData/index.js`
-
-## Development Instruction
+## Development Instructions
 * For every issue, work on a separate branch
 * For every commit, specify clearly the purpose of the commit in this format:
 
