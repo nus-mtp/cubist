@@ -224,6 +224,10 @@ class AppContainer extends PureComponent {
   }
 
   _renderSearchForm() {
+    const { location } = this.props;
+    if (location.pathname === '/browse') {
+      return (undefined);
+    }
     return (
       <div className="col-sm-4 pull-left">
         <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
@@ -255,7 +259,7 @@ class AppContainer extends PureComponent {
     const { dispatch } = this.props;
     const queryString = qs.stringify(
       { searchString: this.state.formData[SEARCH_FIELD] });
-    dispatch(pushState(null, '/search?' + queryString));
+    dispatch(pushState(null, '/browse?' + queryString));
   };
 }
 

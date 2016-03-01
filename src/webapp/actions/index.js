@@ -7,5 +7,5 @@ export default {
   ModelActions: require('./ModelActions'),
   UserActions: require('./UserActions'),
   SnapshotActions: require('./SnapshotActions'),
-  SearchActions: require('./SearchActions')
+  BrowseActions: require('./BrowseActions')
 };

@@ -4,7 +4,7 @@ const normalTypes = {
 };
 
 const promiseTypes = {
-  REQ_GET_SEARCH_RESULTS: null
+  REQ_GET_BROWSE_RESULTS: null
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

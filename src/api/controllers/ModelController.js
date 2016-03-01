@@ -38,8 +38,8 @@ ModelController.request.updateModelInfo = function (req, res) {
   ResponseHelper.handle(ModelController.promise.updateModelInfo, req, res, DEBUG_ENV);
 };
 
-ModelController.request.searchModels = function (req, res) {
-  ResponseHelper.handle(ModelController.promise.searchModels, req, res, DEBUG_ENV);
+ModelController.request.getBrowsePageModels = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getBrowsePageModels, req, res, DEBUG_ENV);
 };
 
 // ---------------------------------------------------------------------------- //
@@ -115,8 +115,8 @@ ModelController.promise.updateModelInfo = function (req) {
     .then(() => Model.updateModelInfo(modelId, modelInfo));
 };
 
-ModelController.promise.searchModels = function (req) {
-  return Model.searchModels(req.query.searchString);
+ModelController.promise.getBrowsePageModels = function (req) {
+  return Model.getBrowsePageModels(req.query.searchString);
 };
 
 // ----------------------------------------------------------------------------//
