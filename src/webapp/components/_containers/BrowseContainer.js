@@ -87,7 +87,7 @@ class BrowseContainer extends PureComponent {
     }
 
     return resultsModels.map((model, i) => (
-      <div className={ `${CLASS_NAME}-results col-md-4 col-sm-6 col-xs-12` } key={ i }>
+      <div className={ `${CLASS_NAME}-results col-md-3 col-sm-6 col-xs-12` } key={ i }>
         <ModelCard model={ model } />
       </div>
     ));
