@@ -124,15 +124,19 @@ Model.statics.updateModelInfo = function (modelId, info) {
   return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
 };
 
-Model.statics.searchModels = function (searchString) {
-  const searchWords = searchString.split(/[ ,]+/);
-  const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
+Model.statics.getBrowsePageModels = function (searchString) {
+  const query = {};
+  const options = { limit: 20 };
+
+  if (searchString) {
+    const searchWords = searchString.split(/[ ,]+/);
+    const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
+    query.title = regExp;
+  }
   return MongooseHelper.find(
     this,
-    {
-      title: { $regex: regExp }
-    },
-    {}
+    query,
+    options
   );
 };
 
