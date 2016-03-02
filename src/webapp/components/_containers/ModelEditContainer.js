@@ -208,7 +208,10 @@ class ModelEditContainer extends PureComponent {
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
             <h2>Snapshots</h2>
-          <SnapshotSlider snapshots={ model.get('imageUrls') } onSnapshotsAdd={ this._onSnapshotsAdd } />
+            <SnapshotSlider
+              isEditor
+              snapshots={ model.get('imageUrls') }
+              onSnapshotsAdd={ this._onSnapshotsAdd } />
             <h2>Walkthroughs</h2>
             { false && this._renderWalkthroughSection() }
             { false && this._renderWalkthroughPlaybackSection() }

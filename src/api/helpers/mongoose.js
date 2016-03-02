@@ -4,11 +4,11 @@ import mongoose from 'mongoose';
 import { Constants, ClientError } from 'common';
 
 export default {
-  isObjectId: (str) => {
+  isObjectId(str) {
     return mongoose.Types.ObjectId.isValid(str);
   },
 
-  checkExists: (obj, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) => {
+  checkExists(obj, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) {
     return new Promise((resolve, reject) => {
       if (obj) {
         resolve(obj);
@@ -18,7 +18,7 @@ export default {
     });
   },
 
-  checkNil: (obj, errorMessage = Constants.ERROR_MONGOOSE_DID_EXIST) => {
+  checkNil(obj, errorMessage = Constants.ERROR_MONGOOSE_DID_EXIST) {
     return new Promise((resolve, reject) => {
       if (!obj) {
         resolve();
@@ -28,17 +28,17 @@ export default {
     });
   },
 
-  checkEmpty: (count) => {
+  checkEmpty(count, errorMessage = Constants.ERROR_MONGOOSE_DID_EXIST) {
     return new Promise((resolve, reject) => {
       if (count === 0) {
         resolve();
       } else {
-        reject();
+        reject(new ClientError(errorMessage));
       }
     });
   },
 
-  checkNotEmpty: (count, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) => {
+  checkNotEmpty(count, errorMessage = Constants.ERROR_MONGOOSE_DID_NOT_EXIST) {
     return new Promise((resolve, reject) => {
       if (count > 0) {
         resolve();
@@ -48,7 +48,7 @@ export default {
     });
   },
 
-  toObject: (obj, errorMessage = Constants.ERROR_NOT_MONGOOSE_OBJECT) => {
+  toObject(obj, errorMessage = Constants.ERROR_NOT_MONGOOSE_OBJECT) {
     return new Promise((resolve, reject) => {
       if (obj.toObject) {
         resolve(obj.toObject());
@@ -58,7 +58,7 @@ export default {
     });
   },
 
-  create: (Schema, data) => {
+  create(Schema, data) {
     return new Promise((resolve, reject) => {
       Schema.create(data, (err, result) => {
         if (err) {
@@ -70,7 +70,7 @@ export default {
     });
   },
 
-  findOne: (Schema, query, options = {}) => {
+  findOne(Schema, query, options = {}) {
     const request = Schema.findOne(query);
     if (options.populate) {
       request.populate(options.populate);
@@ -85,7 +85,7 @@ export default {
     return Promise.resolve(request.exec());
   },
 
-  find: (Schema, query, options = {}) => {
+  find(Schema, query, options = {}) {
     const request = Schema.find(query);
     if (options.populate) {
       request.populate(options.populate);
@@ -106,7 +106,7 @@ export default {
     return Promise.resolve(request.exec());
   },
 
-  findOneAndUpdate: (Schema, query, update, updateOptions = {}, options = {}) => {
+  findOneAndUpdate(Schema, query, update, updateOptions = {}, options = {}) {
     const request = Schema.findOneAndUpdate(query, update, updateOptions);
     if (options.populate) {
       request.populate(options.populate);
@@ -124,6 +124,11 @@ export default {
       request.sort(options.sort);
     }
 
+    return Promise.resolve(request.exec());
+  },
+
+  update(Schema, query, update, updateOptions = {}) {
+    const request = Schema.update(query, update, updateOptions);
     return Promise.resolve(request.exec());
   },
 
@@ -145,7 +150,7 @@ export default {
     });
   },
 
-  batchUpsert: (Schema, docs) => {
+  batchUpsert(Schema, docs) {
     return new Promise((resolve, reject) => {
       const bulk = Schema.collection.initializeUnorderedBulkOp();
       docs.forEach((doc) => {
@@ -160,7 +165,7 @@ export default {
     });
   },
 
-  batchUpdate: (Schema, updateOps, isOrdered = false) => {
+  batchUpdate(Schema, updateOps, isOrdered = false) {
     return new Promise((resolve, reject) => {
       if (updateOps.length === 0) {
         return resolve();
