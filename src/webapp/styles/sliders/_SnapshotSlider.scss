@@ -1,0 +1,24 @@
+.cb-snapshot-slider {
+  margin-right: 25px;
+  margin-left: 25px;  
+  background: $cb-white;
+
+  .slick-prev:before,
+  .slick-next:before {
+    color: $cb-primary;
+    opacity: 0.9;
+  }
+}
+
+.cb-snapshot-slide-add {
+  height: 125px;
+  background: $cb-dark-gray;
+}
+
+.cb-snapshot-slide-add-button {
+  display: flex;
+  height: 100%;
+  font-size: 45px;
+  align-items: center;
+  justify-content: center;
+}
