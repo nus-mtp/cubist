@@ -1,7 +1,12 @@
 import validator from 'validator';
 
+const fallbackSnapshotUrl = 'https://d13yacurqjgara.cloudfront.net/users/532989/screenshots/1700135/cube_1x.jpg';
+
 export default {
   getSnapshotUrl(url) {
+    if (!url) {
+      return fallbackSnapshotUrl;
+    }
     if (validator.isURL(url)) {
       return url;
     }
