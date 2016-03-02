@@ -81,14 +81,17 @@ class ModelCanvas extends React.Component {
     }
 
     // Walkthrough Trigger
-    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle && nextProps.walkthroughToggle === true && this.modelScene) {
-      console.log('test');
+    if (nextProps.walkthroughToggle !== this.props.walkthroughToggle
+      && nextProps.walkthroughToggle === true && this.modelScene) {
       this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
       playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
     if (nextProps.viewIndex !== this.props.viewIndex && this.modelScene) {
       const { dispatch } = this.props;
-      this.modelScene.updateWalkthroughViewIndex({ walkthroughPoints: nextProps.walkthroughPoints, viewIndex: nextProps.viewIndex });
+      this.modelScene.updateWalkthroughViewIndex({
+        walkthroughPoints: nextProps.walkthroughPoints,
+        viewIndex: nextProps.viewIndex
+      });
       dispatch(WalkthroughActions.viewWalkthroughPoint(-1));
     }
 
@@ -149,9 +152,7 @@ class ModelCanvas extends React.Component {
   }
 
   _onPlaybackCompleted() {
-    console.log(this.modelScene.walkthroughState.startPlayback);
-    // const { dispatch } = this.props;
-    // dispatch(WalkthroughActions.playbackWalkthrough());
+
   }
 
   render() {
