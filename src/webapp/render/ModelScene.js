@@ -432,12 +432,15 @@ class ModelScene {
 
   getCameraOrbit() {
     const coordinateFields = ['x', 'y', 'z'];
+    const quaternionFields = ['x', 'y', 'z', 'w'];
     const lookAt = this.controls.constraint.target;
     // lookAt.applyMatrix4(this.camera.matrixWorld);
     return {
       position: _.pick(this.camera.position, coordinateFields),
       up: _.pick(this.camera.up, coordinateFields),
-      lookAt: _.pick(lookAt, coordinateFields)
+      lookAt: _.pick(lookAt, coordinateFields),
+      quaternion: _pick(new THREE.Quaternion().copy(this.camera.quaternion),
+                        quaternionFields)
     };
   }
 

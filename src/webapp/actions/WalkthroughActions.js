@@ -18,13 +18,14 @@ export default {
     };
   },
 
-  updatePoint(index, pos, lookAt, snapshotToken) {
+  updatePoint(index, pos, lookAt, quaternion, snapshotToken) {
     return {
       type: UPDATE_POINT,
       payload: {
         index,
         pos,
         lookAt,
+        quaternion,
         snapshotToken
       }
     };

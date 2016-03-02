@@ -38,6 +38,7 @@ class ModelEditContainer extends PureComponent {
     viewIndex: React.PropTypes.number,
     position: React.PropTypes.instanceOf(Immutable.Map),
     lookAt: React.PropTypes.instanceOf(Immutable.Map),
+    quaternion: React.PropTypes.instanceOf(Immutable.Map),
     snapshots: React.PropTypes.instanceOf(Immutable.Map)
   };
 
@@ -108,14 +109,16 @@ class ModelEditContainer extends PureComponent {
 
   _onWalkthroughUpdate = (e, index) => {
     e.preventDefault();
-    const { dispatch, position, lookAt } = this.props;
+    const { dispatch, position, lookAt, quaternion } = this.props;
     const { x, y, z } = position.toJS();
 
     const lookAtList = lookAt.toJS();
     const snapshotToken = StringHelper.randomToken();
 
+    const quaternionList = quaternion.toJS();
+
     dispatch(batchActions([
-      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, snapshotToken),
+      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, quaternionList, snapshotToken),
       SnapshotActions.triggerSnapshot(snapshotToken)
     ]));
   };
@@ -306,7 +309,7 @@ class ModelEditContainer extends PureComponent {
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { walkthroughPoints, position, lookAt } = this.props;
+    const { walkthroughPoints, position, lookAt, quaternion } = this.props;
     const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
     return (
       <div>
@@ -551,6 +554,7 @@ export default connect((state) => {
     up: state.CameraStore.get('up'),
     lookAt: state.CameraStore.get('lookAt'),
     zoom: state.CameraStore.get('zoom'),
+    quaternion: state.CameraStore.get('quaternion'),
 
     // Walkthrough Data
     walkthroughPoints: state.WalkthroughStore.get('points'),

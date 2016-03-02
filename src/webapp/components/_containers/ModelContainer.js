@@ -130,6 +130,7 @@ export default connect((state) => {
     position: state.CameraStore.get('position'),
     up: state.CameraStore.get('up'),
     lookAt: state.CameraStore.get('lookAt'),
+    quaternion: state.CameraStore.get('quaternion'),
     zoom: state.CameraStore.get('zoom'),
 
     // Snapshot Data
