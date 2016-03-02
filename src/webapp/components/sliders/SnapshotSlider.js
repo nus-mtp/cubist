@@ -3,6 +3,8 @@ import Slider from 'react-slick';
 import Immutable from 'immutable';
 import Dropzone from 'react-dropzone';
 
+import { UrlHelper } from 'webapp/helpers';
+
 class SnapshotSlider extends React.Component {
   static propTypes = {
     snapshots: React.PropTypes.instanceOf(Immutable.List),
@@ -77,7 +79,7 @@ class SnapshotSlider extends React.Component {
   _renderSnapshot(snapshot, index) {
     return (
       <div className="cb-snapshot-slide" key={ index }>
-        <img className="cb-snapshot-slide-image" src={ `/storage/snapshots/${snapshot}` } />
+        <img className="cb-snapshot-slide-image" src={ UrlHelper.getSnapshotUrl(snapshot) } />
       </div>
     );
   }

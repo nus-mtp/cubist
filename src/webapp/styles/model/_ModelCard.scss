@@ -7,7 +7,9 @@
 .cb-model-card-thumbnail {
   position: relative;
   display: block;
+  overflow: hidden;
   height: 275px;
+  border-radius: 6px;
 }
 
 .cb-model-card-thumbnail-background {
@@ -16,9 +18,17 @@
   left: 0;
   width: 100%;
   height: 100%;
+  border-radius: 6px;
   background-color: rgba(0, 0, 0, .1);
   background-position: center center;
   background-size: cover;
+  opacity: 0;
+  transition: opacity 1.25s ease-in-out;
+
+  &.is-active {
+    opacity: 1;
+    transition: opacity .75s ease-in-out;
+  }
 }
 
 .cb-model-card-thumbnail-overlay {
