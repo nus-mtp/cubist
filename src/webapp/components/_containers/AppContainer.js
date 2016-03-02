@@ -6,6 +6,8 @@ import { Link } from 'react-router';
 import { NavDropdown, MenuItem } from 'react-bootstrap';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
+import { pushState } from 'redux-router';
+import qs from 'qs';
 
 import { Logger } from 'common';
 import { GravatarHelper } from 'webapp/helpers';
@@ -14,6 +16,7 @@ import { UserActions } from 'webapp/actions';
 const DEBUG_ENV = 'app-container';
 const CLASS_NAME = 'cb-ctn-app';
 const TOP_LIMIT = 25;
+const SEARCH_FIELD = 'search';
 
 class AppContainer extends PureComponent {
   static fetchData({ dispatch }) {
@@ -29,7 +32,10 @@ class AppContainer extends PureComponent {
 
   state = {
     isAtTop: true,
-    isMenuOpened: false
+    isMenuOpened: false,
+    formData: {
+      [SEARCH_FIELD]: ' '
+    }
   };
 
   componentDidMount() {
@@ -137,6 +143,9 @@ class AppContainer extends PureComponent {
               ? this._renderUserHeader()
               : this._renderPublicHeader()
             }
+            {
+              this._renderSearchForm()
+            }
           </div>
         </div>
       </nav>
@@ -213,6 +222,45 @@ class AppContainer extends PureComponent {
       <img className="image-round" src={ GravatarHelper.getGravatarUrl(user.get('email')) } height="25" />
     );
   }
+
+  _renderSearchForm() {
+    const { location } = this.props;
+    if (location.pathname === '/browse') {
+      return (undefined);
+    }
+    return (
+      <div className="col-sm-4 pull-left">
+        <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
+          <div className="input-group">
+            <input id={ SEARCH_FIELD }
+              type="text"
+              className="form-control"
+              placeholder="Search"
+              onChange={ (e) => this._onInputChange(SEARCH_FIELD, e.target.value) }/>
+            <div className="input-group-btn">
+              <button className={ `${CLASS_NAME}-navbar-search btn btn-transparent` } type="submit">
+                <i className="fa fa-search" />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
+  _onInputChange = (fieldId, text) => {
+    const formData = _.cloneDeep(this.state.formData);
+    formData[fieldId] = text;
+    this.setState({ formData });
+  };
+
+  _onSearchFormSubmit = (e) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    const queryString = qs.stringify(
+      { searchString: this.state.formData[SEARCH_FIELD] });
+    dispatch(pushState(null, '/browse?' + queryString));
+  };
 }
 
 export default connect(state => {

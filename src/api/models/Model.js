@@ -13,7 +13,9 @@ const Model = new Schema({
   tags: [{ type: String, trim: true }],
   uploader: { type: ObjectId, ref: 'User', required: true, index: true },
   urls: [{ type: String }],
+  zipUrl: { type: String },
   socialData: {
+    views: { type: Number, default: 0 },
     favorites: { type: Number, default: 0 }
   },
   metaData: {
@@ -26,7 +28,21 @@ const Model = new Schema({
   updatedAt: { type: Date, index: true, default: Date.now }
 });
 
+// -----------------------------------------------------
+// -----------------MODEL VALIDATION--------------------
+// -----------------------------------------------------
+
 Model.statics.validate = function (model, fields) {
+  if (fields._id) {
+    if (!model._id) {
+      return Constants.ERROR_MODEL_ID_REQUIRED;
+    }
+
+    if (!_.isString(model._id) || model._id.trim().length === 0) {
+      return Constants.ERROR_MOEDL_ID_INVALID;
+    }
+  }
+
   if (fields.title) {
     if (!model.title) {
       return Constants.ERROR_MODEL_TITLE_REQUIRED;
@@ -61,6 +77,10 @@ Model.statics.validateFilePaths = function (filePaths) {
   return null;
 };
 
+// -----------------------------------------------------
+// -----------------MODEL QUERY-------------------------
+// -----------------------------------------------------
+
 Model.statics.getModelById = function (modelId, options = {}) {
   return MongooseHelper.findOne(this, { _id: modelId }, options);
 };
@@ -89,6 +109,26 @@ Model.statics.getTopModels = function () {
   );
 };
 
+Model.statics.getBrowsePageModels = function (searchString) {
+  const query = {};
+  const options = { limit: 20 };
+
+  if (searchString) {
+    const searchWords = searchString.split(/[ ,]+/);
+    const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
+    query.title = regExp;
+  }
+  return MongooseHelper.find(
+    this,
+    query,
+    options
+  );
+};
+
+// -----------------------------------------------------
+// -----------------MODEL CREATION----------------------
+// -----------------------------------------------------
+
 Model.statics.createModel = function (model) {
   const fields = [
     'title',
@@ -98,6 +138,7 @@ Model.statics.createModel = function (model) {
     'socialData',
     'metaData',
     'uploader',
+    'zipUrl',
     'urls',
     'imageUrls'
   ];
@@ -119,6 +160,44 @@ Model.statics.updateModelInfo = function (modelId, info) {
   }
 
   return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
+};
+
+// -----------------------------------------------------
+// -----------------MODEL SNAPSHOTS---------------------
+// -----------------------------------------------------
+
+Model.statics.addSnapshots = function (modelId, snapshotUrls) {
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $push: {
+      imageUrls: {
+        $each: snapshotUrls
+      }
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true });
+};
+
+Model.statics.deleteSnapshot = function (modelId, index) {
+  const condition = {
+    _id: modelId
+  };
+  const unsetUpdate = {
+    $unset: {
+      [`imageUrls.${index}`]: 1
+    }
+  };
+  const pullUpdate = {
+    $pull: {
+      imageUrls: null
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, unsetUpdate)
+    .then(() => MongooseHelper.findOneAndUpdate(this, condition, pullUpdate, { new: true }));
 };
 
 export default mongoose.model('Model', Model, 'Model');

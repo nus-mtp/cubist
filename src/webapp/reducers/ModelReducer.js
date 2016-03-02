@@ -7,7 +7,9 @@ import {
   REQ_GET_TOP_MODELS,
   REQ_GET_LATEST_MODELS,
   REQ_POST_CREATE_MODEL,
-  REQ_PUT_UPDATE_MODEL_INFO
+  REQ_PUT_UPDATE_MODEL_INFO,
+  REQ_PUT_ADD_MODEL_SNAPSHOTS,
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -33,11 +35,9 @@ const ModelReducerHelper = {
     return Immutable.fromJS(
       models.map(model => model._id)
     );
-  }
-};
+  },
 
-export default ReducerHelper.createReducer(initialState, {
-  [REQ_GET_MODEL](state, { promiseState, res }) {
+  updateModel(state, { promiseState, res }) {
     let nextState = state;
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const model = Immutable.fromJS(res.body);
@@ -47,7 +47,11 @@ export default ReducerHelper.createReducer(initialState, {
     }
 
     return nextState;
-  },
+  }
+};
+
+export default ReducerHelper.createReducer(initialState, {
+  [REQ_GET_MODEL]: ModelReducerHelper.updateModel,
 
   [REQ_GET_TOP_MODELS](state, { promiseState, res }) {
     let nextState = state;
@@ -75,27 +79,8 @@ export default ReducerHelper.createReducer(initialState, {
     return nextState;
   },
 
-  [REQ_POST_CREATE_MODEL](state, { promiseState, res }) {
-    let nextState = state;
-    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
-      const model = Immutable.fromJS(res.body);
-      nextState = nextState
-        .setIn(['models', model.get('_id')], model)
-        .set('modelId', model.get('_id'));
-    }
-
-    return nextState;
-  },
-
-  [REQ_PUT_UPDATE_MODEL_INFO](state, { promiseState, res }) {
-    let nextState = state;
-    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
-      const model = Immutable.fromJS(res.body);
-      nextState = nextState
-        .setIn(['models', model.get('_id')], model)
-        .set('modelId', model.get('_id'));
-    }
-
-    return nextState;
-  }
+  [REQ_POST_CREATE_MODEL]: ModelReducerHelper.updateModel,
+  [REQ_PUT_UPDATE_MODEL_INFO]: ModelReducerHelper.updateModel,
+  [REQ_PUT_ADD_MODEL_SNAPSHOTS]: ModelReducerHelper.updateModel,
+  [REQ_PUT_REMOVE_MODEL_SNAPSHOT]: ModelReducerHelper.updateModel
 });

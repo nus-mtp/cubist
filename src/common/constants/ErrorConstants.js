@@ -34,6 +34,8 @@ const ErrorConstants = {
   ERROR_USER_ROLE_NOT_ADMIN: 'User role is not admin',
 
   // Model Errors
+  ERROR_MODEL_ID_REQUIRED: 'Model ID is required',
+  ERROR_MOEDL_ID_INVALID: 'Model ID is invalid',
   ERROR_MODEL_TITLE_REQUIRED: 'Model title is required',
   ERROR_MODEL_TITLE_MIN_LENGTH: `Model title length should be at least ${FieldRanges.MODEL_TITLE_MIN_LENGTH}`,
   ERROR_MODEL_TITLE_MAX_LENGTH: `Model title length should be at most ${FieldRanges.MODEL_TITLE_MAX_LENGTH}`,

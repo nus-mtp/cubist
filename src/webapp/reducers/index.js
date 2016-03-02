@@ -8,6 +8,7 @@ import WalkthroughStore from './WalkthroughReducer';
 import ModelStore from './ModelReducer';
 import UserStore from './UserReducer';
 import SnapshotStore from './SnapshotReducer';
+import BrowseStore from './BrowseReducer';
 
 // Define list of Redux stores
 export default {
@@ -19,5 +20,6 @@ export default {
   WalkthroughStore,
   ModelStore,
   UserStore,
-  SnapshotStore
+  SnapshotStore,
+  BrowseStore
 };

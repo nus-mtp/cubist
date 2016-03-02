@@ -13,7 +13,9 @@ const promiseTypes = {
 
   REQ_POST_CREATE_MODEL: null,
 
-  REQ_PUT_UPDATE_MODEL_INFO: null
+  REQ_PUT_UPDATE_MODEL_INFO: null,
+  REQ_PUT_ADD_MODEL_SNAPSHOTS: null,
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT: null
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

@@ -3,7 +3,8 @@ import {
   SHADING_TOGGLE,
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
-  PLAY_WALKTHROUGH
+  PLAY_WALKTHROUGH,
+  TEXTURE_TOGGLE
 } from './types';
 
 export default {
@@ -34,6 +35,12 @@ export default {
   togglePlaybackWalkthrough() {
     return {
       type: PLAY_WALKTHROUGH
+    };
+  },
+
+  toggleTexture() {
+    return {
+      type: TEXTURE_TOGGLE
     };
   }
 };

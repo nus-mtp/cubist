@@ -2,7 +2,12 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 
 import reducer from 'webapp/reducers/RenderReducer';
-import { WIREFRAME_TOGGLE, AUTO_ROTATE_TOGGLE, SHADING_TOGGLE } from 'webapp/actions/types';
+import {
+  WIREFRAME_TOGGLE,
+  AUTO_ROTATE_TOGGLE,
+  SHADING_TOGGLE,
+  TEXTURE_TOGGLE
+} from 'webapp/actions/types';
 
 describe('Render Reducer', () => {
   it('Should return the initial state', () => {
@@ -11,7 +16,8 @@ describe('Render Reducer', () => {
       shadingMode: 0,
       autoRotate: false,
       resetViewToggle: false,
-      playbackWalkthroughToggle: false
+      playbackWalkthroughToggle: false,
+      resizedTexture: false
     }));
   });
 
@@ -75,6 +81,24 @@ describe('Render Reducer', () => {
         reducer(Map({ autoRotate: false }), { type: AUTO_ROTATE_TOGGLE })
       ).to.equal(
         Map({ autoRotate: true })
+      );
+    });
+  });
+
+  describe('#Action: TEXTURE_TOGGLE', () => {
+    it('Should handle TEXTURE_TOGGLE toggling from TRUE to FALSE', () => {
+      expect(
+        reducer(Map({ resizedTexture: true }), { type: TEXTURE_TOGGLE })
+      ).to.equal(
+        Map({ resizedTexture: false })
+      );
+    });
+
+    it('Should handle TEXTURE_TOGGLE toggling from FALSE to TRUE', () => {
+      expect(
+        reducer(Map({ resizedTexture: false }), { type: TEXTURE_TOGGLE })
+      ).to.equal(
+        Map({ resizedTexture: true })
       );
     });
   });

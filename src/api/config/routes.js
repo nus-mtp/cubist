@@ -5,6 +5,7 @@ import { UserController, ModelController } from 'api/controllers';
 import { StorageHelper } from 'api/helpers';
 
 const modelUpload = multer({ storage: StorageHelper.getModelStorage() });
+const snapshotUpload = multer({ storage: StorageHelper.getSnapshotStorage() });
 
 export default (app) => {
   // Authentication
@@ -31,5 +32,23 @@ export default (app) => {
     ModelController.request.createModel
   );
 
-  app.put('/model/:modelId/info', Authorisation.requireUser, ModelController.request.updateModelInfo);
+  app.put(
+    '/model/:modelId/addSnapshots',
+    Util.attachToken,
+    snapshotUpload.array('imageFiles'),
+    Authorisation.requireUser,
+    ModelController.request.addSnapshots
+  );
+  app.put(
+    '/model/:modelId/deleteSnapshot',
+    Authorisation.requireUser,
+    ModelController.request.deleteSnapshot
+  );
+  app.put(
+    '/model/:modelId/info',
+    Authorisation.requireUser,
+    ModelController.request.updateModelInfo
+  );
+
+  app.get('/browse', ModelController.request.getBrowsePageModels);
 };

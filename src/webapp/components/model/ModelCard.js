@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import Immutable from 'immutable';
 
-import { GravatarHelper } from 'webapp/helpers';
+import { UrlHelper, GravatarHelper } from 'webapp/helpers';
 
 const CLASS_NAME = 'cb-model-card';
 const fallBackImage = 'https://d13yacurqjgara.cloudfront.net/users/532989/screenshots/1700135/cube_1x.jpg';
@@ -15,16 +15,15 @@ class ModelCard extends React.Component {
   render() {
     const { model } = this.props;
     const thumbnailStyle = {
-      backgroundImage: `url(${model.getIn(['imageUrls', 0], fallBackImage)})`
+      backgroundImage: `url(${UrlHelper.getSnapshotUrl(model.getIn(['imageUrls', 0], fallBackImage))})`
     };
 
     return (
       <figure className={ CLASS_NAME }>
         <Link className={ `${CLASS_NAME}-thumbnail` }
-          style={ thumbnailStyle }
           to={ `/model/${model.get('_id')}` }>
-          <div className={ `${CLASS_NAME}-thumbnail-overlay` }>
-          </div>
+          <div className={ `${CLASS_NAME}-thumbnail-background` } style={ thumbnailStyle } />
+          <div className={ `${CLASS_NAME}-thumbnail-overlay` } />
         </Link>
         <figcaption className={ `${CLASS_NAME}-caption` }>
           <img className={ `${CLASS_NAME}-caption-avatar` }

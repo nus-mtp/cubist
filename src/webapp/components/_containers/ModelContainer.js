@@ -62,6 +62,8 @@ class ModelContainer extends PureComponent {
               </Link>
             }
             { this._renderUploaderCard() }
+            { this._renderModelInfoCard() }
+            { this._renderModelDownloadLink() }
           </div>
         </div>
       </div>
@@ -74,12 +76,74 @@ class ModelContainer extends PureComponent {
 
     return (
       <div className={ `${CLASS_NAME}-user-card panel panel-default` }>
-        <div className="panel-body cb-text-center">
-          <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+        <div className="panel-body">
+          <h3>Uploader </h3>
           <hr />
-          <h4>{ model.getIn(['uploader', 'name']) }</h4>
+          <div className="cb-text-center">
+            <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+            <h4>{ model.getIn(['uploader', 'name']) }</h4>
+          </div>
         </div>
       </div>
+    );
+  }
+
+  _renderModelInfoCard() {
+    const { model } = this.props;
+
+    return (
+      <div className={ `${CLASS_NAME}-info-card panel panel-default` }>
+        <div className="panel-body">
+          <h3>Model Info</h3>
+          <hr />
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Model Name
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('title') }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Faces
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'faces']) }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Vertices
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'vertices']) }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            External Texture
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.getIn(['metaData', 'hasExternalTexture']) ? 'Yes' : 'No' }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Description
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('description') }
+          </p>
+          <p className={ `${CLASS_NAME}-info-label` }>
+            Category
+          </p>
+          <p className={ `${CLASS_NAME}-info-content` }>
+            { model.get('category') }
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  _renderModelDownloadLink() {
+    const { model } = this.props;
+
+    return (
+      <a href={ `/storage/models/${model.get('zipUrl')}` } className="btn btn-success btn-block">
+        DOWNLOAD MODEL
+      </a>
     );
   }
 
@@ -93,7 +157,7 @@ class ModelContainer extends PureComponent {
 
   loadObj(model) {
     const loader = new OBJLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
       this.setState({ model: m });
@@ -102,7 +166,7 @@ class ModelContainer extends PureComponent {
 
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
     loader.load(objUrl, mtlUrl, m => {
@@ -122,6 +186,7 @@ export default connect((state) => {
     wireframe: state.RenderStore.get('wireframe'),
     shadingMode: state.RenderStore.get('shadingMode'),
     autoRotate: state.RenderStore.get('autoRotate'),
+    resizedTexture: state.RenderStore.get('resizedTexture'),
     walkthroughPoints: state.WalkthroughStore.get('points'),
     playbackPoints: state.WalkthroughStore.get('playbackPoints'),
     walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),

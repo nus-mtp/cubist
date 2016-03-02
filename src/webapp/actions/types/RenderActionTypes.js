@@ -6,7 +6,8 @@ const normalTypes = {
   SHADING_TOGGLE: null,
   AUTO_ROTATE_TOGGLE: null,
   RESET_VIEW_TOGGLE: null,
-  PLAY_WALKTHROUGH: null
+  PLAY_WALKTHROUGH: null,
+  TEXTURE_TOGGLE: null
 };
 
 // Promise Action Types

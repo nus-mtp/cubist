@@ -20,7 +20,10 @@ const AppConstants = {
 
   // User Roles
   ROLE_USER: 'user',
-  ROLE_ADMIN: 'admin'
+  ROLE_ADMIN: 'admin',
+
+  // Model Categories
+  MODEL_CATEGORIES: ['Character', 'Game', 'Animal', 'Scene', 'Vehicle', 'Object', 'Architecture', 'Misc']
 };
 
 export default AppConstants;

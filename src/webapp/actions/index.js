@@ -6,5 +6,6 @@ export default {
   WalkthroughActions: require('./WalkthroughActions'),
   ModelActions: require('./ModelActions'),
   UserActions: require('./UserActions'),
-  SnapshotActions: require('./SnapshotActions')
+  SnapshotActions: require('./SnapshotActions'),
+  BrowseActions: require('./BrowseActions')
 };

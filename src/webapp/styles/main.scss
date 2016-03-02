@@ -1,6 +1,7 @@
 // Import bootstrap
 @import 'vendors/bootstrap';
 @import 'vendors/breakpoint';
+@import 'vendors/slick';
 
 // Import Variables
 @import 'constants/variables';
@@ -18,6 +19,7 @@
 @import 'model/ModelCard';
 @import 'model/ModelViewer';
 @import 'render/ModelCanvas';
+@import 'sliders/SnapshotSlider';
 
 // Import Containers
 @import '_containers/RootContainer';
