@@ -7,6 +7,7 @@ import PureComponent from 'react-pure-render/component';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
+import { SnapshotSlider } from '../sliders';
 import { ModelActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
 
@@ -18,7 +19,6 @@ class ModelContainer extends PureComponent {
       dispatch(ModelActions.getModel(params.modelId)),
       dispatch(ModelActions.incrementViews(params.modelId))
     ]);
-    // return dispatch(ModelActions.getModel(params.modelId));
   }
 
   static propTypes = {
@@ -57,6 +57,8 @@ class ModelContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
+            <h2>Snapshots</h2>
+            <SnapshotSlider snapshots={ model.get('imageUrls') } />
           </div>
           <div className="col-md-4">
             {

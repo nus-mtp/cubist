@@ -103,7 +103,7 @@ Model.statics.getTopModels = function () {
     {},
     {
       limit: 9,
-      sort: '-socialData.favorites',
+      sort: '-socialData.views',
       populate: 'uploader'
     }
   );

@@ -12,27 +12,22 @@
 }
 
 .cb-snapshot-slide {
-  display: flex !important;
   overflow: hidden;
-  height: 125px;
+  height: 150px;
   border: 1px solid $cb-dark-gray;
   border-top: 0;
   border-bottom: 0;
-  align-items: center;
-  justify-content: center;
+  background-color: rgba(0, 0, 0, .1);
+  background-position: center center;
+  background-size: cover;
 
   &:first-child {
     border-left: 0;
   }
 }
 
-.cb-snapshot-slide-image {
-  width: auto;
-  height: 125px;
-}
-
 .cb-snapshot-slide-add {
-  height: 125px;
+  height: 150px;
   background: $cb-dark-gray;
 }
 
