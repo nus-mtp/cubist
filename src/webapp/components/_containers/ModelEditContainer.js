@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
 import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
 import { batchActions } from 'redux-batched-actions';
-import Slider from 'react-slick';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
@@ -107,6 +106,15 @@ class ModelEditContainer extends PureComponent {
   };
 
   // -----------------------------------------------------
+  // -----------------SNAPSHOTS EVENT HANDLER------------
+  // -----------------------------------------------------
+
+  _onSnapshotsAdd = (snapshots) => {
+    const { dispatch, params } = this.props;
+    dispatch(ModelActions.addSnapshots(params.modelId, snapshots));
+  };
+
+  // -----------------------------------------------------
   // ----------MODEL WALKTHROUGH EVENT HANDLER------------
   // -----------------------------------------------------
 
@@ -199,7 +207,9 @@ class ModelEditContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            <SnapshotSlider />
+            <h2>Snapshots</h2>
+          <SnapshotSlider snapshots={ model.get('imageUrls') } onSnapshotsAdd={ this._onSnapshotsAdd } />
+            <h2>Walkthroughs</h2>
             { false && this._renderWalkthroughSection() }
             { false && this._renderWalkthroughPlaybackSection() }
           </div>
@@ -530,7 +540,7 @@ class ModelEditContainer extends PureComponent {
 
   loadObj(model) {
     const loader = new OBJLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
       this.setState({ model: m });
@@ -539,7 +549,7 @@ class ModelEditContainer extends PureComponent {
 
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
     loader.load(objUrl, mtlUrl, m => {

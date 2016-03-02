@@ -141,8 +141,8 @@ class HomeContainer extends PureComponent {
       return (
         <Link to={ `/model/${model.get('_id')}` }
           className={ classnames(itemClasses) }
-          style={ style }
           key={ i }>
+          <div className={ `${CLASS_NAME}-hero-random-item-background` } style={ style } />
           <div className={ `${CLASS_NAME}-hero-random-item-overlay` }>
           </div>
         </Link>
