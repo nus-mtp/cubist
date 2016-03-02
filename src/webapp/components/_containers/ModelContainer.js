@@ -1,4 +1,5 @@
 import React from 'react';
+import Promise from 'bluebird';
 import { Link } from 'react-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
@@ -13,7 +14,11 @@ const CLASS_NAME = 'cb-ctn-model';
 
 class ModelContainer extends PureComponent {
   static fetchData({ dispatch, params }) {
-    return dispatch(ModelActions.getModel(params.modelId));
+    return Promise.all([
+      dispatch(ModelActions.getModel(params.modelId)),
+      dispatch(ModelActions.incrementViews(params.modelId))
+    ]);
+    // return dispatch(ModelActions.getModel(params.modelId));
   }
 
   static propTypes = {

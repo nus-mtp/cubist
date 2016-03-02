@@ -49,6 +49,7 @@ export default (app) => {
     Authorisation.requireUser,
     ModelController.request.updateModelInfo
   );
+  app.put('/model/:modelId/views', ModelController.request.incrementViews);
 
   app.get('/browse', ModelController.request.getBrowsePageModels);
 };

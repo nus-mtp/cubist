@@ -162,6 +162,19 @@ Model.statics.updateModelInfo = function (modelId, info) {
   return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
 };
 
+Model.statics.incrementViews = function (modelId, amount) {
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $inc: {
+      'socialData.views': amount
+    }
+  };
+
+  return MongooseHelper.update(this, condition, update);
+};
+
 // -----------------------------------------------------
 // -----------------MODEL SNAPSHOTS---------------------
 // -----------------------------------------------------

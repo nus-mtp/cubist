@@ -4,6 +4,7 @@ import {
   REQ_GET_LATEST_MODELS,
   REQ_POST_CREATE_MODEL,
   REQ_PUT_UPDATE_MODEL_INFO,
+  REQ_PUT_INCREMENT_MODEL_VIEWS,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT
 } from './types';
@@ -53,6 +54,13 @@ export default {
           ...modelInfo
         }
       })
+    };
+  },
+
+  incrementViews(modelId) {
+    return {
+      type: REQ_PUT_INCREMENT_MODEL_VIEWS,
+      promise: apiClient => apiClient.put(`/model/${modelId}/views`)
     };
   },
 
