@@ -1,3 +1,4 @@
 export default {
-  GravatarHelper: require('./gravatar')
+  GravatarHelper: require('./gravatar'),
+  UrlHelper: require('./url')
 };
