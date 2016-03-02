@@ -92,7 +92,7 @@ class ModelScene {
 
   _initBackground() {
     // Load background texture
-    const texture = THREE.ImageUtils.loadTexture('/models/background.jpg');
+    const texture = THREE.ImageUtils.loadTexture('/storage/models/background.jpg');
     const backgroundMesh = new THREE.Mesh(
       new THREE.PlaneGeometry(2, 2, 0),
       new THREE.MeshBasicMaterial({

@@ -30,6 +30,10 @@ ModelController.request.getTopModels = function (req, res) {
   ResponseHelper.handle(ModelController.promise.getTopModels, req, res, DEBUG_ENV);
 };
 
+ModelController.request.getBrowsePageModels = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getBrowsePageModels, req, res, DEBUG_ENV);
+};
+
 ModelController.request.createModel = function (req, res) {
   ResponseHelper.handle(ModelController.promise.createModel, req, res, DEBUG_ENV);
 };
@@ -38,8 +42,12 @@ ModelController.request.updateModelInfo = function (req, res) {
   ResponseHelper.handle(ModelController.promise.updateModelInfo, req, res, DEBUG_ENV);
 };
 
-ModelController.request.getBrowsePageModels = function (req, res) {
-  ResponseHelper.handle(ModelController.promise.getBrowsePageModels, req, res, DEBUG_ENV);
+ModelController.request.addSnapshots = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.addSnapshots, req, res, DEBUG_ENV);
+};
+
+ModelController.request.deleteSnapshot = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.deleteSnapshot, req, res, DEBUG_ENV);
 };
 
 // ---------------------------------------------------------------------------- //
@@ -57,6 +65,10 @@ ModelController.promise.getLatestModels = function () {
   return Model.getLatestModels();
 };
 
+ModelController.promise.getBrowsePageModels = function (req) {
+  return Model.getBrowsePageModels(req.query.searchString);
+};
+
 ModelController.promise.createModel = function (req) {
   const userId = req.user._id;
   const infoFields = ['title', 'category', 'description', 'tags'];
@@ -66,8 +78,8 @@ ModelController.promise.createModel = function (req) {
   // Extract urls to be saved in Model document
   const urls = req.files
     .filter(file => file.fieldname === 'modelFiles')
-    .map(file => file.path.replace(`${path.resolve(__dirname, '../../../models')}/`, ''));
-  const zipFilePath = path.resolve(__dirname, `../../../models/${req.requestToken}/model.zip`);
+    .map(file => file.path.replace(`${path.resolve(__dirname, '../../../storage/models')}/`, ''));
+  const zipFilePath = path.resolve(__dirname, `../../../storage/models/${req.requestToken}/model.zip`);
 
   // Validate data error
   const error = User.validate({ _id: userId }, { _id: true })
@@ -100,7 +112,7 @@ ModelController.promise.updateModelInfo = function (req) {
   const modelInfo = _.pick(req.body, fields);
 
   const error = User.validate(req.user, { _id: true })
-    || Model.validate(modelInfo, { title: true });
+    || Model.validate({ ...modelInfo, _id: modelId }, { _id: true, title: true });
   if (error) {
     return Promise.reject(new ClientError(error));
   }
@@ -115,8 +127,33 @@ ModelController.promise.updateModelInfo = function (req) {
     .then(() => Model.updateModelInfo(modelId, modelInfo));
 };
 
-ModelController.promise.getBrowsePageModels = function (req) {
-  return Model.getBrowsePageModels(req.query.searchString);
+ModelController.promise.addSnapshots = function (req) {
+  const { modelId } = req.params;
+  // Extract urls to be saved in Model document
+  const snapshotUrls = req.files
+    .filter(file => file.fieldname === 'imageFiles')
+    .map(file => file.path.replace(`${path.resolve(__dirname, '../../../storage/snapshots')}/`, ''));
+
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.addSnapshots(modelId, snapshotUrls);
+};
+
+ModelController.promise.deleteSnapshot = function (req) {
+  const { modelId } = req.params;
+  const { index } = req.body;
+
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.deleteSnapshot(modelId, index);
 };
 
 // ----------------------------------------------------------------------------//

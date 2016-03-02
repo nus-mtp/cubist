@@ -11,6 +11,7 @@ import Trianglify from 'trianglify';
 import { TrianglifyCanvas } from '../common';
 import { ModelCard } from '../model';
 import { ModelActions } from 'webapp/actions';
+import { UrlHelper } from 'webapp/helpers';
 import { requireServerJson } from 'webapp/utils';
 
 const categories = process.env.BROWSER
@@ -134,15 +135,16 @@ class HomeContainer extends PureComponent {
           'col-xs-2'
         ];
       }
+
       const style = {
-        backgroundImage: `url(${model.getIn(['imageUrls', 0], fallBackImage)})`
+        backgroundImage: `url(${UrlHelper.getSnapshotUrl(model.getIn(['imageUrls', 0], fallBackImage))})`
       };
 
       return (
         <Link to={ `/model/${model.get('_id')}` }
           className={ classnames(itemClasses) }
-          style={ style }
           key={ i }>
+          <div className={ `${CLASS_NAME}-hero-random-item-background` } style={ style } />
           <div className={ `${CLASS_NAME}-hero-random-item-overlay` }>
           </div>
         </Link>
@@ -202,8 +204,8 @@ class HomeContainer extends PureComponent {
 
       return (
         <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` }
-          style={ style }
           key={ i }>
+          <div className={ `${CLASS_NAME}-category-item-background` } style={ style } />
           <div className={ `${CLASS_NAME}-category-item-overlay` }>
             <div className={ `${CLASS_NAME}-category-item-title` }>
               { category.category }

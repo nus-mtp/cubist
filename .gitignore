@@ -28,6 +28,6 @@ node_modules
 
 # Build files
 /public
-/models
+/storage
 src/webapp/server/webpack-stats.json
 src/api/config/settings/private.js

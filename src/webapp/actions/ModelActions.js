@@ -2,10 +2,10 @@ import {
   REQ_GET_MODEL,
   REQ_GET_TOP_MODELS,
   REQ_GET_LATEST_MODELS,
-
   REQ_POST_CREATE_MODEL,
-
-  REQ_PUT_UPDATE_MODEL_INFO
+  REQ_PUT_UPDATE_MODEL_INFO,
+  REQ_PUT_ADD_MODEL_SNAPSHOTS,
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT
 } from './types';
 
 export default {
@@ -51,6 +51,31 @@ export default {
       promise: apiClient => apiClient.put(`/model/${modelId}/info`, {
         body: {
           ...modelInfo
+        }
+      })
+    };
+  },
+
+  addSnapshots(modelId, snapshots) {
+    return {
+      type: REQ_PUT_ADD_MODEL_SNAPSHOTS,
+      promise: apiClient => apiClient.put(`/model/${modelId}/addSnapshots`, {
+        attachments: snapshots.map(img => {
+          return {
+            file: img,
+            field: 'imageFiles'
+          };
+        })
+      })
+    };
+  },
+
+  removeSnapshot(modelId, index) {
+    return {
+      type: REQ_PUT_REMOVE_MODEL_SNAPSHOT,
+      promise: apiClient => apiClient.put(`/model/${modelId}/removeSnapshot`, {
+        body: {
+          index
         }
       })
     };

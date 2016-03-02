@@ -14,5 +14,5 @@ export default (app) => {
   if (process.env.NODE_ENV !== 'development') {
     app.use(express.static(path.resolve(__dirname, '../../../../public')));
   }
-  app.use('/models', express.static(path.resolve(__dirname, '../../../../models/')));
+  app.use('/storage', express.static(path.resolve(__dirname, '../../../../storage/')));
 };

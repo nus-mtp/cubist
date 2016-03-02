@@ -141,7 +141,7 @@ class ModelContainer extends PureComponent {
     const { model } = this.props;
 
     return (
-      <a href={ `/models/${model.get('zipUrl')}` } className="btn btn-success btn-block">
+      <a href={ `/storage/models/${model.get('zipUrl')}` } className="btn btn-success btn-block">
         DOWNLOAD MODEL
       </a>
     );
@@ -157,7 +157,7 @@ class ModelContainer extends PureComponent {
 
   loadObj(model) {
     const loader = new OBJLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
       this.setState({ model: m });
@@ -166,7 +166,7 @@ class ModelContainer extends PureComponent {
 
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
     loader.load(objUrl, mtlUrl, m => {

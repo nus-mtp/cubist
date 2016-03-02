@@ -90,6 +90,7 @@
     "sendgrid": "2.0.0",
     "serve-favicon": "2.3.0",
     "sharp": "0.12.2",
+    "slick-carousel": "1.5.9",
     "split": "1.0.0",
     "superagent": "1.6.1",
     "superagent-bluebird-promise": "3.0.0",

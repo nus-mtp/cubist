@@ -8,7 +8,8 @@ import { batchActions } from 'redux-batched-actions';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
-import { StringHelper } from 'common';
+import { SnapshotSlider } from '../sliders';
+import { StringHelper, Constants } from 'common';
 import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
 import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
@@ -87,6 +88,10 @@ class ModelEditContainer extends PureComponent {
     }
   }
 
+  // -----------------------------------------------------
+  // -----------------MODEL INFO EVENT HANDLER------------
+  // -----------------------------------------------------
+
   _onModelInfoInputChange = (fieldId, value) => {
     const modelInfoData = _.cloneDeep(this.state.modelInfoData);
     modelInfoData[fieldId] = value;
@@ -99,6 +104,19 @@ class ModelEditContainer extends PureComponent {
     const { modelInfoData } = this.state;
     dispatch(ModelActions.updateModelInfo(model.get('_id'), modelInfoData));
   };
+
+  // -----------------------------------------------------
+  // -----------------SNAPSHOTS EVENT HANDLER------------
+  // -----------------------------------------------------
+
+  _onSnapshotsAdd = (snapshots) => {
+    const { dispatch, params } = this.props;
+    dispatch(ModelActions.addSnapshots(params.modelId, snapshots));
+  };
+
+  // -----------------------------------------------------
+  // ----------MODEL WALKTHROUGH EVENT HANDLER------------
+  // -----------------------------------------------------
 
   _onWalkthroughAdd = (e) => {
     e.preventDefault();
@@ -174,13 +192,12 @@ class ModelEditContainer extends PureComponent {
   };
 
   render() {
-    const { model, user, err, success } = this.props;
+    const { model } = this.props;
     const { object } = this.state;
     const viewerProps = {
       object,
       ...this.props
     };
-    const isUploader = model.getIn(['uploader', '_id']) === user.get('_id');
 
     return (
       <div className={ CLASS_NAME }>
@@ -190,29 +207,18 @@ class ModelEditContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            { this._renderWalkthroughPlaybackSection() }
-            { this._renderWalkthroughSection() }
+            <h2>Snapshots</h2>
+          <SnapshotSlider snapshots={ model.get('imageUrls') } onSnapshotsAdd={ this._onSnapshotsAdd } />
+            <h2>Walkthroughs</h2>
+            { false && this._renderWalkthroughSection() }
+            { false && this._renderWalkthroughPlaybackSection() }
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
-              {
-                err &&
-                <div className="alert alert-danger cb-margin-bottom-10px">
-                  { err.get('message') }
-                </div>
-              }
-              {
-                success &&
-                <div className="alert alert-success cb-margin-bottom-10px">
-                  Update Successfully
-                </div>
-              }
-              {
-                isUploader &&
-                <button type="submit" className="btn btn-success btn-block cb-margin-bottom-10px">
-                  SAVE
-                </button>
-              }
+              { this._renderInfoStatusMessage() }
+              <button type="submit" className="btn btn-success btn-block cb-margin-bottom-10px">
+                SAVE
+              </button>
               { this._renderUploaderCard() }
               { this._renderModelInfoCard() }
             </form>
@@ -225,6 +231,28 @@ class ModelEditContainer extends PureComponent {
   // -----------------------------------------------------
   // -----------------MODEL INFO RENDER-------------------
   // -----------------------------------------------------
+
+  _renderInfoStatusMessage() {
+    const { err, success } = this.props;
+
+    return (
+      <div>
+        {
+          err &&
+          <div className="alert alert-danger cb-margin-bottom-10px">
+            { err.get('message') }
+          </div>
+        }
+        {
+          success &&
+          <div className="alert alert-success cb-margin-bottom-10px">
+            Update Successfully
+          </div>
+        }
+      </div>
+    );
+  }
+
   _renderUploaderCard() {
     const { user } = this.props;
     const avatarUrl = GravatarHelper.getGravatarUrl(user.get('email'));
@@ -277,14 +305,11 @@ class ModelEditContainer extends PureComponent {
               className="form-control"
               id={ `model-${MODEL_CATEGORY_FIELD}` }>
               <option value="">Select One</option>
-              <option value="character">Character</option>
-              <option value="game">Game</option>
-              <option value="animal">Animal</option>
-              <option value="scene">Scene</option>
-              <option value="vehicle">Vehicle</option>
-              <option value="object">Object</option>
-              <option value="architecture">Architecture</option>
-              <option value="misc">Misc</option>
+              {
+                Constants.MODEL_CATEGORIES.map((c, i) => (
+                  <option key={ i } value={ c.toLowerCase() }>{ c }</option>
+                ))
+              }
             </select>
           </div>
           <div className="form-group">
@@ -515,7 +540,7 @@ class ModelEditContainer extends PureComponent {
 
   loadObj(model) {
     const loader = new OBJLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
       this.setState({ model: m });
@@ -524,7 +549,7 @@ class ModelEditContainer extends PureComponent {
 
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
-    const urls = model.get('urls').map(u => `/models/${u}`);
+    const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
     loader.load(objUrl, mtlUrl, m => {
