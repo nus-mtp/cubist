@@ -70,7 +70,15 @@ ModelController.promise.getLatestModels = function () {
 };
 
 ModelController.promise.getBrowsePageModels = function (req) {
-  return Model.getBrowsePageModels(req.query.searchString);
+  if (req.query.searchString && !req.query.searchUser) {
+    const payload = { ...req.query };
+    return User.findByName(payload.searchString)
+      .then(result => {
+        payload.userIds = result;
+        return Model.getBrowsePageModels(payload);
+      });
+  }
+  return Model.getBrowsePageModels(req.query);
 };
 
 ModelController.promise.createModel = function (req) {

@@ -32,7 +32,7 @@ class AppContainer extends PureComponent {
   state = {
     isMenuOpened: false,
     formData: {
-      [SEARCH_FIELD]: ' '
+      [SEARCH_FIELD]: ''
     }
   };
 
@@ -193,15 +193,17 @@ class AppContainer extends PureComponent {
 
   _onInputChange = (fieldId, text) => {
     const formData = _.cloneDeep(this.state.formData);
-    formData[fieldId] = text;
+    const trimmedText = text.trim();
+    formData[fieldId] = trimmedText.length === 0 ? undefined : trimmedText;
     this.setState({ formData });
   };
 
   _onSearchFormSubmit = (e) => {
     e.preventDefault();
     const { dispatch } = this.props;
+    const trimmedString = this.state.formData[SEARCH_FIELD].trim();
     const queryString = qs.stringify(
-      { searchString: this.state.formData[SEARCH_FIELD] });
+      { searchString: trimmedString.length !== 0 ? trimmedString : undefined });
     dispatch(pushState(null, '/browse?' + queryString));
   };
 }

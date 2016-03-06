@@ -99,6 +99,9 @@ export default {
     if (options.limit) {
       request.limit(options.limit);
     }
+    if (options.skip) {
+      request.skip(options.skip);
+    }
     if (options.sort) {
       request.sort(options.sort);
     }
