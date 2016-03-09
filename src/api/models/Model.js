@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import { MongooseHelper } from 'api/helpers';
 import { Constants } from 'common';
@@ -109,20 +110,80 @@ Model.statics.getTopModels = function () {
   );
 };
 
-Model.statics.getBrowsePageModels = function (searchString) {
-  const query = {};
-  const options = { limit: 20 };
+Model.statics.getBrowsePageModels = function (urlQuery) {
+  let query = {};
+  const options = {
+    limit: 21,
+    populate: 'uploader',
+    sort: '-updatedAt'
+  };
 
-  if (searchString) {
-    const searchWords = searchString.split(/[ ,]+/);
+  if (urlQuery.searchString) {
+    const searchWords = urlQuery.searchString.split(/[ ,]+/);
     const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
-    query.title = regExp;
+
+    let noOfFields = 3;
+    if (urlQuery.searchTitle !== undefined) {
+      noOfFields--;
+    }
+    if (urlQuery.searchTag !== undefined) {
+      noOfFields--;
+    }
+    if (urlQuery.searchUser !== undefined) {
+      noOfFields--;
+    }
+    if (noOfFields === 1) {
+      if (!urlQuery.searchTitle) {
+        query.title = regExp;
+      }
+      if (!urlQuery.searchTag) {
+        query.tags = regExp;
+      }
+      if (!urlQuery.searchUser) {
+        query.uploader = { $in: urlQuery.userIds };
+      }
+    } else if (noOfFields > 1) {
+      const queryArr = [];
+      if (!urlQuery.searchTitle) {
+        queryArr.push({ title: regExp });
+      }
+      if (!urlQuery.searchTag) {
+        queryArr.push({ tags: regExp });
+      }
+      if (!urlQuery.searchUser) {
+        queryArr.push({ uploader: { $in: urlQuery.userIds } });
+      }
+      query = { $or: queryArr };
+    } else {
+      // No fields specified, return empty array
+      return Promise.resolve([]);
+    }
   }
-  return MongooseHelper.find(
-    this,
-    query,
-    options
-  );
+
+  if (urlQuery.category && urlQuery.category !== 'all') {
+    for (let i = 0; i < Constants.MODEL_CATEGORIES.length; i++) {
+      if (Constants.MODEL_CATEGORIES[i].toLowerCase() === urlQuery.category.toLowerCase()) {
+        query.category = new RegExp(urlQuery.category, 'i');
+      }
+    }
+  }
+
+  if (urlQuery.sort === '1') {
+    options.sort = '-socialData.views';
+  }
+
+  if (urlQuery.sort === '2') {
+    options.sort = 'title';
+  }
+
+  if (urlQuery.page && urlQuery.page !== '1') {
+    const parsedInt = parseInt(urlQuery.page, 10);
+    if (!isNaN(parsedInt) && parsedInt > 1) {
+      options.skip = (parsedInt - 1) * 20;
+    }
+  }
+
+  return MongooseHelper.find(this, query, options);
 };
 
 // -----------------------------------------------------

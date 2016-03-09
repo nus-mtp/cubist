@@ -103,6 +103,14 @@ User.statics.findOneByUsernameOrEmail = function (email, name) {
   }));
 };
 
+User.statics.findByName = function (name) {
+  const searchWords = name.split(/[ ,]+/);
+  const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
+  return Promise.resolve(this.find({
+    name: regExp
+  }).select('id'));
+};
+
 /**
  * Find single user by user ID
  * @param  { String } userId [id of the user]
