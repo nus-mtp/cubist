@@ -66,9 +66,9 @@ class ModelViewer extends React.Component {
     let buttonTitle;
     // console.log('resizedTexture bool: ', resizedTexture);
     if (resizedTexture === true) {
-      buttonTitle = 'HD';
-    } else { // if (resizedTexture === false)
       buttonTitle = 'LD';
+    } else { // if (resizedTexture === false)
+      buttonTitle = 'HD';
     }
 
     return (

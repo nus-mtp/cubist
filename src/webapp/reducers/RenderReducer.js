@@ -7,7 +7,9 @@ import {
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
   PLAY_WALKTHROUGH,
-  TEXTURE_TOGGLE
+  TEXTURE_TOGGLE,
+  TEXTURE_SET,
+  TEXTURE_CLEAR
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -58,6 +60,20 @@ export default ReducerHelper.createReducer(initialState, {
   [TEXTURE_TOGGLE]: (state) => {
     let nextState = state;
     nextState = nextState.set('resizedTexture', !nextState.get('resizedTexture'));
+
+    return nextState;
+  },
+
+  [TEXTURE_SET]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('resizedTexture', true);
+
+    return nextState;
+  },
+
+  [TEXTURE_CLEAR]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('resizedTexture', false);
 
     return nextState;
   }

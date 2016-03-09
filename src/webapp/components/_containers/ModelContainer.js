@@ -8,6 +8,7 @@ import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
 import { ModelActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
+import { RenderActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-ctn-model';
 
@@ -167,10 +168,20 @@ class ModelContainer extends PureComponent {
   loadObjMtl(model) {
     const loader = new OBJMTLLoader();
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
+    console.log(urls);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
-    const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
+    const mtlUrl = urls.filter(url => url.endsWith('.mtl')).get(0);
+    loader.loadSmall(objUrl, mtlUrl, m => {
+      this.setState({ object: m });
+      const { dispatch } = this.props;
+      dispatch(RenderActions.setTexture()); //write test cases
+      console.log('small loaded');
+    });
     loader.load(objUrl, mtlUrl, m => {
       this.setState({ object: m });
+      const { dispatch } = this.props;
+      dispatch(RenderActions.clearTexture());
+      console.log('big loaded');
     });
   }
 }

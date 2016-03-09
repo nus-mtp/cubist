@@ -6,10 +6,39 @@ class OBJMTLLoader {
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
   }
 
+  loadSmall(url, mtlurl, onLoad, onProgress, onError) {
+    const mtlLoader = new MTLLoader(this.manager);
+    mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
+    mtlLoader.setCrossOrigin(this.crossOrigin);
+    const smallMtlUrl = mtlurl.substring(0, mtlurl.lastIndexOf('.')) + '_small' + mtlurl.substring(mtlurl.lastIndexOf('.'))
+    // console.log('new mtl url : ',smallMtlUrl);
+    mtlLoader.load(smallMtlUrl, materials => {
+      const materialsCreator = materials;
+      materialsCreator.preload();
+      const loader = new THREE.XHRLoader(this.manager);
+      loader.setCrossOrigin(this.crossOrigin);
+      loader.load(url, (text) => {
+        const object = this.parse(text);
+        object.traverse(o => {
+          if (o instanceof THREE.Mesh) {
+            if (o.material.name) {
+              const material = materialsCreator.create(o.material.name);
+              if (material) {
+                o.material = material;
+              }
+            }
+          }
+        });
+        onLoad(object);
+      }, onProgress, onError);
+    }, onProgress, onError);
+  }
+
   load(url, mtlurl, onLoad, onProgress, onError) {
     const mtlLoader = new MTLLoader(this.manager);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
+    // console.log('orig mtl url : ',mtlurl);
     mtlLoader.load(mtlurl, materials => {
       const materialsCreator = materials;
       materialsCreator.preload();

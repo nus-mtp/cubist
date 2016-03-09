@@ -4,7 +4,9 @@ import {
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
   PLAY_WALKTHROUGH,
-  TEXTURE_TOGGLE
+  TEXTURE_TOGGLE,
+  TEXTURE_SET,
+  TEXTURE_CLEAR
 } from './types';
 
 export default {
@@ -41,6 +43,18 @@ export default {
   toggleTexture() {
     return {
       type: TEXTURE_TOGGLE
+    };
+  },
+
+  setTexture() {
+    return {
+      type: TEXTURE_SET
+    };
+  },
+
+  clearTexture() {
+    return {
+      type: TEXTURE_CLEAR
     };
   }
 };

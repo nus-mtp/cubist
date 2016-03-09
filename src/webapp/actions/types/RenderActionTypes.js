@@ -7,7 +7,9 @@ const normalTypes = {
   AUTO_ROTATE_TOGGLE: null,
   RESET_VIEW_TOGGLE: null,
   PLAY_WALKTHROUGH: null,
-  TEXTURE_TOGGLE: null
+  TEXTURE_TOGGLE: null,
+  TEXTURE_CLEAR: null,
+  TEXTURE_SET: null
 };
 
 // Promise Action Types
