@@ -27,7 +27,7 @@ export default ReducerHelper.createReducer(initialState, {
   [ADD_POINT]: (state) => {
     const pos = { x: 0, y: 0, z: 0 };
     const lookAt = { x: 0, y: 0, z: 0 };
-    const quaternion = { x: 0, y: 0, z: 0, w: 0};
+    const quaternion = { x: 0, y: 0, z: 0, w: 0 };
     const disjointMode = true;
     const animationMode = 'Stationary';
     const duration = 1.00;
@@ -41,12 +41,13 @@ export default ReducerHelper.createReducer(initialState, {
 
   [UPDATE_POINT]: (state, { payload }) => {
     const nextState = state;
-    const { pos, lookAt, index, snapshotToken, quaternion } = payload;
+    const { pos, lookAt, index, quaternion, snapshotToken } = payload;
+
     return nextState
       .setIn(['points', index, 'pos'], Immutable.fromJS(pos))
       .setIn(['points', index, 'lookAt'], Immutable.fromJS(lookAt))
-      .setIn(['points', index, 'snapshotToken'], snapshotToken)
-      .setIn(['points', index, 'quaternion', Immutable.fromJS(quaternion)]);
+      .setIn(['points', index, 'quaternion'], Immutable.fromJS(quaternion))
+      .setIn(['points', index, 'snapshotToken'], snapshotToken);
   },
 
   [DELETE_POINT]: (state, { payload }) => {

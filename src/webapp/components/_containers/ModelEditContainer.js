@@ -213,8 +213,8 @@ class ModelEditContainer extends PureComponent {
             <h2>Snapshots</h2>
           <SnapshotSlider snapshots={ model.get('imageUrls') } onSnapshotsAdd={ this._onSnapshotsAdd } />
             <h2>Walkthroughs</h2>
-            { false && this._renderWalkthroughSection() }
-            { false && this._renderWalkthroughPlaybackSection() }
+            { true && this._renderWalkthroughPlaybackSection() }
+            { true && this._renderWalkthroughSection() }
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
@@ -334,7 +334,7 @@ class ModelEditContainer extends PureComponent {
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { walkthroughPoints, position, lookAt, quaternion } = this.props;
+    const { walkthroughPoints, position, lookAt } = this.props;
     const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
     return (
       <div>
