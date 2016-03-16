@@ -5,24 +5,13 @@
 
 // NavBar
 .cb-ctn-app-navbar {
+  border: 1px solid $cb-medium-gray;
+  border-width: 0 0 1px;
   background-color: $cb-white;
-}
-
-.cb-ctn-app-navbar-home {
-  transition: background-color .15s ease;
-}
-
-.cb-ctn-app-navbar-home-top {
-  border: 0;
-  background-color: transparent;
 }
 
 // NavBar Brand
 .cb-ctn-app-navbar-brand {
-  color: $cb-default;
-}
-
-.cb-ctn-app-navbar-brand-home-top {
   color: $cb-default;
 }
 
@@ -39,29 +28,8 @@
   }
 }
 
-.cb-ctn-app-navbar-dropdown-hometop {
-  &:hover,
-  &.open {
-    .dropdown-toggle {
-      background-color: rgba(0, 0, 0, 0.2) !important;
-    }
-  }
-
-  .dropdown-toggle:focus {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-  }
-
-  .dropdown-toggle span {
-    color: #fff;
-  }
-}
-
 // App Content
 .cb-ctn-app-content {
   height: 100%;
   padding: 50px 0 0;
-}
-
-.cb-ctn-app-content-home {
-  padding-top: 0;
 }

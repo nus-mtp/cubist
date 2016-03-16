@@ -3,13 +3,11 @@ import {
 } from './types';
 
 export default {
-  browse(searchString) {
+  browse(query) {
     return {
       type: REQ_GET_BROWSE_RESULTS,
       promise: (apiClient) => apiClient.get('/browse', {
-        query: {
-          searchString
-        }
+        query
       })
     };
   }

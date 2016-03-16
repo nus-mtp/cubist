@@ -3,14 +3,18 @@ import Slider from 'react-slick';
 import Immutable from 'immutable';
 import Dropzone from 'react-dropzone';
 
+import { UrlHelper } from 'webapp/helpers';
+
 class SnapshotSlider extends React.Component {
   static propTypes = {
     snapshots: React.PropTypes.instanceOf(Immutable.List),
-    onSnapshotsAdd: React.PropTypes.func
+    onSnapshotsAdd: React.PropTypes.func,
+    isEditor: React.PropTypes.bool
   };
 
   static defaultProps = {
-    snapshots: new Immutable.List()
+    snapshots: new Immutable.List(),
+    isEditor: false
   };
 
   state = {
@@ -49,23 +53,18 @@ class SnapshotSlider extends React.Component {
       slidesToShow: 3,
       slidesToScroll: 1
     };
-    const { snapshots } = this.props;
+    const { snapshots, isEditor } = this.props;
     const { newSnapshots } = this.state;
 
     return (
       <div>
         <Slider { ...slideSettings }>
-          { snapshots.map(this._renderSnapshot) }
-          { newSnapshots.map(this._renderNewSnapshot) }
-          <div className="cb-snapshot-slide-add">
-            <Dropzone className="cb-snapshot-slide-add-button btn btn-transparent btn-block"
-              onDrop={ this._onSnapshotFilesDrop }>
-              +
-            </Dropzone>
-          </div>
+          { snapshots.map(this._renderSnapshot.bind(this)) }
+          { newSnapshots.map(this._renderNewSnapshot.bind(this)) }
+          { this._renderDropzone() }
         </Slider>
         {
-          newSnapshots.length !== 0 &&
+          isEditor && newSnapshots.length !== 0 &&
           <button onClick={ this._onAddButtonClick } className="btn btn-success">
             ADD NEW SNAPSHOTS
           </button>
@@ -74,10 +73,30 @@ class SnapshotSlider extends React.Component {
     );
   }
 
-  _renderSnapshot(snapshot, index) {
+  _renderDropzone() {
+    const { isEditor } = this.props;
+
+    if (!isEditor) {
+      return [];
+    }
+
     return (
-      <div className="cb-snapshot-slide" key={ index }>
-        <img className="cb-snapshot-slide-image" src={ `/storage/snapshots/${snapshot}` } />
+      <div className="cb-snapshot-slide-add">
+        <Dropzone className="cb-snapshot-slide-add-button btn btn-transparent btn-block"
+          onDrop={ this._onSnapshotFilesDrop }>
+          +
+        </Dropzone>
+      </div>
+    );
+  }
+
+  _renderSnapshot(snapshot, index) {
+    const snapshotStyle = {
+      backgroundImage: `url("${UrlHelper.getSnapshotUrl(snapshot)}")`
+    };
+
+    return (
+      <div className="cb-snapshot-slide" style={ snapshotStyle } key={ index }>
       </div>
     );
   }

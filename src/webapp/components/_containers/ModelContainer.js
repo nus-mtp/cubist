@@ -1,4 +1,5 @@
 import React from 'react';
+import Promise from 'bluebird';
 import { Link } from 'react-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
@@ -6,6 +7,7 @@ import PureComponent from 'react-pure-render/component';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
+import { SnapshotSlider } from '../sliders';
 import { ModelActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
 
@@ -13,7 +15,10 @@ const CLASS_NAME = 'cb-ctn-model';
 
 class ModelContainer extends PureComponent {
   static fetchData({ dispatch, params }) {
-    return dispatch(ModelActions.getModel(params.modelId));
+    return Promise.all([
+      dispatch(ModelActions.getModel(params.modelId)),
+      dispatch(ModelActions.incrementViews(params.modelId))
+    ]);
   }
 
   static propTypes = {
@@ -52,6 +57,8 @@ class ModelContainer extends PureComponent {
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
+            <h2>Snapshots</h2>
+            <SnapshotSlider snapshots={ model.get('imageUrls') } />
           </div>
           <div className="col-md-4">
             {
