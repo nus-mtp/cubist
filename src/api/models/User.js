@@ -79,13 +79,26 @@ User.statics.validate = function (user, fields) {
   return null;
 };
 
+User.static.findUser = function (query = {}, options = {}) {
+  return MongooseHelper.findOne(this, query, options);
+};
+
 /**
  * Find single user by email
  * @param  { String } email [email of the user]
  * @return { Promise }       [promise of the query result]
  */
 User.statics.findOneByEmail = function (email) {
-  return Promise.resolve(this.findOne({ email }).exec());
+  return MongooseHelper.findOne(this, { email });
+};
+
+/**
+ * Find single user by name
+ * @param  { String } name [username of the user]
+ * @return { Promise }      [promise of the query result]
+ */
+User.statics.findOneByName = function (name) {
+  return MongooseHelper.findOne(this, { name });
 };
 
 /**
@@ -95,20 +108,31 @@ User.statics.findOneByEmail = function (email) {
  * @return { Promise } [promise of the query result]
  */
 User.statics.findOneByUsernameOrEmail = function (email, name) {
-  return Promise.resolve(this.findOne({
+  return MongooseHelper.findOne(this, {
     $or: [
       { email },
       { name }
     ]
-  }));
+  });
 };
 
+/**
+ * Search elastically for user with name regex
+ * @param  { String } name [words to search for in username]
+ * @return { Promise }      [promise of the query result]
+ */
 User.statics.findByName = function (name) {
   const searchWords = name.split(/[ ,]+/);
   const regExp = new RegExp('(' + searchWords.join('|') + ')', 'i');
-  return Promise.resolve(this.find({
-    name: regExp
-  }).select('id'));
+  return MongooseHelper.find(
+    this,
+    {
+      name: regExp
+    },
+    {
+      select: 'id'
+    }
+  );
 };
 
 /**
@@ -117,7 +141,7 @@ User.statics.findByName = function (name) {
  * @return { Promise }        [promise of the query result]
  */
 User.statics.findByUserId = function (userId) {
-  return Promise.resolve(this.findById(userId).exec());
+  return MongooseHelper.find(this, { _id: userId });
 };
 
 /**

@@ -34,6 +34,8 @@ export default (apiClient) => {
         } else {
           next({ ...rest, res, promiseState: Constants.PROMISE_STATE_SUCCESS });
         }
+
+        return res;
       })
       .catch((res) => {
         // Create the promise  action in the failure state

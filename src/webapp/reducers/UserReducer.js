@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import { Constants } from 'common';
 import ReducerHelper from './ReducerHelper';
 import {
+  REQ_GET_USER,
   REQ_GET_USER_ME,
   REQ_GET_USER_USER_INFO,
   REQ_GET_USER_ADMIN_INFO,
@@ -12,27 +13,39 @@ import {
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
-  // The current user ID if logged in
+  // The own user ID of the current session
+  ownUserId: null,
+  // The current focus user ID
   currentUserId: null,
   // Users Map
   users: Immutable.Map()
 });
 
 export default ReducerHelper.createReducer(initialState, {
+  [REQ_GET_USER]: function (state, { promiseState, res }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const user = res.body;
+      nextState = nextState
+        .setIn(['users', user._id], Immutable.fromJS(user))
+        .set('currentUserId', user._id);
+    }
+
+    return nextState;
+  },
+
   [REQ_GET_USER_ME]: function (state, { promiseState, res }) {
     let nextState = state;
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const user = res.body;
       if (user) {
         nextState = nextState
-          .update('users', (users) => users.merge({ [user._id]: user }))
-          .merge({
-            currentUserId: user._id
-          });
+          .setIn(['users', user._id], Immutable.fromJS(user))
+          .set('ownUserId', user._id);
       } else {
         nextState = nextState.merge({
           isRegistered: false,
-          currentUserId: null
+          ownUserId: null
         });
       }
     }
@@ -45,7 +58,7 @@ export default ReducerHelper.createReducer(initialState, {
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const user = res.body;
       nextState = nextState.merge({
-        currentUserId: user._id,
+        ownUserId: user._id,
         users: { [user._id]: user }
       });
     }
@@ -58,7 +71,7 @@ export default ReducerHelper.createReducer(initialState, {
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const user = res.body;
       nextState = nextState.merge({
-        currentUserId: user._id,
+        ownUserId: user._id,
         users: { [user._id]: user }
       });
     }
@@ -71,7 +84,7 @@ export default ReducerHelper.createReducer(initialState, {
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const user = res.body;
       nextState = nextState.merge({
-        currentUserId: user._id,
+        ownUserId: user._id,
         users: { [user._id]: user }
       });
     }
@@ -82,7 +95,7 @@ export default ReducerHelper.createReducer(initialState, {
   [REQ_POST_USER_LOGOUT]: function (state, { promiseState }) {
     let nextState = state;
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
-      nextState = nextState.set('currentUserId', null);
+      nextState = nextState.set('ownUserId', null);
     }
 
     return nextState;

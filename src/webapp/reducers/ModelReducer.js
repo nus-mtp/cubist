@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import { Constants } from 'common';
 import ReducerHelper from './ReducerHelper';
 import {
+  REQ_GET_MODELS,
   REQ_GET_MODEL,
   REQ_GET_TOP_MODELS,
   REQ_GET_LATEST_MODELS,
@@ -47,11 +48,25 @@ const ModelReducerHelper = {
     }
 
     return nextState;
+  },
+
+  updateModels(state, { promiseState, res }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const fetchedModelMap = ModelReducerHelper.toModelMap(res.body);
+      const fetchedModelIds = ModelReducerHelper.toModelIds(res.body);
+      nextState = nextState
+        .update('models', m => m.merge(fetchedModelMap))
+        .set('modelIds', fetchedModelIds);
+    }
+
+    return nextState;
   }
 };
 
 export default ReducerHelper.createReducer(initialState, {
   [REQ_GET_MODEL]: ModelReducerHelper.updateModel,
+  [REQ_GET_MODELS]: ModelReducerHelper.updateModels,
 
   [REQ_GET_TOP_MODELS](state, { promiseState, res }) {
     let nextState = state;

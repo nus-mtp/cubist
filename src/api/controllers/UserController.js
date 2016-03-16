@@ -17,10 +17,12 @@ const UserController = {
 
 // ---------------------------------------------------------------------------- //
 
+UserController.request.getUser = function (req, res) {
+  ResponseHelper.handle(UserController.promise.getUser, req, res, DEBUG_ENV);
+};
+
 UserController.request.me = function (req, res) {
-  UserController.promise.me(req)
-    .then(user => ResponseHelper.success(res, user))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(UserController.promise.me, req, res, DEBUG_ENV);
 };
 
 UserController.request.info = function (req, res) {
@@ -30,9 +32,7 @@ UserController.request.info = function (req, res) {
 };
 
 UserController.request.register = function (req, res) {
-  UserController.promise.register(req)
-    .then(user => ResponseHelper.success(res, user))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(UserController.promise.register, req, res, DEBUG_ENV);
 };
 
 UserController.request.login = function (req, res) {
@@ -59,18 +59,19 @@ UserController.request.logout = function (req, res) {
 };
 
 UserController.request.resetPassword = function (req, res) {
-  UserController.promise.resetPassword(req)
-    .then(user => ResponseHelper.success(res, user))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(UserController.promise.resetPassword, req, res, DEBUG_ENV);
 };
 
 UserController.request.changePassword = function (req, res) {
-  UserController.promise.changePassword(req)
-    .then(user => ResponseHelper.success(res, user))
-    .catch(error => ResponseHelper.error(res, error, DEBUG_ENV));
+  ResponseHelper.handle(UserController.promise.changePassword, req, res, DEBUG_ENV);
 };
 
 // ---------------------------------------------------------------------------- //
+
+UserController.promise.getUser = function (req) {
+  const { query, options } = req.query;
+  return User.getUser(query, options);
+};
 
 UserController.promise.me = function (req, needAuthorized = false) {
   if (needAuthorized && !req.user) {

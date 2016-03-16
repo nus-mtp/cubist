@@ -209,10 +209,10 @@ class AppContainer extends PureComponent {
 }
 
 export default connect(state => {
-  const currentUserId = state.UserStore.get('currentUserId');
+  const ownUserId = state.UserStore.get('ownUserId');
   const users = state.UserStore.get('users');
 
   return {
-    user: users.get(currentUserId, new Immutable.Map())
+    user: users.get(ownUserId, new Immutable.Map())
   };
 })(AppContainer);
