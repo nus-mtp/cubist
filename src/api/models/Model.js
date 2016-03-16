@@ -17,7 +17,8 @@ const Model = new Schema({
   zipUrl: { type: String },
   socialData: {
     views: { type: Number, default: 0 },
-    favorites: { type: Number, default: 0 }
+    favorites: [{ type: ObjectId, ref: 'User', index: true }],
+    flags: [{ type: ObjectId, ref: 'User', index: true }]
   },
   metaData: {
     vertices: { type: Number, default: 0 },
@@ -225,6 +226,36 @@ Model.statics.updateModelInfo = function (modelId, info) {
   }
 
   return MongooseHelper.findOneAndUpdate(this, { _id: modelId }, info, { new: true }, { populate: 'uploader' });
+};
+
+// -----------------------------------------------------
+// -----------------MODEL SOCIAL DATA-------------------
+// -----------------------------------------------------
+
+Model.statics.flagModel = function (modelId, userId) {
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $addToSet: {
+      'socialData.flags': userId
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true }, { populate: 'uploader' });
+};
+
+Model.statics.unflagModel = function (modelId, userId) {
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $pull: {
+      'socialData.flags': userId
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true }, { populate: 'uploader' });
 };
 
 Model.statics.incrementViews = function (modelId, amount) {

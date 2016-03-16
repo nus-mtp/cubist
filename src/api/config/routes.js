@@ -53,4 +53,9 @@ export default (app) => {
     ModelController.request.updateModelInfo
   );
   app.put('/model/:modelId/views', ModelController.request.incrementViews);
+  app.put(
+    '/model/:modelId/flag',
+    Authorisation.requireUser,
+    ModelController.request.toggleFlag
+  );
 };

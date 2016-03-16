@@ -6,6 +6,7 @@ import {
   REQ_POST_CREATE_MODEL,
   REQ_PUT_UPDATE_MODEL_INFO,
   REQ_PUT_INCREMENT_MODEL_VIEWS,
+  REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT
 } from './types';
@@ -79,6 +80,17 @@ export default {
     return {
       type: REQ_PUT_INCREMENT_MODEL_VIEWS,
       promise: apiClient => apiClient.put(`/model/${modelId}/views`)
+    };
+  },
+
+  toggleFlag(modelId, isFlagged) {
+    return {
+      type: REQ_PUT_TOGGLE_MODEL_FLAG,
+      promise: apiClient => apiClient.put(`/model/${modelId}/flag`, {
+        body: {
+          isFlagged
+        }
+      })
     };
   },
 
