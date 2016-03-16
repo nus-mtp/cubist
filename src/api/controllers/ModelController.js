@@ -66,7 +66,7 @@ ModelController.request.deleteSnapshot = function (req, res) {
 
 ModelController.promise.getModel = function (req) {
   const { modelId } = req.params;
-  return Model.getModelById(modelId, { populate: 'uploader' });
+  return Model.getModelById(modelId, {}, { populate: 'uploader' });
 };
 
 ModelController.promise.getModels = function (req) {

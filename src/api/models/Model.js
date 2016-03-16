@@ -88,7 +88,7 @@ Model.statics.getModels = function (query = {}, options = {}) {
 };
 
 Model.statics.getModelById = function (modelId, query = {}, options = {}) {
-  return MongooseHelper.findOne(this, { ...query, _id: modelId }, options);
+  return MongooseHelper.findOne(this, { ...query, _id: mongoose.Types.ObjectId(modelId) }, options);
 };
 
 Model.statics.getLatestModels = function () {
