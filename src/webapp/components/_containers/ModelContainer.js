@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import PureComponent from 'react-pure-render/component';
+import Promise from 'bluebird';
 
 import { OBJLoader, OBJMTLLoader } from '../../render';
 import { ModelViewer } from '../model';
@@ -171,12 +172,33 @@ class ModelContainer extends PureComponent {
     console.log(urls);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('.mtl')).get(0);
-    loader.loadSmall(objUrl, mtlUrl, m => {
-      this.setState({ object: m });
-      const { dispatch } = this.props;
-      dispatch(RenderActions.setTexture()); //write test cases
-      console.log('small loaded');
+    // loader.loadSmall(objUrl, mtlUrl, m => {
+    //   this.setState({ object: m });
+    //   const { dispatch } = this.props;
+    //   dispatch(RenderActions.setTexture()); //write test cases
+    //   console.log('small loaded');
+    // });
+
+    var promiseTexture = new Promise((resolve, reject) => {
+      loader.loadSmall(objUrl, mtlUrl, m => {
+        this.setState({ object: m });
+        const { dispatch } = this.props;
+        dispatch(RenderActions.setTexture()); //write test cases
+      });
+      resolve(console.log('small loaded'));
     });
+
+
+    // var promise = new Promise((resolve, reject) => {
+    //   this.loadProgressive(loader, objUrl, mtlUrl);
+    //   resolve(console.log('success'));
+    // });
+
+    promiseTexture.then(this.loadProgressive(loader, objUrl, mtlUrl));
+    // this.loadProgressive(loader, objUrl, mtlUrl);
+  }
+
+  loadProgressive(loader, objUrl, mtlUrl) {
     loader.load(objUrl, mtlUrl, m => {
       this.setState({ object: m });
       const { dispatch } = this.props;
