@@ -1,4 +1,5 @@
 import {
+  REQ_GET_USER,
   REQ_GET_USER_ME,
   REQ_GET_USER_USER_INFO,
   REQ_GET_USER_ADMIN_INFO,
@@ -9,6 +10,17 @@ import {
 } from './types';
 
 export default {
+  getUser(query) {
+    return {
+      type: REQ_GET_USER,
+      promise: apiClient => apiClient.get('/user', {
+        query: {
+          query
+        }
+      })
+    };
+  },
+
   me() {
     return {
       type: REQ_GET_USER_ME,

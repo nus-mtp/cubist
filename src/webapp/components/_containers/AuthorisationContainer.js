@@ -11,7 +11,7 @@ const CLASS_NAME = 'cb-ctn-authorisation';
 class AuthorisationContainer extends PureComponent {
   static propTypes = {
     dispatch: React.PropTypes.func.isRequired,
-    currentUserId: React.PropTypes.string,
+    ownUserId: React.PropTypes.string,
     user: React.PropTypes.instanceOf(Immutable.Map)
   };
 

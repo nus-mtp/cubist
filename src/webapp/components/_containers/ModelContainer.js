@@ -93,7 +93,7 @@ class ModelContainer extends PureComponent {
           <h3>Uploader </h3>
           <hr />
           <div className="cb-text-center">
-            <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+            <img className={ `${CLASS_NAME}-user-avatar cb-image-round` } src={ avatarUrl } />
             <h4>{ model.getIn(['uploader', 'name']) }</h4>
           </div>
         </div>

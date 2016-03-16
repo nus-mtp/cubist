@@ -5,6 +5,7 @@ const normalTypes = {
 };
 
 const promiseTypes = {
+  REQ_GET_USER: null,
   REQ_GET_USER_ME: null,
   REQ_GET_USER_USER_INFO: null,
   REQ_GET_USER_ADMIN_INFO: null,

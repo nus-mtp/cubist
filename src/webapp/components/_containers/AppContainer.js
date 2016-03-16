@@ -4,6 +4,7 @@ import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { NavDropdown, MenuItem } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 import { pushState } from 'redux-router';
@@ -130,6 +131,7 @@ class AppContainer extends PureComponent {
   }
 
   _renderUserHeader() {
+    const { user } = this.props;
     const dropDownClasses = [
       `${CLASS_NAME}-navbar-dropdown`
     ];
@@ -138,9 +140,11 @@ class AppContainer extends PureComponent {
       <ul className="nav navbar-nav navbar-right" key={ 1 }>
         <NavDropdown className={ classnames(dropDownClasses) }
           title={ this._renderUserAvatar() } id="registeredDropdown">
-          <MenuItem eventKey="2">
-            Manage Profile
-          </MenuItem>
+          <LinkContainer to={ `/u/${user.get('name')}` }>
+            <MenuItem eventKey="2">
+              Manage Profile
+            </MenuItem>
+          </LinkContainer>
           <MenuItem eventKey="2">
             Settings
           </MenuItem>
@@ -162,7 +166,7 @@ class AppContainer extends PureComponent {
     const { user } = this.props;
 
     return (
-      <img className="image-round" src={ GravatarHelper.getGravatarUrl(user.get('email')) } height="25" />
+      <img className="cb-image-round" src={ GravatarHelper.getGravatarUrl(user.get('email')) } height="25" />
     );
   }
 
@@ -209,10 +213,10 @@ class AppContainer extends PureComponent {
 }
 
 export default connect(state => {
-  const currentUserId = state.UserStore.get('currentUserId');
+  const ownUserId = state.UserStore.get('ownUserId');
   const users = state.UserStore.get('users');
 
   return {
-    user: users.get(currentUserId, new Immutable.Map())
+    user: users.get(ownUserId, new Immutable.Map())
   };
 })(AppContainer);

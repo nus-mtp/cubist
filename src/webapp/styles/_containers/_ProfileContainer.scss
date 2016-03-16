@@ -1,0 +1,22 @@
+.cb-ctn-profile {
+  min-height: 100%;
+  padding: 15px 50px;
+  background: $cb-light-gray;
+}
+
+.cb-ctn-profile-personal-card {
+  @include breakpoint($max-mobile) {
+    text-align: center;
+  }
+}
+
+.cb-ctn-profile-personal-card-content {
+  @include breakpoint($min-tablet) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.cb-ctn-profile-model-item {
+  margin-bottom: 15px;
+}

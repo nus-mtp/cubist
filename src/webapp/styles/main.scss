@@ -13,6 +13,7 @@
 @import 'common/anchor';
 @import 'common/button';
 @import 'common/utils';
+@import 'common/hr';
 @import 'common/image';
 
 // Import Subcomponents
@@ -29,3 +30,4 @@
 @import '_containers/ModelContainer';
 @import '_containers/UploadContainer';
 @import '_containers/BrowseContainer';
+@import '_containers/ProfileContainer';

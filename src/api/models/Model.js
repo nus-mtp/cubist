@@ -83,8 +83,12 @@ Model.statics.validateFilePaths = function (filePaths) {
 // -----------------MODEL QUERY-------------------------
 // -----------------------------------------------------
 
-Model.statics.getModelById = function (modelId, options = {}) {
-  return MongooseHelper.findOne(this, { _id: modelId }, options);
+Model.statics.getModels = function (query = {}, options = {}) {
+  return MongooseHelper.find(this, query, options);
+};
+
+Model.statics.getModelById = function (modelId, query = {}, options = {}) {
+  return MongooseHelper.findOne(this, { ...query, _id: modelId }, options);
 };
 
 Model.statics.getLatestModels = function () {

@@ -2,12 +2,20 @@
   display: block;
 }
 
+.cb-flex {
+  display: flex;
+}
+
 .cb-relative {
   position: relative;
 }
 
 .cb-text-center {
   text-align: center;
+}
+
+.cb-flex-vert-center {
+  align-items: center;
 }
 
 .cb-align-right {

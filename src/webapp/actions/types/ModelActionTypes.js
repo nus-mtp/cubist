@@ -7,6 +7,7 @@ const normalTypes = {
 
 // Promise Action Types
 const promiseTypes = {
+  REQ_GET_MODELS: null,
   REQ_GET_MODEL: null,
   REQ_GET_TOP_MODELS: null,
   REQ_GET_LATEST_MODELS: null,

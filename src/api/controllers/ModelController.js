@@ -18,6 +18,10 @@ const ModelController = {
 
 // ---------------------------------------------------------------------------- //
 
+ModelController.request.getModels = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getModels, req, res, DEBUG_ENV);
+};
+
 ModelController.request.getModel = function (req, res) {
   ResponseHelper.handle(ModelController.promise.getModel, req, res, DEBUG_ENV);
 };
@@ -63,6 +67,11 @@ ModelController.request.deleteSnapshot = function (req, res) {
 ModelController.promise.getModel = function (req) {
   const { modelId } = req.params;
   return Model.getModelById(modelId, { populate: 'uploader' });
+};
+
+ModelController.promise.getModels = function (req) {
+  const { query, options } = req.query;
+  return Model.getModels(query, options);
 };
 
 ModelController.promise.getTopModels = function () {

@@ -133,7 +133,7 @@ class UploadContainer extends PureComponent {
     return (
       <div className={ `${CLASS_NAME}-user-card panel panel-default` }>
         <div className="panel-body cb-text-center">
-          <img className={ `${CLASS_NAME}-user-avatar image-round` } src={ avatarUrl } />
+          <img className={ `${CLASS_NAME}-user-avatar cb-image-round` } src={ avatarUrl } />
           <hr />
           <h4>{ user.get('name') }</h4>
         </div>
