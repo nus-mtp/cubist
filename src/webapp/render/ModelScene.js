@@ -42,7 +42,8 @@ class ModelScene {
     playbackWalkthrough: false
   };
 
-  tweenList = [];
+  tweenTranslate = [];
+  tweenRotate = [];
   tweenLook = [];
 
   walkthroughState = {
@@ -123,6 +124,142 @@ class ModelScene {
     this.controls = new OrbitControls(this.camera, dimensions);
   }
 
+  _initRotationTween(index, firstIndex, nextIndex, duration) {
+    const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
+    const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
+    const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
+
+    const xDest = this.walkthroughState.points[nextIndex].pos.x;
+    const yDest = this.walkthroughState.points[nextIndex].pos.y;
+    const zDest = this.walkthroughState.points[nextIndex].pos.z;
+
+    const qm = new THREE.Quaternion();
+
+    const quatOrigin = new THREE.Quaternion(this.walkthroughState.points[firstIndex].quaternion.x,
+                                            this.walkthroughState.points[firstIndex].quaternion.y,
+                                            this.walkthroughState.points[firstIndex].quaternion.z,
+                                            this.walkthroughState.points[firstIndex].quaternion.w);
+    const quatTarget = new THREE.Quaternion(this.walkthroughState.points[nextIndex].quaternion.x,
+                                            this.walkthroughState.points[nextIndex].quaternion.y,
+                                            this.walkthroughState.points[nextIndex].quaternion.z,
+                                            this.walkthroughState.points[nextIndex].quaternion.w);
+    const inverseOrigin = quatOrigin.inverse();
+    const targetQuaternion = quatTarget.multiply(inverseOrigin);
+    const curQuaternion = new THREE.Quaternion();
+
+    const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
+    const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
+    const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
+
+    const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
+    const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
+    const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
+    const destL = new THREE.Vector3(xDestL, yDestL, zDestL);
+
+    const t1 = { t: 0 };
+    const t2 = { t: 1 };
+
+    const s1 = { t: 0 };
+    const s2 = { t: 1 };
+
+    this.tweenRotate[index] = new TWEEN.Tween(t1).to(t2, duration)
+    .easing(TWEEN.Easing.Linear.None)
+    .onStart(() => {
+      this.camera.position.set(xOrigin, yOrigin, zOrigin);
+    });
+
+    // Tween for camera lookAt
+    this.tweenLook[index] = new TWEEN.Tween(s1).to(s2, duration)
+    .easing(TWEEN.Easing.Linear.None)
+    .onStart(() => {
+      const lookTarget = new THREE.Vector3(xOrig, yOrig, zOrig);
+      this.controls.constraint.target = lookTarget;
+    });
+
+    // if Second Point is disjoint, do not UPDATE tween to next Point.
+    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
+        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+      this.tweenRotate[index].onComplete(() => {
+        this.camera.position.set(xDest, yDest, zDest);
+        const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
+        this.controls.constraint.target = lookTarget;
+      });
+    } else {
+      this.tweenRotate[index].onUpdate(() => {
+        THREE.Quaternion.slerp(curQuaternion, targetQuaternion, qm, t1.t);
+
+        // apply new quaternion to camera position
+        const cloneOrigin = new THREE.Vector3(xOrigin, yOrigin, zOrigin);
+        cloneOrigin.applyQuaternion(qm);
+        this.camera.position.set(cloneOrigin.x, cloneOrigin.y, cloneOrigin.z);
+      });
+
+      this.tweenLook[index].onUpdate(() => {
+        const lookVec = new THREE.Vector3(xOrig, yOrig, zOrig);
+        lookVec.applyQuaternion(qm);
+        this.controls.constraint.target = lookVec;
+      });
+    }
+  }
+
+  _initTranslationTween(index, firstIndex, nextIndex, duration) {
+    const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
+    const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
+    const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
+    const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
+
+    const xDest = this.walkthroughState.points[nextIndex].pos.x;
+    const yDest = this.walkthroughState.points[nextIndex].pos.y;
+    const zDest = this.walkthroughState.points[nextIndex].pos.z;
+    const destination = { x: xDest, y: yDest, z: zDest };
+
+    const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
+    const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
+    const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
+    const originLook = { x: xOrig, y: yOrig, z: zOrig };
+
+    const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
+    const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
+    const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
+    const destL = { x: xDestL, y: yDestL, z: zDestL };
+
+    // Tween for camera position
+    this.tweenTranslate[index] = new TWEEN.Tween(origin)
+    .to(destination, duration)
+    .onStart(() => {
+      this.camera.position.set(origin.x, origin.y, origin.z);
+    })
+    .easing(TWEEN.Easing.Linear.None);
+
+    // Tween for camera lookAt
+    this.tweenLook[index] = new TWEEN.Tween(originLook)
+    .to(destL, duration)
+    .onStart(() => {
+      const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+      this.controls.constraint.target = lookTarget;
+    })
+    .easing(TWEEN.Easing.Linear.None);
+
+
+    // if Second Point is disjoint, do not UPDATE tween to next Point.
+    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
+        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+      this.tweenTranslate[index].onComplete(() => {
+        this.camera.position.set(destination.x, destination.y, destination.z);
+        const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
+        this.controls.constraint.target = lookTarget;
+      });
+    } else {
+      this.tweenTranslate[index].onUpdate(() => {
+        this.camera.position.set(origin.x, origin.y, origin.z);
+      });
+      this.tweenLook[index].onUpdate(() => {
+        const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+        this.controls.constraint.target = lookTarget;
+      });
+    }
+  }
+
   _initTween() {
 // Analyse how many Tween Obj is require
     const numTweenObjRequire = this.walkthroughState.index[1] - this.walkthroughState.index[0];
@@ -138,83 +275,36 @@ class ModelScene {
         firstIndex = firstIndex + i;
         nextIndex = firstIndex + 1;
 
-        const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
-        const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
-        const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
-        const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
-
         duration = this.walkthroughState.points[firstIndex].duration * 1000;
 
-        const xDest = this.walkthroughState.points[nextIndex].pos.x;
-        const yDest = this.walkthroughState.points[nextIndex].pos.y;
-        const zDest = this.walkthroughState.points[nextIndex].pos.z;
-        const destination = { x: xDest, y: yDest, z: zDest };
+        this.tweenTranslate[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
+        this.tweenRotate[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
+        this.tweenLook[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
 
-        const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
-        const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
-        const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
-        const originLook = { x: xOrig, y: yOrig, z: zOrig };
-
-        const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
-        const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
-        const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
-        const destL = { x: xDestL, y: yDestL, z: zDestL };
-
-
-        this.tweenList[i] = new TWEEN.Tween(origin)
-        .to(destination, duration)
-        .onStart(() => {
-          this.camera.position.set(origin.x, origin.y, origin.z);
-        })
-        .easing(TWEEN.Easing.Linear.None);
-
-        this.tweenLook[i] = new TWEEN.Tween(originLook)
-        .to(destL, duration)
-        .onStart(() => {
-          const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
-          this.controls.constraint.target = lookTarget;
-        })
-        .easing(TWEEN.Easing.Linear.None);
-
-        // if Second Point is disjoint, do not UPDATE tween to next Point.
-        if (this.walkthroughState.points[nextIndex].disjointMode === true) {
-          this.tweenList[i].onComplete(() => {
-            this.camera.position.set(destination.x, destination.y, destination.z);
-            const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
-            this.controls.constraint.target = lookTarget;
-          });
+        if (this.walkthroughState.points[nextIndex].animationMode === 'Linear') {
+          this._initTranslationTween(i, firstIndex, nextIndex, duration);
+        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Spherical') {
+          this._initRotationTween(i, firstIndex, nextIndex, duration);
         } else {
-          this.tweenList[i].onUpdate(() => {
-            this.camera.position.set(origin.x, origin.y, origin.z);
-          });
-          this.tweenLook[i].onUpdate(() => {
-            const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
-            this.controls.constraint.target = lookTarget;
-          });
+          this._initTranslationTween(i, firstIndex, nextIndex, duration);
         }
-
-        firstIndex = 0;
       }
 
       // Chain up playback node
       if (numTweenObjRequire > 1) {
         for (let i = 1; i < numTweenObjRequire; i++) {
-          this.tweenList[i - 1].chain(this.tweenList[i]);
+          this.tweenTranslate[i - 1].chain(this.tweenTranslate[i]);
+          this.tweenRotate[i - 1].chain(this.tweenRotate[i]);
           this.tweenLook[i - 1].chain(this.tweenLook[i]);
         }
       }
     }
 
     if (numTweenObjRequire > 0) {
-      this.tweenList[0].start();
+      this.tweenTranslate[0].start();
+      this.tweenRotate[0].start();
       this.tweenLook[0].start();
     }
-
-    // if (numTweenObjRequire > 0) {
-    //   this.tweenList[0].onComplete(() => {
-    //     console.log('Completed');
-    //   });
-    // }
   }
 
   /**
@@ -228,10 +318,6 @@ class ModelScene {
     if (this.walkthroughState.startPlayback) {
       TWEEN.update();
     }
-
-    // if (this.camera.position - this.walkthroughState.points[this.walkthroughState.index[1]] < 0.5) {
-    //   this._onPlaybackCompleted();
-    // }
   }
 
   /**
@@ -242,19 +328,6 @@ class ModelScene {
     // Render background first so that the model appears in front
     this.renderer.render(this.backgroundScene, this.backgroundCamera);
     this.renderer.render(this.scene, this.camera);
-  }
-
-  _onPlaybackCompleted() {
-   // console.log('Completed');
-    // console.log('start state: ', this.walkthroughState.startPlayback);
-    // callback(ModelCanvas._onPlaybackCompleted());
-    this.walkthroughState.startPlayback = false;
-    // console.log('End state: ', this.walkthroughState.startPlayback);
-
-
-    // return {
-    //   walkthroughToggle: this.walkthroughState.startPlayback
-    // };
   }
 
   /**
@@ -561,12 +634,15 @@ class ModelScene {
 
   getCameraOrbit() {
     const coordinateFields = ['x', 'y', 'z'];
+    const quaternionFields = ['x', 'y', 'z', 'w'];
     const lookAt = this.controls.constraint.target;
-    // lookAt.applyMatrix4(this.camera.matrixWorld);
+
     return {
       position: _.pick(this.camera.position, coordinateFields),
       up: _.pick(this.camera.up, coordinateFields),
-      lookAt: _.pick(lookAt, coordinateFields)
+      lookAt: _.pick(lookAt, coordinateFields),
+      quaternion: _.pick(this.camera.quaternion, quaternionFields)
+
     };
   }
 

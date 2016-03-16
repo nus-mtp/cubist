@@ -39,6 +39,7 @@ class ModelEditContainer extends PureComponent {
     viewIndex: React.PropTypes.number,
     position: React.PropTypes.instanceOf(Immutable.Map),
     lookAt: React.PropTypes.instanceOf(Immutable.Map),
+    quaternion: React.PropTypes.instanceOf(Immutable.Map),
     snapshots: React.PropTypes.instanceOf(Immutable.Map)
   };
 
@@ -126,14 +127,16 @@ class ModelEditContainer extends PureComponent {
 
   _onWalkthroughUpdate = (e, index) => {
     e.preventDefault();
-    const { dispatch, position, lookAt } = this.props;
+    const { dispatch, position, lookAt, quaternion } = this.props;
     const { x, y, z } = position.toJS();
 
     const lookAtList = lookAt.toJS();
     const snapshotToken = StringHelper.randomToken();
 
+    const quaternionList = quaternion.toJS();
+
     dispatch(batchActions([
-      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, snapshotToken),
+      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, quaternionList, snapshotToken),
       SnapshotActions.triggerSnapshot(snapshotToken)
     ]));
   };
@@ -213,8 +216,8 @@ class ModelEditContainer extends PureComponent {
               snapshots={ model.get('imageUrls') }
               onSnapshotsAdd={ this._onSnapshotsAdd } />
             <h2>Walkthroughs</h2>
-            { false && this._renderWalkthroughSection() }
-            { false && this._renderWalkthroughPlaybackSection() }
+            { true && this._renderWalkthroughPlaybackSection() }
+            { true && this._renderWalkthroughSection() }
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
@@ -422,17 +425,11 @@ class ModelEditContainer extends PureComponent {
           Stationary
         </MenuItem>
         <MenuItem divider />
-        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
-          Translation
+        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Linear') } >
+          Linear
         </MenuItem>
-        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
-          Rotation
-        </MenuItem>
-        <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
-          Zooming
-        </MenuItem>
-        <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
-          Translation + Rotation
+        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Spherical') } >
+          Spherical
         </MenuItem>
       </DropdownButton>
     );
@@ -579,6 +576,7 @@ export default connect((state) => {
     up: state.CameraStore.get('up'),
     lookAt: state.CameraStore.get('lookAt'),
     zoom: state.CameraStore.get('zoom'),
+    quaternion: state.CameraStore.get('quaternion'),
 
     // Walkthrough Data
     walkthroughPoints: state.WalkthroughStore.get('points'),
