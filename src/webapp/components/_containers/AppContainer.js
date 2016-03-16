@@ -15,7 +15,6 @@ import { UserActions } from 'webapp/actions';
 
 const DEBUG_ENV = 'app-container';
 const CLASS_NAME = 'cb-ctn-app';
-const TOP_LIMIT = 25;
 const SEARCH_FIELD = 'search';
 
 class AppContainer extends PureComponent {
@@ -31,38 +30,11 @@ class AppContainer extends PureComponent {
   };
 
   state = {
-    isAtTop: true,
     isMenuOpened: false,
     formData: {
-      [SEARCH_FIELD]: ' '
+      [SEARCH_FIELD]: ''
     }
   };
-
-  componentDidMount() {
-    window.addEventListener('scroll', this._onScrollThrottle);
-    this._onScroll();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this._onScrollThrottle);
-  }
-
-  _onScrollThrottle = _.throttle(this._onScroll.bind(this), 250);
-
-  _onScroll() {
-    const { location } = this.props;
-    if (location.pathname !== '/') {
-      return;
-    }
-
-    const { isAtTop } = this.state;
-    const offsetY = window.pageYOffset;
-    if (offsetY <= TOP_LIMIT && !isAtTop) {
-      this.setState({ isAtTop: true });
-    } else if (offsetY > TOP_LIMIT && isAtTop) {
-      this.setState({ isAtTop: false });
-    }
-  }
 
   _onMenuToggle = () => {
     this.setState({
@@ -80,14 +52,10 @@ class AppContainer extends PureComponent {
   }
 
   _renderBody() {
-    const { children, location, user } = this.props;
-    const isHomePage = location.pathname === '/';
+    const { children, user } = this.props;
     const contentClasses = [
       'container-fluid',
-      `${CLASS_NAME}-content`,
-      {
-        [`${CLASS_NAME}-content-home`]: isHomePage
-      }
+      `${CLASS_NAME}-content`
     ];
 
     return (
@@ -98,25 +66,15 @@ class AppContainer extends PureComponent {
   }
 
   _renderHeader() {
-    const { location, user } = this.props;
-    const { isAtTop } = this.state;
-    const isHomePage = location.pathname === '/';
+    const { user } = this.props;
     const navClasses = [
       'navbar',
       'navbar-fixed-top',
-      `${CLASS_NAME}-navbar`,
-      {
-        [`${CLASS_NAME}-navbar-home`]: isHomePage,
-        [`${CLASS_NAME}-navbar-home-top`]: isHomePage && isAtTop
-      }
+      `${CLASS_NAME}-navbar`
     ];
     const navBrandClasses = [
       'navbar-brand',
-      `${CLASS_NAME}-navbar-brand`,
-      {
-        [`${CLASS_NAME}-navbar-brand-home`]: isHomePage && isAtTop,
-        [`${CLASS_NAME}-navbar-brand-home-top`]: isHomePage && isAtTop
-      }
+      `${CLASS_NAME}-navbar-brand`
     ];
     const collapseClasses = [
       'collapse',
@@ -153,18 +111,10 @@ class AppContainer extends PureComponent {
   }
 
   _renderPublicHeader() {
-    const { location } = this.props;
-    const { isAtTop } = this.state;
-    const isHomePage = location.pathname === '/';
-
     const signUpClasses = [
       'btn',
       'navbar-btn',
-      `${CLASS_NAME}-navbar-register`,
-      {
-        'btn-transparent': !(isHomePage && isAtTop),
-        'btn-transparent-alt': isHomePage & isAtTop
-      }
+      `${CLASS_NAME}-navbar-register`
     ];
 
     return (
@@ -180,15 +130,8 @@ class AppContainer extends PureComponent {
   }
 
   _renderUserHeader() {
-    const { location } = this.props;
-    const { isAtTop } = this.state;
-    const isHomePage = location.pathname === '/';
-
     const dropDownClasses = [
-      `${CLASS_NAME}-navbar-dropdown`,
-      {
-        [`${CLASS_NAME}-navbar-dropdown-hometop`]: isHomePage & isAtTop
-      }
+      `${CLASS_NAME}-navbar-dropdown`
     ];
 
     return [
@@ -226,7 +169,7 @@ class AppContainer extends PureComponent {
   _renderSearchForm() {
     const { location } = this.props;
     if (location.pathname === '/browse') {
-      return (undefined);
+      return undefined;
     }
     return (
       <div className="col-sm-4 pull-left">
@@ -250,15 +193,17 @@ class AppContainer extends PureComponent {
 
   _onInputChange = (fieldId, text) => {
     const formData = _.cloneDeep(this.state.formData);
-    formData[fieldId] = text;
+    const trimmedText = text.trim();
+    formData[fieldId] = trimmedText.length === 0 ? undefined : trimmedText;
     this.setState({ formData });
   };
 
   _onSearchFormSubmit = (e) => {
     e.preventDefault();
     const { dispatch } = this.props;
+    const trimmedString = this.state.formData[SEARCH_FIELD].trim();
     const queryString = qs.stringify(
-      { searchString: this.state.formData[SEARCH_FIELD] });
+      { searchString: trimmedString.length !== 0 ? trimmedString : undefined });
     dispatch(pushState(null, '/browse?' + queryString));
   };
 }

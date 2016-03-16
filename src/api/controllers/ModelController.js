@@ -42,6 +42,10 @@ ModelController.request.updateModelInfo = function (req, res) {
   ResponseHelper.handle(ModelController.promise.updateModelInfo, req, res, DEBUG_ENV);
 };
 
+ModelController.request.incrementViews = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.incrementViews, req, res, DEBUG_ENV);
+};
+
 ModelController.request.addSnapshots = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addSnapshots, req, res, DEBUG_ENV);
 };
@@ -66,7 +70,15 @@ ModelController.promise.getLatestModels = function () {
 };
 
 ModelController.promise.getBrowsePageModels = function (req) {
-  return Model.getBrowsePageModels(req.query.searchString);
+  if (req.query.searchString && !req.query.searchUser) {
+    const payload = { ...req.query };
+    return User.findByName(payload.searchString)
+      .then(result => {
+        payload.userIds = result;
+        return Model.getBrowsePageModels(payload);
+      });
+  }
+  return Model.getBrowsePageModels(req.query);
 };
 
 ModelController.promise.createModel = function (req) {
@@ -125,6 +137,17 @@ ModelController.promise.updateModelInfo = function (req) {
       }
     })
     .then(() => Model.updateModelInfo(modelId, modelInfo));
+};
+
+ModelController.promise.incrementViews = function (req) {
+  const { modelId } = req.params;
+
+  const error = Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.incrementViews(modelId, 1);
 };
 
 ModelController.promise.addSnapshots = function (req) {

@@ -19,7 +19,6 @@ const categories = process.env.BROWSER
   : requireServerJson(__dirname, '../../assets/model-category.json');
 
 const CLASS_NAME = 'cb-ctn-home';
-const fallBackImage = 'https://d13yacurqjgara.cloudfront.net/users/532989/screenshots/1700135/cube_1x.jpg';
 const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
@@ -137,7 +136,7 @@ class HomeContainer extends PureComponent {
       }
 
       const style = {
-        backgroundImage: `url(${UrlHelper.getSnapshotUrl(model.getIn(['imageUrls', 0], fallBackImage))})`
+        backgroundImage: `url("${UrlHelper.getSnapshotUrl(model.getIn(['imageUrls', 0]))}")`
       };
 
       return (
@@ -199,7 +198,7 @@ class HomeContainer extends PureComponent {
   _renderCategories() {
     return categories.map((category, i) => {
       const style = {
-        backgroundImage: `url(${category.image_url})`
+        backgroundImage: `url("${category.image_url}")`
       };
 
       return (
