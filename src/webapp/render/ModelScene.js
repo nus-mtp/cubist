@@ -135,13 +135,18 @@ class ModelScene {
     const zDest = this.walkthroughState.points[nextIndex].pos.z;
     const dest = new THREE.Vector3(xDest, yDest, zDest);
 
-    const axis = origin.cross(dest).normalize();
-    const angle = Math.acos(origin.dot(dest));
-
     const qm = new THREE.Quaternion();
 
-    const targetQuaternion = new THREE.Quaternion();
-    targetQuaternion.setFromAxisAngle(axis, angle);
+    const quatOrigin = new THREE.Quaternion(this.walkthroughState.points[firstIndex].quaternion.x,
+                                            this.walkthroughState.points[firstIndex].quaternion.y, 
+                                            this.walkthroughState.points[firstIndex].quaternion.z,
+                                            this.walkthroughState.points[firstIndex].quaternion.w);
+    const quatTarget = new THREE.Quaternion(this.walkthroughState.points[nextIndex].quaternion.x,
+                                            this.walkthroughState.points[nextIndex].quaternion.y, 
+                                            this.walkthroughState.points[nextIndex].quaternion.z,
+                                            this.walkthroughState.points[nextIndex].quaternion.w);
+    const inverseOrigin = quatOrigin.inverse();
+    const targetQuaternion = quatTarget.multiply(inverseOrigin);
     const curQuaternion = new THREE.Quaternion();
 
     const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
@@ -174,7 +179,8 @@ class ModelScene {
     });
 
     // if Second Point is disjoint, do not UPDATE tween to next Point.
-    if (this.walkthroughState.points[nextIndex].disjointMode === true) {
+    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
+        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
       this.tweenRotate[index].onComplete(() => {
         this.camera.position.set(xDest, yDest, zDest);
         const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
@@ -182,9 +188,7 @@ class ModelScene {
       });
     } else {
       this.tweenRotate[index].onUpdate(() => {
-        // console.log(curQuaternion, targetQuaternion, t1);
         THREE.Quaternion.slerp(curQuaternion, targetQuaternion, qm, t1.t);
-        // console.log(curQuaternion, targetQuaternion, qm, t1.t);
 
         // apply new quaternion to camera position
         const cloneOrigin = new THREE.Vector3(xOrigin, yOrigin, zOrigin);
@@ -279,23 +283,15 @@ class ModelScene {
         this.tweenRotate[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
         this.tweenLook[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
 
-        if (this.walkthroughState.points[nextIndex].animationMode === 'Translation') {
+        if (this.walkthroughState.points[nextIndex].animationMode === 'Linear') {
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
-        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Rotation') {
-          this._initRotationTween(i, firstIndex, nextIndex, duration);
-        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Zooming') {
-          console.log('Zoom');
-          this._initTranslationTween(i, firstIndex, nextIndex, duration);
-        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Translation + Rotation') {
-          console.log('Translation + Rotation');
-          this._initTranslationTween(i, firstIndex, nextIndex, duration);
+        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Spherical') {
           this._initRotationTween(i, firstIndex, nextIndex, duration);
         } else {
           console.log('anything else');
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
         }
 
-        firstIndex = 0;
       }
 
       // Chain up playback node
@@ -328,9 +324,6 @@ class ModelScene {
       TWEEN.update();
     }
 
-    // if (this.camera.position - this.walkthroughState.points[this.walkthroughState.index[1]] < 0.5) {
-    //   this._onPlaybackCompleted();
-    // }
   }
 
   /**
@@ -341,19 +334,6 @@ class ModelScene {
     // Render background first so that the model appears in front
     this.renderer.render(this.backgroundScene, this.backgroundCamera);
     this.renderer.render(this.scene, this.camera);
-  }
-
-  _onPlaybackCompleted() {
-   // console.log('Completed');
-    // console.log('start state: ', this.walkthroughState.startPlayback);
-    // callback(ModelCanvas._onPlaybackCompleted());
-    this.walkthroughState.startPlayback = false;
-    // console.log('End state: ', this.walkthroughState.startPlayback);
-
-
-    // return {
-    //   walkthroughToggle: this.walkthroughState.startPlayback
-    // };
   }
 
   /**
@@ -662,7 +642,6 @@ class ModelScene {
     const coordinateFields = ['x', 'y', 'z'];
     const quaternionFields = ['x', 'y', 'z', 'w'];
     const lookAt = this.controls.constraint.target;
-    // lookAt.applyMatrix4(this.camera.matrixWorld);
 
     return {
       position: _.pick(this.camera.position, coordinateFields),

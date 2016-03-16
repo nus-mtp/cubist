@@ -422,17 +422,11 @@ class ModelEditContainer extends PureComponent {
           Stationary
         </MenuItem>
         <MenuItem divider />
-        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation') } >
-          Translation
+        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Linear') } >
+          Linear
         </MenuItem>
-        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Rotation') } >
-          Rotation
-        </MenuItem>
-        <MenuItem eventKey="4" onClick={ e => this._onWalkthroughAnimation(e, index, 'Zooming') } >
-          Zooming
-        </MenuItem>
-        <MenuItem eventKey="5" onClick={ e => this._onWalkthroughAnimation(e, index, 'Translation + Rotation') } >
-          Translation + Rotation
+        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Spherical') } >
+          Spherical
         </MenuItem>
       </DropdownButton>
     );
