@@ -24,7 +24,7 @@ class ResetPassword extends PureComponent {
 
   static propTypes = {
     dispatch: React.PropTypes.func.isRequired,
-    currentUserId: React.PropTypes.string,
+    ownUserId: React.PropTypes.string,
     err: React.PropTypes.instanceOf(Immutable.Map),
     success: React.PropTypes.bool
   };
@@ -36,8 +36,8 @@ class ResetPassword extends PureComponent {
   };
 
   componentWillMount() {
-    const { dispatch, currentUserId } = this.props;
-    if (currentUserId) {
+    const { dispatch, ownUserId } = this.props;
+    if (ownUserId) {
       if (process.env.BROWSER) {
         dispatch(pushState(null, '/'));
       } else {
@@ -109,7 +109,7 @@ class ResetPassword extends PureComponent {
 
 export default connect((state) => {
   return {
-    currentUserId: state.UserStore.get('currentUserId'),
+    ownUserId: state.UserStore.get('ownUserId'),
     err: state.RequestStore.getIn(['err', REQ_POST_USER_RESET_PASSWORD]),
     success: state.RequestStore.getIn(['success', REQ_POST_USER_RESET_PASSWORD])
   };

@@ -1,5 +1,6 @@
 import {
   REQ_GET_MODEL,
+  REQ_GET_MODELS,
   REQ_GET_TOP_MODELS,
   REQ_GET_LATEST_MODELS,
   REQ_POST_CREATE_MODEL,
@@ -10,10 +11,27 @@ import {
 } from './types';
 
 export default {
-  getModel(id) {
+  getModels(query = {}, options = {}) {
+    return {
+      type: REQ_GET_MODELS,
+      promise: apiClient => apiClient.get(`/model`, {
+        query: {
+          query,
+          options
+        }
+      })
+    };
+  },
+
+  getModel(id, query = {}, options = {}) {
     return {
       type: REQ_GET_MODEL,
-      promise: (apiClient) => apiClient.get(`/model/${id}`)
+      promise: (apiClient) => apiClient.get(`/model/${id}`, {
+        query: {
+          query,
+          options
+        }
+      })
     };
   },
 
