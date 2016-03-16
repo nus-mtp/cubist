@@ -183,6 +183,7 @@ class AppContainer extends PureComponent {
               type="text"
               className="form-control"
               placeholder="Search"
+              value={ this.state.formData[SEARCH_FIELD] }
               onChange={ (e) => this._onInputChange(SEARCH_FIELD, e.target.value) }/>
             <div className="input-group-btn">
               <button className={ `${CLASS_NAME}-navbar-search btn btn-transparent` } type="submit">
