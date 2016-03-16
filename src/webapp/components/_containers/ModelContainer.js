@@ -40,6 +40,11 @@ class ModelContainer extends PureComponent {
     }
   }
 
+  _onToggleFlag = isFlagged => {
+    const { dispatch, params } = this.props;
+    dispatch(ModelActions.toggleFlag(params.modelId, isFlagged));
+  };
+
   render() {
     const { model, user } = this.props;
     const { object } = this.state;
@@ -71,6 +76,7 @@ class ModelContainer extends PureComponent {
             { this._renderUploaderCard() }
             { this._renderModelInfoCard() }
             { this._renderModelDownloadLink() }
+            { user.get('_id') && this._renderModelFlagButton() }
           </div>
         </div>
       </div>
@@ -151,6 +157,17 @@ class ModelContainer extends PureComponent {
       <a href={ `/storage/models/${model.get('zipUrl')}` } className="btn btn-success btn-block">
         DOWNLOAD MODEL
       </a>
+    );
+  }
+
+  _renderModelFlagButton() {
+    const { user, model } = this.props;
+    const flagState = model.getIn(['socialData', 'flags']).includes(user.get('_id'));
+
+    return (
+      <button className="btn btn-danger btn-block" onClick={ () => this._onToggleFlag(!flagState) }>
+        { flagState ? 'UNFLAG MODEL' : 'FLAG MODEL' }
+      </button>
     );
   }
 

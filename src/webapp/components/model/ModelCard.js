@@ -46,8 +46,14 @@ class ModelCard extends React.Component {
             model.get('imageUrls', new Immutable.List()).map(this._renderThumbnailBackground.bind(this))
           }
           <div className={ `${CLASS_NAME}-thumbnail-views` }>
+            <i className={ `${CLASS_NAME}-thumbnail-views-icon fa fa-flag` } />
+            <span className="cb-margin-right-10px">
+              { model.getIn(['socialData', 'flags'], new Immutable.List()).size }
+            </span>
             <i className={ `${CLASS_NAME}-thumbnail-views-icon fa fa-eye` } />
-            <span>{ model.getIn(['socialData', 'views'], 0) }</span>
+            <span>
+              { model.getIn(['socialData', 'views'], 0) }
+            </span>
           </div>
           <div className={ `${CLASS_NAME}-thumbnail-overlay` } />
         </Link>

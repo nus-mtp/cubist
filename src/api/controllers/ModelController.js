@@ -46,6 +46,10 @@ ModelController.request.incrementViews = function (req, res) {
   ResponseHelper.handle(ModelController.promise.incrementViews, req, res, DEBUG_ENV);
 };
 
+ModelController.request.toggleFlag = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.toggleFlag, req, res, DEBUG_ENV);
+};
+
 ModelController.request.addSnapshots = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addSnapshots, req, res, DEBUG_ENV);
 };
@@ -148,6 +152,24 @@ ModelController.promise.incrementViews = function (req) {
   }
 
   return Model.incrementViews(modelId, 1);
+};
+
+ModelController.promise.toggleFlag = function (req) {
+  const { modelId } = req.params;
+  const { isFlagged } = req.body;
+  const userId = req.user._id;
+
+  const error = Model.validate({ _id: modelId }, { _id: true })
+    || User.validate(req.user, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  if (isFlagged) {
+    return Model.flagModel(modelId, userId);
+  } else {
+    return Model.unflagModel(modelId, userId);
+  }
 };
 
 ModelController.promise.addSnapshots = function (req) {

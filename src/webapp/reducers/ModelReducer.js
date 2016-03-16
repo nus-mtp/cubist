@@ -8,6 +8,7 @@ import {
   REQ_GET_LATEST_MODELS,
   REQ_POST_CREATE_MODEL,
   REQ_PUT_UPDATE_MODEL_INFO,
+  REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT
 } from 'webapp/actions/types';
@@ -82,5 +83,6 @@ export default ReducerHelper.createReducer(initialState, {
   [REQ_POST_CREATE_MODEL]: ModelReducerHelper.updateModel,
   [REQ_PUT_UPDATE_MODEL_INFO]: ModelReducerHelper.updateModel,
   [REQ_PUT_ADD_MODEL_SNAPSHOTS]: ModelReducerHelper.updateModel,
-  [REQ_PUT_REMOVE_MODEL_SNAPSHOT]: ModelReducerHelper.updateModel
+  [REQ_PUT_REMOVE_MODEL_SNAPSHOT]: ModelReducerHelper.updateModel,
+  [REQ_PUT_TOGGLE_MODEL_FLAG]: ModelReducerHelper.updateModel
 });
