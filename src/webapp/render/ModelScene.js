@@ -272,7 +272,7 @@ class ModelScene {
 
       // Create Tween Obj
       for (let i = 0; i < numTweenObjRequire; i++) {
-        if ( i > 0) {
+        if (i > 0) {
           firstIndex = nextIndex;
           nextIndex = firstIndex + 1;
         }
