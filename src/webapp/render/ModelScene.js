@@ -128,21 +128,19 @@ class ModelScene {
     const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
     const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
     const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
-    const origin = new THREE.Vector3(xOrigin, yOrigin, zOrigin);
 
     const xDest = this.walkthroughState.points[nextIndex].pos.x;
     const yDest = this.walkthroughState.points[nextIndex].pos.y;
     const zDest = this.walkthroughState.points[nextIndex].pos.z;
-    const dest = new THREE.Vector3(xDest, yDest, zDest);
 
     const qm = new THREE.Quaternion();
 
     const quatOrigin = new THREE.Quaternion(this.walkthroughState.points[firstIndex].quaternion.x,
-                                            this.walkthroughState.points[firstIndex].quaternion.y, 
+                                            this.walkthroughState.points[firstIndex].quaternion.y,
                                             this.walkthroughState.points[firstIndex].quaternion.z,
                                             this.walkthroughState.points[firstIndex].quaternion.w);
     const quatTarget = new THREE.Quaternion(this.walkthroughState.points[nextIndex].quaternion.x,
-                                            this.walkthroughState.points[nextIndex].quaternion.y, 
+                                            this.walkthroughState.points[nextIndex].quaternion.y,
                                             this.walkthroughState.points[nextIndex].quaternion.z,
                                             this.walkthroughState.points[nextIndex].quaternion.w);
     const inverseOrigin = quatOrigin.inverse();
@@ -288,10 +286,8 @@ class ModelScene {
         } else if (this.walkthroughState.points[nextIndex].animationMode === 'Spherical') {
           this._initRotationTween(i, firstIndex, nextIndex, duration);
         } else {
-          console.log('anything else');
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
         }
-
       }
 
       // Chain up playback node
@@ -309,7 +305,6 @@ class ModelScene {
       this.tweenRotate[0].start();
       this.tweenLook[0].start();
     }
-
   }
 
   /**
@@ -323,7 +318,6 @@ class ModelScene {
     if (this.walkthroughState.startPlayback) {
       TWEEN.update();
     }
-
   }
 
   /**
