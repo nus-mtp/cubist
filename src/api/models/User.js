@@ -79,7 +79,7 @@ User.statics.validate = function (user, fields) {
   return null;
 };
 
-User.static.findUser = function (query = {}, options = {}) {
+User.statics.findUser = function (query = {}, options = {}) {
   return MongooseHelper.findOne(this, query, options);
 };
 
@@ -141,7 +141,7 @@ User.statics.findByName = function (name) {
  * @return { Promise }        [promise of the query result]
  */
 User.statics.findByUserId = function (userId) {
-  return MongooseHelper.find(this, { _id: userId });
+  return MongooseHelper.findOne(this, { _id: userId });
 };
 
 /**

@@ -70,7 +70,7 @@ UserController.request.changePassword = function (req, res) {
 
 UserController.promise.getUser = function (req) {
   const { query, options } = req.query;
-  return User.getUser(query, options);
+  return User.findUser(query, options);
 };
 
 UserController.promise.me = function (req, needAuthorized = false) {

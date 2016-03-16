@@ -10,5 +10,6 @@ export default {
   UploadContainer: require('./UploadContainer'),
   RootContainer: require('./RootContainer'),
   ErrorContainer: require('./ErrorContainer'),
-  BrowseContainer: require('./BrowseContainer')
+  BrowseContainer: require('./BrowseContainer'),
+  ProfileContainer: require('./ProfileContainer')
 };

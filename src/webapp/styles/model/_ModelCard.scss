@@ -86,10 +86,14 @@
 }
 
 .cb-model-card-caption-info-title {
-  font-size: 1.25em;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 1.25em;  
 }
 
 .cb-model-card-caption-info-uploader {
+  overflow: hidden;
+  white-space: nowrap;
   color: $cb-dark-gray;
   font-weight: 200;
 }

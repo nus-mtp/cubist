@@ -9,7 +9,12 @@ const CLASS_NAME = 'cb-model-card';
 
 class ModelCard extends React.Component {
   static propTypes = {
-    model: React.PropTypes.instanceOf(Immutable.Map)
+    model: React.PropTypes.instanceOf(Immutable.Map),
+    isUserDisplayed: React.PropTypes.bool
+  };
+
+  static defaultProps = {
+    isUserDisplayed: true
   };
 
   state = {
@@ -33,7 +38,7 @@ class ModelCard extends React.Component {
   };
 
   render() {
-    const { model } = this.props;
+    const { model, isUserDisplayed } = this.props;
 
     return (
       <figure className={ CLASS_NAME }>
@@ -52,15 +57,23 @@ class ModelCard extends React.Component {
           <div className={ `${CLASS_NAME}-thumbnail-overlay` } />
         </Link>
         <figcaption className={ `${CLASS_NAME}-caption` }>
-          <img className={ `${CLASS_NAME}-caption-avatar` }
-            src={ GravatarHelper.getGravatarUrl(model.getIn(['uploader', 'email'])) } />
+          {
+            isUserDisplayed &&
+            <Link to={ `/u/${model.getIn(['uploader', 'name'])}` }>
+              <img className={ `${CLASS_NAME}-caption-avatar` }
+                src={ GravatarHelper.getGravatarUrl(model.getIn(['uploader', 'email'])) } />
+            </Link>
+          }
           <div className={ `${CLASS_NAME}-caption-info` }>
             <div className={ `${CLASS_NAME}-caption-info-title` }>
               { model.get('title') }
             </div>
-            <div className={ `${CLASS_NAME}-caption-info-uploader` }>
-              { `By ${model.getIn(['uploader', 'name'])}` }
-            </div>
+            {
+              isUserDisplayed &&
+              <div className={ `${CLASS_NAME}-caption-info-uploader` }>
+                { `By ${model.getIn(['uploader', 'name'])}` }
+              </div>
+            }
           </div>
         </figcaption>
       </figure>
