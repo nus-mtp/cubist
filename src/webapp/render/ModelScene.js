@@ -353,8 +353,10 @@ class ModelScene {
   updateModel(model, boundingRadius, callback) {
     this.model = model;
     this.boundingRadius = boundingRadius < MIN_BOUNDING_RADIUS ? MIN_BOUNDING_RADIUS : boundingRadius;
-    const camPos = boundingRadius * SCALE_FACTOR * 3;
-    this.camera.position.set(camPos * 0.5, camPos * 0.5, camPos);
+    const temp = boundingRadius * SCALE_FACTOR * 3;
+    const camPos = new THREE.Vector3(temp * 0.5, temp * 0.5, temp);
+    this.controls.updateFirstPosition(camPos);
+    this.controls.resetView = true;
     this.updateObjectVertexNormals();
     this.updateSceneObjects();
     this.controls.constraint.coordLimit = boundingRadius * SCALE_FACTOR * 7;
