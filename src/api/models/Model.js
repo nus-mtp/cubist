@@ -23,7 +23,8 @@ const Model = new Schema({
   metaData: {
     vertices: { type: Number, default: 0 },
     faces: { type: Number, default: 0 },
-    hasExternalTexture: { type: Boolean, default: false }
+    hasExternalTexture: { type: Boolean, default: false },
+    boundingRadius: { type: Number, default: 1 }
   },
   imageUrls: [{ type: String }],
   createdAt: { type: Date, index: true, default: Date.now },

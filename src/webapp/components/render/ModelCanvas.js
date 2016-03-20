@@ -60,7 +60,9 @@ class ModelCanvas extends React.Component {
     }
     // Update model
     if (nextProps.object !== this.props.object && this.modelScene) {
-      this.modelScene.updateModel(nextProps.object);
+      this.modelScene.updateModel(nextProps.object,
+        nextProps.model.getIn(['metaData', 'boundingRadius']),
+         this._onCameraOrbitThrottle);
     }
     // Update rendering state
     if (nextProps.wireframe !== this.props.wireframe && this.modelScene) {

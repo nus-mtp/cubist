@@ -275,4 +275,20 @@ describe('Orbit Constraint', () => {
       expect(orbitConstraint.update()).is.false;
     });
   });
+
+  describe('#restrainValues', () => {
+    it('Should keep values under coordLimit', () => {
+      const orbitConstraint = new OrbitConstraint(new PerspectiveCamera());
+      orbitConstraint.coordLimit = 2;
+      expect(orbitConstraint.restrainValues(new Vector3(5, 5, 5)))
+        .to.deep.equal(new Vector3(2, 2, 2));
+    });
+
+    it('Should keep values over negative-coordLimit', () => {
+      const orbitConstraint = new OrbitConstraint(new PerspectiveCamera());
+      orbitConstraint.coordLimit = 2;
+      expect(orbitConstraint.restrainValues(new Vector3(-5, -5, -5)))
+        .to.deep.equal(new Vector3(-2, -2, -2));
+    });
+  });
 });
