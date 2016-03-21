@@ -267,13 +267,15 @@ class ModelScene {
     if (numTweenObjRequire > 0) {
       TWEEN.removeAll();
       let firstIndex = this.walkthroughState.index[0];
-      let nextIndex;
+      let nextIndex = firstIndex + 1;
       let duration;
 
       // Create Tween Obj
       for (let i = 0; i < numTweenObjRequire; i++) {
-        firstIndex = firstIndex + i;
-        nextIndex = firstIndex + 1;
+        if (i > 0) {
+          firstIndex = nextIndex;
+          nextIndex = firstIndex + 1;
+        }
 
         duration = this.walkthroughState.points[firstIndex].duration * 1000;
 
