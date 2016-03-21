@@ -5,6 +5,7 @@ import OrbitControls from './OrbitControls';
 
 const TEXTURE_SUFFIX = '_small';
 const SCALE_FACTOR = 40;
+const SCALE_THRESHOLD = 20;
 const MIN_BOUNDING_RADIUS = 0.025;
 let TWEEN;
 if (process.env.BROWSER) {
@@ -342,8 +343,10 @@ class ModelScene {
     this.removeSceneObjects();
     this.displayObjects = this._getDisplayObjects();
     for (let i = 0; i < this.displayObjects.length; i++) {
-      this.displayObjects[i].scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
-      this.displayObjects[i].position.y = -this.boundingRadius * SCALE_FACTOR;
+      if (this.boundingRadius < SCALE_THRESHOLD) {
+        this.displayObjects[i].scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
+        this.displayObjects[i].position.y = -this.boundingRadius * SCALE_FACTOR;
+      }
       this.scene.add(this.displayObjects[i]);
     }
   }
@@ -355,14 +358,20 @@ class ModelScene {
   updateModel(model, boundingRadius, callback) {
     this.model = model;
     this.boundingRadius = boundingRadius < MIN_BOUNDING_RADIUS ? MIN_BOUNDING_RADIUS : boundingRadius;
-    const temp = boundingRadius * SCALE_FACTOR * 3;
-    const camPos = new THREE.Vector3(temp * 0.5, temp * 0.5, temp);
+
+    let temp = 0;
+    if (boundingRadius > SCALE_THRESHOLD) {
+      temp = boundingRadius * 3;
+    } else {
+      temp = boundingRadius * SCALE_FACTOR * 3;
+    }
+    const camPos = new THREE.Vector3(temp * 0.5, temp * 0.25, temp);
+    this.controls.constraint.coordLimit = temp * 3;
+    callback(this.getCameraOrbit());
     this.controls.updateFirstPosition(camPos);
     this.controls.resetView = true;
     this.updateObjectVertexNormals();
     this.updateSceneObjects();
-    this.controls.constraint.coordLimit = boundingRadius * SCALE_FACTOR * 7;
-    callback(this.getCameraOrbit());
   }
 
   /**

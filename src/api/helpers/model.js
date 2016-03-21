@@ -28,56 +28,56 @@ export default {
 
         // X - smallest
         if (coordinateProperties.smallestX) {
-          if (coordinateProperties.smallestX > splitLine[1]) {
-            coordinateProperties.smallestX = splitLine[1];
+          if (coordinateProperties.smallestX > parseFloat(splitLine[1])) {
+            coordinateProperties.smallestX = parseFloat(splitLine[1]);
           }
         } else {
-          coordinateProperties.smallestX = splitLine[1];
+          coordinateProperties.smallestX = parseFloat(splitLine[1]);
         }
 
         // X - largest
         if (coordinateProperties.largestX) {
-          if (coordinateProperties.largestX < splitLine[1]) {
-            coordinateProperties.largestX = splitLine[1];
+          if (coordinateProperties.largestX < parseFloat(splitLine[1])) {
+            coordinateProperties.largestX = parseFloat(splitLine[1]);
           }
         } else {
-          coordinateProperties.largestX = splitLine[1];
+          coordinateProperties.largestX = parseFloat(splitLine[1]);
         }
 
         // Y - smallest
         if (coordinateProperties.smallestY) {
-          if (coordinateProperties.smallestY > splitLine[2]) {
-            coordinateProperties.smallestY = splitLine[2];
+          if (coordinateProperties.smallestY > parseFloat(splitLine[2])) {
+            coordinateProperties.smallestY = parseFloat(splitLine[2]);
           }
         } else {
-          coordinateProperties.smallestY = splitLine[2];
+          coordinateProperties.smallestY = parseFloat(splitLine[2]);
         }
 
         // Y - largest
         if (coordinateProperties.largestY) {
-          if (coordinateProperties.largestY < splitLine[2]) {
-            coordinateProperties.largestY = splitLine[2];
+          if (coordinateProperties.largestY < parseFloat(splitLine[2])) {
+            coordinateProperties.largestY = parseFloat(splitLine[2]);
           }
         } else {
-          coordinateProperties.largestY = splitLine[2];
+          coordinateProperties.largestY = parseFloat(splitLine[2]);
         }
 
         // Y - smallest
         if (coordinateProperties.smallestZ) {
-          if (coordinateProperties.smallestz > splitLine[3]) {
-            coordinateProperties.smallestz = splitLine[3];
+          if (coordinateProperties.smallestz > parseFloat(splitLine[3])) {
+            coordinateProperties.smallestz = parseFloat(splitLine[3]);
           }
         } else {
-          coordinateProperties.smallestZ = splitLine[3];
+          coordinateProperties.smallestZ = parseFloat(splitLine[3]);
         }
 
         // Z - largest
         if (coordinateProperties.largestZ) {
-          if (coordinateProperties.largestZ < splitLine[3]) {
-            coordinateProperties.largestZ = splitLine[3];
+          if (coordinateProperties.largestZ < parseFloat(splitLine[3])) {
+            coordinateProperties.largestZ = parseFloat(splitLine[3]);
           }
         } else {
-          coordinateProperties.largestZ = splitLine[2];
+          coordinateProperties.largestZ = parseFloat(splitLine[3]);
         }
       } else if (splitLine[0] === 'f') {
         metadata.faces += 1;
