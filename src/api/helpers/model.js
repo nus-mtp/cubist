@@ -22,10 +22,9 @@ export default {
       input: fs.createReadStream(objFilePath)
     });
     rl.on('line', line => {
-      const splitLine = line.split(' ');
-      if (splitLine[0] === 'v') {
+      const splitLine = line.trim().split(/\s+/);
+      if (splitLine[0].toLowerCase() === 'v') {
         metadata.vertices += 1;
-
         // X - smallest
         if (coordinateProperties.smallestX) {
           if (coordinateProperties.smallestX > parseFloat(splitLine[1])) {
@@ -79,7 +78,7 @@ export default {
         } else {
           coordinateProperties.largestZ = parseFloat(splitLine[3]);
         }
-      } else if (splitLine[0] === 'f') {
+      } else if (splitLine[0].toLowerCase() === 'f') {
         metadata.faces += 1;
       }
     });
@@ -118,7 +117,7 @@ export default {
       input: fs.createReadStream(mtlFilePath)
     });
     rl.on('line', line => {
-      const splitLine = line.split(' ');
+      const splitLine = line.trim().split(/\s+/);
       if (mapTypes.indexOf(splitLine[0].toLowerCase()) > -1) {
         if (filenames.indexOf(splitLine[splitLine.length - 1]) === -1) {
           filenames.push(splitLine[splitLine.length - 1]);
