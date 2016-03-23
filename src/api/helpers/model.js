@@ -117,10 +117,11 @@ export default {
       input: fs.createReadStream(mtlFilePath)
     });
     rl.on('line', line => {
-      const splitLine = line.trim().split(/\s+/);
-      if (mapTypes.indexOf(splitLine[0].toLowerCase()) > -1) {
-        if (filenames.indexOf(splitLine[splitLine.length - 1]) === -1) {
-          filenames.push(splitLine[splitLine.length - 1]);
+      const arg = line.trim().substr(0, line.indexOf(' ') - 1).toLowerCase();
+      if (mapTypes.indexOf(arg) > -1) {
+        const filename = line.substr(line.indexOf(' ') + 1).trim();
+        if (filenames.indexOf(filename) === -1) {
+          filenames.push(filename);
         }
       }
     });
