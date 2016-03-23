@@ -7,5 +7,6 @@ export default {
   ModelActions: require('./ModelActions'),
   UserActions: require('./UserActions'),
   SnapshotActions: require('./SnapshotActions'),
-  BrowseActions: require('./BrowseActions')
+  BrowseActions: require('./BrowseActions'),
+  TextureLoadActions: require('./TextureLoadActions')
 };

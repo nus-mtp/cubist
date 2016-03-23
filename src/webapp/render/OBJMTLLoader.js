@@ -2,8 +2,9 @@ import THREE from 'three';
 import MTLLoader from './MTLLoader';
 
 class OBJMTLLoader {
-  constructor(manager) {
+  constructor(callback, manager) {
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
+    this.callback = callback;
   }
 
   loadSmall(url, mtlurl, onLoad, onProgress, onError) {
@@ -24,6 +25,11 @@ class OBJMTLLoader {
             if (o.material.name) {
               const material = materialsCreator.create(o.material.name);
               if (material) {
+                // action to write image to store
+                if (material.map) {
+                  this.callback(material.name, material.map.image.src);
+                  // dispatch(TextureLoadActions.loadSmall(o.material.name, material));
+                }
                 o.material = material;
               }
             }

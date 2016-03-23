@@ -375,10 +375,12 @@ class ModelScene {
           for (let mapType = 0; mapType < 10; mapType++) {
             switch (mapType) {
               case 0: // texture map
-                child.material.map.image.src = this.modifySuffix(
-                  child.material.map.image.src,
-                  isAppend
-                );
+                if (child.material.map) {
+                  child.material.map.image.src = this.modifySuffix(
+                    child.material.map.image.src,
+                    isAppend
+                  );
+                }
                 break;
               case 1: // bumpMap
                 if (child.material.bumpMap) {

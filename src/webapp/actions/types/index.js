@@ -7,5 +7,6 @@ export default {
   ...require('./ModelActionTypes'),
   ...require('./UserActionTypes'),
   ...require('./SnapshotActionTypes'),
-  ...require('./BrowseActionTypes')
+  ...require('./BrowseActionTypes'),
+  ...require('./TextureLoadActionTypes')
 };

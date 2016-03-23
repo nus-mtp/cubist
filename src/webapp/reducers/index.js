@@ -9,6 +9,7 @@ import ModelStore from './ModelReducer';
 import UserStore from './UserReducer';
 import SnapshotStore from './SnapshotReducer';
 import BrowseStore from './BrowseReducer';
+import TextureLoadStore from './TextureLoadReducer';
 
 // Define list of Redux stores
 export default {
@@ -21,5 +22,6 @@ export default {
   ModelStore,
   UserStore,
   SnapshotStore,
-  BrowseStore
+  BrowseStore,
+  TextureLoadStore
 };

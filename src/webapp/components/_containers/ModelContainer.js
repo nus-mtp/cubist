@@ -10,6 +10,7 @@ import { ModelViewer } from '../model';
 import { ModelActions } from 'webapp/actions';
 import { GravatarHelper } from 'webapp/helpers';
 import { RenderActions } from 'webapp/actions';
+import { TextureLoadActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-ctn-model';
 
@@ -167,26 +168,32 @@ class ModelContainer extends PureComponent {
   }
 
   loadObjMtl(model) {
-    const loader = new OBJMTLLoader();
+    const loader = new OBJMTLLoader( 
+      (name, image) => {
+        const { dispatch } = this.props;
+        console.log('name', name, ', image: ', image);
+        dispatch(TextureLoadActions.loadSmall(name, image));
+      }
+    );
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
     console.log(urls);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('.mtl')).get(0);
-    // loader.loadSmall(objUrl, mtlUrl, m => {
-    //   this.setState({ object: m });
-    //   const { dispatch } = this.props;
-    //   dispatch(RenderActions.setTexture()); //write test cases
-    //   console.log('small loaded');
-    // });
-
-    var promiseTexture = new Promise((resolve, reject) => {
-      loader.loadSmall(objUrl, mtlUrl, m => {
-        this.setState({ object: m });
-        const { dispatch } = this.props;
-        dispatch(RenderActions.setTexture()); //write test cases
-      });
-      resolve(console.log('small loaded'));
+    loader.loadSmall(objUrl, mtlUrl, m => {
+      this.setState({ object: m });
+      const { dispatch } = this.props;
+      dispatch(RenderActions.setTexture()); //write test cases
+      console.log('small loaded');
     });
+
+    // var promiseTexture = new Promise((resolve, reject) => {
+    //   loader.loadSmall(objUrl, mtlUrl, m => {
+    //     this.setState({ object: m });
+    //     const { dispatch } = this.props;
+    //     dispatch(RenderActions.setTexture()); //write test cases
+    //   });
+    //   resolve(console.log('small loaded'));
+    // });
 
 
     // var promise = new Promise((resolve, reject) => {
@@ -194,7 +201,7 @@ class ModelContainer extends PureComponent {
     //   resolve(console.log('success'));
     // });
 
-    promiseTexture.then(this.loadProgressive(loader, objUrl, mtlUrl));
+    // promiseTexture.then(() => this.loadProgressive(loader, objUrl, mtlUrl));
     // this.loadProgressive(loader, objUrl, mtlUrl);
   }
 
