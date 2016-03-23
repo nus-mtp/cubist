@@ -4,11 +4,11 @@ import sinon from 'sinon';
 import ModelHelper from 'api/helpers/model';
 
 describe('Model Helper', () => {
-  describe('Process .obj file for vertex and face count', () => {
+  describe('Process .obj file for vertex count, face count and boundingSphere radius', () => {
     it('Should give the right count when supplied with file url', () => {
       return ModelHelper.objVertexFaceCounter('tests/test_files/test.obj')
         .then(metaData => {
-          expect(metaData).deep.equal({ vertices: 8, faces: 6 });
+          expect(metaData).deep.equal({ vertices: 8, faces: 6, boundingRadius: 1.0000005 });
         });
     });
   });

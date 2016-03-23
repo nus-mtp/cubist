@@ -404,6 +404,10 @@ class OrbitControl extends Three.EventDispatcher {
 
   }
 
+  updateFirstPosition(posVector) {
+    this._position0 = posVector.clone();
+  }
+
   // Virtual Properties
   get camera() {
     return this.constraint.camera;

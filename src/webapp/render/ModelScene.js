@@ -4,7 +4,9 @@ import _ from 'lodash';
 import OrbitControls from './OrbitControls';
 
 const TEXTURE_SUFFIX = '_small';
-
+const SCALE_FACTOR = 40;
+const SCALE_THRESHOLD = 20;
+const MIN_BOUNDING_RADIUS = 0.025;
 let TWEEN;
 if (process.env.BROWSER) {
   TWEEN = require('tween.js');
@@ -24,6 +26,8 @@ class ModelScene {
   backgroundCamera = undefined;
   // The Model
   model = undefined;
+  // Bounding Sphere radius of model before scaling
+  boundingRadius = 1;
   // Stores currently displayed objects (meshes/models)
   displayObjects = [];
   // Orbit Controls
@@ -339,8 +343,10 @@ class ModelScene {
     this.removeSceneObjects();
     this.displayObjects = this._getDisplayObjects();
     for (let i = 0; i < this.displayObjects.length; i++) {
-      this.displayObjects[i].scale.set(40, 40, 40);
-      this.displayObjects[i].position.y = -20;
+      if (this.boundingRadius < SCALE_THRESHOLD) {
+        this.displayObjects[i].scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
+        this.displayObjects[i].position.y = -this.boundingRadius * SCALE_FACTOR;
+      }
       this.scene.add(this.displayObjects[i]);
     }
   }
@@ -349,8 +355,21 @@ class ModelScene {
    * Update the model variable of this class
    * @param  {Object} model [the new model to be displayed]
    */
-  updateModel(model) {
+  updateModel(model, boundingRadius, callback) {
     this.model = model;
+    this.boundingRadius = boundingRadius < MIN_BOUNDING_RADIUS ? MIN_BOUNDING_RADIUS : boundingRadius;
+
+    let temp = 0;
+    if (boundingRadius > SCALE_THRESHOLD) {
+      temp = boundingRadius * 3;
+    } else {
+      temp = boundingRadius * SCALE_FACTOR * 3;
+    }
+    const camPos = new THREE.Vector3(temp * 0.5, temp * 0.25, temp);
+    this.controls.constraint.coordLimit = temp * 3;
+    callback(this.getCameraOrbit());
+    this.controls.updateFirstPosition(camPos);
+    this.controls.resetView = true;
     this.updateObjectVertexNormals();
     this.updateSceneObjects();
   }
@@ -450,10 +469,12 @@ class ModelScene {
           for (let mapType = 0; mapType < 10; mapType++) {
             switch (mapType) {
               case 0: // texture map
-                child.material.map.image.src = this.modifySuffix(
-                  child.material.map.image.src,
-                  isAppend
-                );
+                if (child.material.map && child.material.map.image) {
+                  child.material.map.image.src = this.modifySuffix(
+                    child.material.map.image.src,
+                    isAppend
+                  );
+                }
                 break;
               case 1: // bumpMap
                 if (child.material.bumpMap) {

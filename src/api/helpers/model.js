@@ -5,9 +5,18 @@ import _ from 'lodash';
 
 export default {
   objVertexFaceCounter(objFilePath) {
+    const coordinateProperties = {
+      smallestX: undefined,
+      largestX: undefined,
+      smallestY: undefined,
+      largestY: undefined,
+      smallestZ: undefined,
+      largestZ: undefined
+    };
     const metadata = {
       vertices: 0,
-      faces: 0
+      faces: 0,
+      boundingRadius: 0
     };
     const rl = readline.createInterface({
       input: fs.createReadStream(objFilePath)
@@ -16,6 +25,60 @@ export default {
       const splitLine = line.split(' ');
       if (splitLine[0] === 'v') {
         metadata.vertices += 1;
+
+        // X - smallest
+        if (coordinateProperties.smallestX) {
+          if (coordinateProperties.smallestX > parseFloat(splitLine[1])) {
+            coordinateProperties.smallestX = parseFloat(splitLine[1]);
+          }
+        } else {
+          coordinateProperties.smallestX = parseFloat(splitLine[1]);
+        }
+
+        // X - largest
+        if (coordinateProperties.largestX) {
+          if (coordinateProperties.largestX < parseFloat(splitLine[1])) {
+            coordinateProperties.largestX = parseFloat(splitLine[1]);
+          }
+        } else {
+          coordinateProperties.largestX = parseFloat(splitLine[1]);
+        }
+
+        // Y - smallest
+        if (coordinateProperties.smallestY) {
+          if (coordinateProperties.smallestY > parseFloat(splitLine[2])) {
+            coordinateProperties.smallestY = parseFloat(splitLine[2]);
+          }
+        } else {
+          coordinateProperties.smallestY = parseFloat(splitLine[2]);
+        }
+
+        // Y - largest
+        if (coordinateProperties.largestY) {
+          if (coordinateProperties.largestY < parseFloat(splitLine[2])) {
+            coordinateProperties.largestY = parseFloat(splitLine[2]);
+          }
+        } else {
+          coordinateProperties.largestY = parseFloat(splitLine[2]);
+        }
+
+        // Y - smallest
+        if (coordinateProperties.smallestZ) {
+          if (coordinateProperties.smallestz > parseFloat(splitLine[3])) {
+            coordinateProperties.smallestz = parseFloat(splitLine[3]);
+          }
+        } else {
+          coordinateProperties.smallestZ = parseFloat(splitLine[3]);
+        }
+
+        // Z - largest
+        if (coordinateProperties.largestZ) {
+          if (coordinateProperties.largestZ < parseFloat(splitLine[3])) {
+            coordinateProperties.largestZ = parseFloat(splitLine[3]);
+          }
+        } else {
+          coordinateProperties.largestZ = parseFloat(splitLine[3]);
+        }
       } else if (splitLine[0] === 'f') {
         metadata.faces += 1;
       }
@@ -23,6 +86,10 @@ export default {
 
     return new Promise(resolve => {
       rl.on('close', () => {
+        const diffX = coordinateProperties.largestX - coordinateProperties.smallestX;
+        const diffY = coordinateProperties.largestY - coordinateProperties.smallestY;
+        const diffZ = coordinateProperties.largestZ - coordinateProperties.smallestZ;
+        metadata.boundingRadius = Math.max(diffX, diffY, diffZ) / 2.0;
         resolve(metadata);
       });
     });

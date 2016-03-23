@@ -38,6 +38,8 @@ class OrbitConstraint {
   _lastPosition = new Three.Vector3();
   _lastQuaternion = new Three.Quaternion();
 
+  // X, Y, Z coord cannot be more than coordLimit or less than -coordLimit
+  coordLimit = 500;
   constructor(camera) {
     if (!camera) {
       throw new Error('Camera is undefined');
@@ -114,6 +116,14 @@ class OrbitConstraint {
     }
   }
 
+  restrainValues(vector) {
+    return new Three.Vector3(
+      Math.max(-this.coordLimit, Math.min(this.coordLimit, vector.x)),
+      Math.max(-this.coordLimit, Math.min(this.coordLimit, vector.y)),
+      Math.max(-this.coordLimit, Math.min(this.coordLimit, vector.z)),
+      );
+  }
+
   // Update function to be called for every frame
   update() {
     // Let camera.up is the orbit axis
@@ -155,7 +165,7 @@ class OrbitConstraint {
     // rotate offset back to "camera-up-vector-is-up" space
     offset.applyQuaternion(quatInverse);
 
-    this.camera.position.copy(this.target).add(offset);
+    this.camera.position.copy(this.restrainValues(new Three.Vector3().copy(this.target).add(offset)));
 
     this.camera.lookAt(this.target);
 
