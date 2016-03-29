@@ -9,8 +9,8 @@ Ks 0.115000 0.115000 0.115000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Ka empty1.jpg
-map_Kd empty2.jpg
+  map_Ka   empty1.jpg
+map_Kd  empty2.jpg
 map_Ks somewhere/empty0.jpg
 
 newmtl frame1

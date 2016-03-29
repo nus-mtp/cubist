@@ -117,9 +117,10 @@ export default {
       input: fs.createReadStream(mtlFilePath)
     });
     rl.on('line', line => {
-      const arg = line.trim().substr(0, line.indexOf(' ')).toLowerCase().trim();
+      const splitLine = line.trim().split(/\s+/);
+      const arg = splitLine[0].toLowerCase();
       if (mapTypes.indexOf(arg) > -1) {
-        const filename = line.substr(line.indexOf(' ') + 1).trim();
+        const filename = splitLine[splitLine.length - 1];
         if (filenames.indexOf(filename) === -1) {
           filenames.push(filename);
         }
