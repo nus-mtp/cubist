@@ -365,7 +365,7 @@ class ModelScene {
       temp = boundingRadius * SCALE_FACTOR;
     }
     const camPos = new THREE.Vector3(temp, temp * 3, temp * 4);
-    this.controls.constraint.coordLimit = temp * 5;
+    this.controls.constraint.coordLimit = temp * 6;
     callback(this.getCameraOrbit());
     this.controls.updateFirstPosition(camPos);
     this.controls.resetView = true;
