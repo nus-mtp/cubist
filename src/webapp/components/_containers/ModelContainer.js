@@ -52,8 +52,11 @@ class ModelContainer extends PureComponent {
       object,
       ...this.props
     };
+    const arr = model.get('statisticsPoints');
+    for (let i = 0; i < arr.length; i++) {
+      console.log(arr[i]);
+    }
     const isUploader = model.getIn(['uploader', '_id']) === user.get('_id');
-
     return (
       <div className={ CLASS_NAME }>
         <h2 className={ `${CLASS_NAME}-title` }>

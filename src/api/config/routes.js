@@ -58,4 +58,6 @@ export default (app) => {
     Authorisation.requireUser,
     ModelController.request.toggleFlag
   );
+
+  app.put('/model/:modelId/addStatisticsPoint', ModelController.request.addStatisticsPoint);
 };

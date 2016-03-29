@@ -5,10 +5,13 @@ import Dimensions from 'react-dimensions';
 import _ from 'lodash';
 import Immutable from 'immutable';
 
-import { CameraActions, SnapshotActions, WalkthroughActions } from 'webapp/actions';
+import { CameraActions, SnapshotActions, WalkthroughActions, ModelActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
+
+// Time in milisec that will pass before a point is considered "interesting" by the user
+const STATS_TIMEOUT = 5000;
 
 /**
  * Model Canvas Component
@@ -18,6 +21,7 @@ class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
     dispatch: React.PropTypes.func,
+    params: React.PropTypes.object,
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
@@ -30,7 +34,9 @@ class ModelCanvas extends React.Component {
     playbackPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughToggle: React.PropTypes.bool,
-    viewIndex: React.PropTypes.number
+    viewIndex: React.PropTypes.number,
+    position: React.PropTypes.instanceOf(Immutable.Map),
+    lookAt: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   static defaultProps = {
@@ -125,6 +131,9 @@ class ModelCanvas extends React.Component {
   _onMouseDown = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseDown(event, this._onCameraOrbitThrottle);
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
     }
   };
 
@@ -137,12 +146,17 @@ class ModelCanvas extends React.Component {
   _onMouseUp = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseUp(event, this._onCameraOrbitThrottle);
+      this.timeoutVar = setTimeout(this._triggerStatPointSend, STATS_TIMEOUT);
     }
   };
 
   _onWheel = (event) => {
     if (this.modelScene) {
       this.modelScene.onWheel(event, this._onCameraOrbitThrottle);
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
+      this.timeoutVar = setTimeout(this._triggerStatPointSend, STATS_TIMEOUT);
     }
   };
 
@@ -180,6 +194,29 @@ class ModelCanvas extends React.Component {
           ref="sceneCanvas" />
       </div>
     );
+  }
+
+  _triggerStatPointSend = () => {
+    const { dispatch, params, position, lookAt } = this.props;
+    const camPos = position.toJS();
+    const camLookAt = lookAt.toJS();
+    dispatch(ModelActions.addStatisticsPoint(
+      params.modelId,
+      this.convertPoint(camPos, camLookAt)
+    ));
+  };
+
+  // Place holder
+  convertPoint(position, lookAt) {
+    const convertedPoint = {
+      camLongtitude: position.x,
+      camLatitude: position.y,
+      camRadius: position.z,
+      lookAtLongtitude: lookAt.x,
+      lookAtLatitude: lookAt.y
+    };
+
+    return convertedPoint;
   }
 }
 
