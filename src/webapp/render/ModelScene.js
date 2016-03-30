@@ -89,7 +89,7 @@ class ModelScene {
   }
 
   _initCamera(dimensions) {
-    this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 10000);
+    this.camera = new THREE.PerspectiveCamera(45, dimensions.aspectRatio, 0.1, 100000);
     this.scene.add(this.camera);
     this.camera.position.set(0, 450, 450);
     this.camera.lookAt(this.scene.position);
@@ -345,7 +345,6 @@ class ModelScene {
     for (let i = 0; i < this.displayObjects.length; i++) {
       if (this.boundingRadius < SCALE_THRESHOLD) {
         this.displayObjects[i].scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
-        this.displayObjects[i].position.y = -this.boundingRadius * SCALE_FACTOR;
       }
       this.scene.add(this.displayObjects[i]);
     }
@@ -361,12 +360,12 @@ class ModelScene {
 
     let temp = 0;
     if (boundingRadius > SCALE_THRESHOLD) {
-      temp = boundingRadius * 3;
+      temp = boundingRadius;
     } else {
-      temp = boundingRadius * SCALE_FACTOR * 3;
+      temp = boundingRadius * SCALE_FACTOR;
     }
-    const camPos = new THREE.Vector3(temp * 0.5, temp * 0.25, temp);
-    this.controls.constraint.coordLimit = temp * 3;
+    const camPos = new THREE.Vector3(temp, temp * 3, temp * 4);
+    this.controls.constraint.coordLimit = temp * 6;
     callback(this.getCameraOrbit());
     this.controls.updateFirstPosition(camPos);
     this.controls.resetView = true;
