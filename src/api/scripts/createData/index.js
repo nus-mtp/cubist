@@ -36,9 +36,14 @@ connectDb()
       modelsList.map(m => Model.createModel({
         title: m.title,
         uploader: nameIdMap[m.uploader],
+        category: m.category,
         urls: m.urls,
         imageUrls: m.imageUrls,
-        socialData: m.socialData
+        zipUrl: m.zipUrl,
+        description: m.description,
+        tags: m.tags,
+        socialData: m.socialData,
+        metaData: m.metaData
       }))
     );
   })

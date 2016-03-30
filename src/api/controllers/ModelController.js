@@ -62,6 +62,10 @@ ModelController.request.deleteSnapshot = function (req, res) {
   ResponseHelper.handle(ModelController.promise.deleteSnapshot, req, res, DEBUG_ENV);
 };
 
+ModelController.request.addStatisticsPoint = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 
 ModelController.promise.getModel = function (req) {
@@ -314,6 +318,17 @@ ModelController.helper.getMtlMeta = function (mtlFile, textureFiles) {
         hasExternalTexture: textureFiles.length > 0
       };
     });
+};
+
+ModelController.promise.addStatisticsPoint = function (req) {
+  const { modelId } = req.params;
+
+  const error = Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.addStatisticsPoint(modelId, req.body.point);
 };
 
 export default ModelController;

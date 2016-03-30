@@ -5,10 +5,13 @@ import Dimensions from 'react-dimensions';
 import _ from 'lodash';
 import Immutable from 'immutable';
 
-import { CameraActions, SnapshotActions, WalkthroughActions } from 'webapp/actions';
+import { CameraActions, SnapshotActions, WalkthroughActions, ModelActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
+
+// Time in milisec that will pass before a point is considered "interesting" by the user
+const STATS_TIMEOUT = 5000;
 
 /**
  * Model Canvas Component
@@ -18,6 +21,7 @@ class ModelCanvas extends React.Component {
   static propTypes = {
     // Current width of the container
     dispatch: React.PropTypes.func,
+    params: React.PropTypes.object,
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
@@ -30,7 +34,9 @@ class ModelCanvas extends React.Component {
     playbackPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughToggle: React.PropTypes.bool,
-    viewIndex: React.PropTypes.number
+    viewIndex: React.PropTypes.number,
+    position: React.PropTypes.instanceOf(Immutable.Map),
+    lookAt: React.PropTypes.instanceOf(Immutable.Map)
   };
 
   static defaultProps = {
@@ -75,6 +81,9 @@ class ModelCanvas extends React.Component {
       this.modelScene.updateCameraState({ autoRotate: nextProps.autoRotate });
     }
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
       this.modelScene.updateCameraState({ resetView: true });
 
       // wait for OrbitControls to reset camera view in update
@@ -92,6 +101,9 @@ class ModelCanvas extends React.Component {
     // Walkthrough Trigger
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle
       && nextProps.walkthroughToggle === true && this.modelScene) {
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
       this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
       playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
@@ -124,6 +136,9 @@ class ModelCanvas extends React.Component {
   _onMouseDown = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseDown(event, this._onCameraOrbitThrottle);
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
     }
   };
 
@@ -136,12 +151,17 @@ class ModelCanvas extends React.Component {
   _onMouseUp = (event) => {
     if (this.modelScene) {
       this.modelScene.onMouseUp(event, this._onCameraOrbitThrottle);
+      this.timeoutVar = setTimeout(this._triggerStatPointSend, STATS_TIMEOUT);
     }
   };
 
   _onWheel = (event) => {
     if (this.modelScene) {
       this.modelScene.onWheel(event, this._onCameraOrbitThrottle);
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
+      this.timeoutVar = setTimeout(this._triggerStatPointSend, STATS_TIMEOUT);
     }
   };
 
@@ -180,6 +200,79 @@ class ModelCanvas extends React.Component {
   _updateCameraProps(camera) {
     const { dispatch } = this.props;
     dispatch(CameraActions.updateCamera(camera));
+  }
+
+  _triggerStatPointSend = () => {
+    const { dispatch, params, position, lookAt } = this.props;
+    const camPos = position.toJS();
+    const camLookAt = lookAt.toJS();
+    dispatch(ModelActions.addStatisticsPoint(
+      params.modelId,
+      this.convertPoint(camPos, camLookAt)
+    ));
+  };
+
+  // Place holder
+  convertPoint(position, lookAt) {
+    const partitionSize = 15;
+    const camX = position.x;
+    const camY = position.y;
+    const camZ = position.z;
+    const lookX = lookAt.x;
+    const lookY = lookAt.y;
+    const lookZ = lookAt.z;
+
+    // calculate the vector from cam to look at: AB = OB - OA
+    const diffX = lookX - camX;
+    const diffY = lookY - camY;
+    const diffZ = lookZ - camZ;
+
+    // convert to polar coordinates
+    // azimuth = longitude, atan = (-pi/2, pi/2)
+    // incline = latitude, acos = [0, pi]
+    let camRad = Math.sqrt((camX * camX) + (camY * camY) + (camZ * camZ));
+    let camIncline = Math.acos(camY / camRad);
+    let camAzimuth = Math.atan(camX / camZ);
+    if (camZ < 0) camAzimuth = camAzimuth + Math.PI;
+    if (camAzimuth < 0) camAzimuth = camAzimuth + Math.PI + Math.PI;
+
+    const lookRadius = Math.sqrt((diffX * diffX) + (diffY * diffY) + (diffZ * diffZ));
+    let lookIncline = Math.acos(diffY / lookRadius);
+    let lookAzimuth = Math.atan(diffX / Math.abs(diffZ));
+    if (diffZ < 0) lookAzimuth = lookAzimuth + Math.PI;
+    if (lookAzimuth < 0) lookAzimuth = lookAzimuth + Math.PI + Math.PI;
+
+    // round off polar coords to nearest degree
+    camRad = Math.round(camRad);
+    camIncline = Math.round(camIncline * 180 / Math.PI);
+    camAzimuth = Math.round(camAzimuth * 180 / Math.PI);
+    lookIncline = Math.round(lookIncline * 180 / Math.PI);
+    lookAzimuth = Math.round(lookAzimuth * 180 / Math.PI);
+
+    // seperate into partitions
+    camRad = camRad - (camRad % partitionSize);
+    camIncline = camIncline - (camIncline % partitionSize);
+    camAzimuth = camAzimuth - (camAzimuth % partitionSize);
+    lookIncline = lookIncline - (lookIncline % partitionSize);
+    lookAzimuth = lookAzimuth - (lookAzimuth % partitionSize);
+
+    // convert polar coords of camera back to cartesian
+    // let cam_seg_x = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.sin(camAzimuth / 180 * Math.PI);
+    // let cam_seg_y = camRadius * Math.cos(camIncline / 180 * Math.PI);
+    // let cam_seg_z = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.cos(camAzimuth / 180 * Math.PI);
+    // cam_seg_x = Math.round(cam_seg_x);
+    // cam_seg_y = Math.round(cam_seg_y);
+    // cam_seg_z = Math.round(cam_seg_z);
+
+    const convertedPoint = {
+      camLongtitude: camAzimuth,
+      camLatitude: camIncline,
+      camRadius: camRad,
+      lookAtLongtitude: lookAzimuth,
+      lookAtLatitude: lookIncline
+    };
+
+    return convertedPoint;
   }
 }
 
