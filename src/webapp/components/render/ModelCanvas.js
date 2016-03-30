@@ -81,6 +81,9 @@ class ModelCanvas extends React.Component {
       this.modelScene.updateCameraState({ autoRotate: nextProps.autoRotate });
     }
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
       this.modelScene.updateCameraState({ resetView: true });
     }
     if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
@@ -95,6 +98,9 @@ class ModelCanvas extends React.Component {
     // Walkthrough Trigger
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle
       && nextProps.walkthroughToggle === true && this.modelScene) {
+      if (this.timeoutVar) {
+        clearTimeout(this.timeoutVar);
+      }
       this.modelScene.updateWalkthroughState({ walkthroughToggle: nextProps.walkthroughToggle,
       playbackPoints: nextProps.playbackPoints, walkthroughPoints: nextProps.walkthroughPoints });
     }
@@ -222,10 +228,10 @@ class ModelCanvas extends React.Component {
     const diffZ = lookZ - camZ;
 
     // convert to polar coordinates
-    // azimuth = latitude, atan = (-pi/2, pi/2)
-    // incline = longitude, acos = [0, pi]
-    let camRadius = Math.sqrt((camX * camX) + (camY * camY) + (camZ * camZ));
-    let camIncline = Math.acos(camY / camRadius);
+    // azimuth = longitude, atan = (-pi/2, pi/2)
+    // incline = latitude, acos = [0, pi]
+    let camRad = Math.sqrt((camX * camX) + (camY * camY) + (camZ * camZ));
+    let camIncline = Math.acos(camY / camRad);
     let camAzimuth = Math.atan(camX / camZ);
     if (camZ < 0) camAzimuth = camAzimuth + Math.PI;
     if (camAzimuth < 0) camAzimuth = camAzimuth + Math.PI + Math.PI;
@@ -237,14 +243,14 @@ class ModelCanvas extends React.Component {
     if (lookAzimuth < 0) lookAzimuth = lookAzimuth + Math.PI + Math.PI;
 
     // round off polar coords to nearest degree
-    camRadius = Math.round(camRadius);
+    camRad = Math.round(camRad);
     camIncline = Math.round(camIncline * 180 / Math.PI);
     camAzimuth = Math.round(camAzimuth * 180 / Math.PI);
     lookIncline = Math.round(lookIncline * 180 / Math.PI);
     lookAzimuth = Math.round(lookAzimuth * 180 / Math.PI);
 
     // seperate into partitions
-    camRadius = camRadius - (camRadius % partitionSize);
+    camRad = camRad - (camRad % partitionSize);
     camIncline = camIncline - (camIncline % partitionSize);
     camAzimuth = camAzimuth - (camAzimuth % partitionSize);
     lookIncline = lookIncline - (lookIncline % partitionSize);
@@ -259,11 +265,11 @@ class ModelCanvas extends React.Component {
     // cam_seg_z = Math.round(cam_seg_z);
 
     const convertedPoint = {
-      camLongtitude: this.camIncline,
-      camLatitude: this.camAzimuth,
-      camRadius: this.camRadius,
-      lookAtLongtitude: this.lookIncline,
-      lookAtLatitude: this.lookAzimuth
+      camLongtitude: camAzimuth,
+      camLatitude: camIncline,
+      camRadius: camRad,
+      lookAtLongtitude: lookAzimuth,
+      lookAtLatitude: lookIncline
     };
 
     return convertedPoint;
