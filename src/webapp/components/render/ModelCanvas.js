@@ -208,12 +208,62 @@ class ModelCanvas extends React.Component {
 
   // Place holder
   convertPoint(position, lookAt) {
+    const partitionSize = 15;
+    const camX = position.x;
+    const camY = position.y;
+    const camZ = position.z;
+    const lookX = lookAt.x;
+    const lookY = lookAt.y;
+    const lookZ = lookAt.z;
+
+    // calculate the vector from cam to look at: AB = OB - OA
+    const diffX = lookX - camX;
+    const diffY = lookY - camY;
+    const diffZ = lookZ - camZ;
+
+    // convert to polar coordinates
+    // azimuth = latitude, atan = (-pi/2, pi/2)
+    // incline = longitude, acos = [0, pi]
+    let camRadius = Math.sqrt((camX * camX) + (camY * camY) + (camZ * camZ));
+    let camIncline = Math.acos(camY / camRadius);
+    let camAzimuth = Math.atan(camX / camZ);
+    if (camZ < 0) camAzimuth = camAzimuth + Math.PI;
+    if (camAzimuth < 0) camAzimuth = camAzimuth + Math.PI + Math.PI;
+
+    const lookRadius = Math.sqrt((diffX * diffX) + (diffY * diffY) + (diffZ * diffZ));
+    let lookIncline = Math.acos(diffY / lookRadius);
+    let lookAzimuth = Math.atan(diffX / Math.abs(diffZ));
+    if (diffZ < 0) lookAzimuth = lookAzimuth + Math.PI;
+    if (lookAzimuth < 0) lookAzimuth = lookAzimuth + Math.PI + Math.PI;
+
+    // round off polar coords to nearest degree
+    camRadius = Math.round(camRadius);
+    camIncline = Math.round(camIncline * 180 / Math.PI);
+    camAzimuth = Math.round(camAzimuth * 180 / Math.PI);
+    lookIncline = Math.round(lookIncline * 180 / Math.PI);
+    lookAzimuth = Math.round(lookAzimuth * 180 / Math.PI);
+
+    // seperate into partitions
+    camRadius = camRadius - (camRadius % partitionSize);
+    camIncline = camIncline - (camIncline % partitionSize);
+    camAzimuth = camAzimuth - (camAzimuth % partitionSize);
+    lookIncline = lookIncline - (lookIncline % partitionSize);
+    lookAzimuth = lookAzimuth - (lookAzimuth % partitionSize);
+
+    // convert polar coords of camera back to cartesian
+    // let cam_seg_x = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.sin(camAzimuth / 180 * Math.PI);
+    // let cam_seg_y = camRadius * Math.cos(camIncline / 180 * Math.PI);
+    // let cam_seg_z = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.cos(camAzimuth / 180 * Math.PI);
+    // cam_seg_x = Math.round(cam_seg_x);
+    // cam_seg_y = Math.round(cam_seg_y);
+    // cam_seg_z = Math.round(cam_seg_z);
+
     const convertedPoint = {
-      camLongtitude: position.x,
-      camLatitude: position.y,
-      camRadius: position.z,
-      lookAtLongtitude: lookAt.x,
-      lookAtLatitude: lookAt.y
+      camLongtitude: this.camIncline,
+      camLatitude: this.camAzimuth,
+      camRadius: this.camRadius,
+      lookAtLongtitude: this.lookIncline,
+      lookAtLatitude: this.lookAzimuth
     };
 
     return convertedPoint;
