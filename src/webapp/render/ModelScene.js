@@ -32,6 +32,9 @@ class ModelScene {
   displayObjects = [];
   // Orbit Controls
   controls = undefined;
+
+  canvas = undefined;
+
   // Current Rendering State
   renderingState = {
     wireframe: false,
@@ -62,8 +65,9 @@ class ModelScene {
    * @param  {DOMElement} sceneCanvas [the dom element for the canvas containing the scene]
    * @param  {Object} dimensions  [dimensions data of the canvas]
    */
-  constructor(sceneCanvas, dimensions) {
+  constructor(sceneCanvas, dimensions, ref) {
     this._init(sceneCanvas, dimensions);
+    this.canvas = ref;
   }
 
   _init(sceneCanvas, dimensions) {
@@ -187,6 +191,7 @@ class ModelScene {
         this.camera.position.set(xDest, yDest, zDest);
         const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
         this.controls.constraint.target = lookTarget;
+        this._updateCamera();
       });
     } else {
       this.tweenRotate[index].onUpdate(() => {
@@ -241,6 +246,7 @@ class ModelScene {
     .onStart(() => {
       const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
       this.controls.constraint.target = lookTarget;
+      // this._updateCamera();
     })
     .easing(TWEEN.Easing.Linear.None);
 
@@ -252,6 +258,7 @@ class ModelScene {
         this.camera.position.set(destination.x, destination.y, destination.z);
         const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
         this.controls.constraint.target = lookTarget;
+        this._updateCamera();
       });
     } else {
       this.tweenTranslate[index].onUpdate(() => {
@@ -265,7 +272,7 @@ class ModelScene {
   }
 
   _initTween() {
-// Analyse how many Tween Obj is require
+    // Analyse how many Tween Obj is require
     const numTweenObjRequire = this.walkthroughState.index[1] - this.walkthroughState.index[0];
 
     if (numTweenObjRequire > 0) {
@@ -311,6 +318,33 @@ class ModelScene {
       this.tweenRotate[0].start();
       this.tweenLook[0].start();
     }
+
+    this.tweenLook[numTweenObjRequire - 1].onComplete(() => {
+      this._updateCamera();
+      this.walkthroughState.startPlayback = false;
+      this.canvas._onWalkthroughCompleted();
+    });
+
+    const firstIndex = this.walkthroughState.index[0];
+    const { pos } = this.walkthroughState.points[firstIndex];
+    const { lookAt } = this.walkthroughState.points[firstIndex];
+
+    this.camera.position.set(pos.x, pos.y, pos.z);
+    const lookTarget = new THREE.Vector3(lookAt.x, lookAt.y, lookAt.z);
+    this.controls.constraint.target = lookTarget;
+    this._updateCamera();
+  }
+
+  _updateCamera() {
+    this.getCameraOrbit();
+
+    const coordinateFields = ['x', 'y', 'z'];
+    const quaternionFields = ['x', 'y', 'z', 'w'];
+
+    this.canvas._updateCameraProps({ position: _.pick(this.camera.position, coordinateFields),
+                                       lookAt: _.pick(this.controls.constraint.target, coordinateFields),
+                                       up: _.pick(this.camera.up, coordinateFields),
+                                       quaternion: _.pick(this.camera.quaternion, quaternionFields) });
   }
 
   /**
@@ -387,11 +421,12 @@ class ModelScene {
     this.controls.resetView = this.cameraState.resetView;
     this.controls.autoRotate = this.cameraState.autoRotate;
     this.cameraState.resetView = false;
-    this.controls.playbackWalkthrough = this.cameraState.playbackWalkthrough;
+    // this.controls.playbackWalkthrough = this.cameraState.playbackWalkthrough;
   }
 
   updateWalkthroughState(state) {
     Object.assign(this.walkthroughState, state);
+
     this.walkthroughState.startPlayback = state.walkthroughToggle;
     this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
     this.walkthroughState.index = this.walkthroughState.playbackPoints.toJS();
@@ -399,7 +434,7 @@ class ModelScene {
     this._initTween();
   }
 
-  updateWalkthroughViewIndex(state) {
+  updateWalkthroughViewIndex(ref, state) {
     Object.assign(this.walkthroughState, state);
     this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
     this.walkthroughState.viewIndex = state.viewIndex;
@@ -411,6 +446,8 @@ class ModelScene {
       this.camera.position.set(pos.x, pos.y, pos.z);
       const lookTarget = new THREE.Vector3(lookAt.x, lookAt.y, lookAt.z);
       this.controls.constraint.target = lookTarget;
+
+      this._updateCamera();
     }
   }
 

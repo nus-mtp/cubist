@@ -2,7 +2,8 @@ import Immutable from 'immutable';
 
 import ReducerHelper from './ReducerHelper';
 import {
-  CAMERA_ORBIT
+  CAMERA_ORBIT,
+  CAMERA_UPDATE
 } from 'webapp/actions/types';
 
 // Take note that each element in the list is Vector3
@@ -17,6 +18,18 @@ export default ReducerHelper.createReducer(initialState, {
   [CAMERA_ORBIT](state, action) {
     let nextState = state;
     nextState = nextState.merge(Immutable.fromJS(action.payload));
+    return nextState;
+  },
+
+  [CAMERA_UPDATE]: (state, camera) => {
+    let nextState = state;
+    const { position, up, lookAt, quaternion } = camera.payload;
+
+    nextState = nextState.set('position', Immutable.fromJS(position));
+    nextState = nextState.set('up', Immutable.fromJS(up));
+    nextState = nextState.set('lookAt', Immutable.fromJS(lookAt));
+    nextState = nextState.set('quaternion', Immutable.fromJS(quaternion));
+
     return nextState;
   }
 });
