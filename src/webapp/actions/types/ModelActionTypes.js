@@ -18,7 +18,8 @@ const promiseTypes = {
   REQ_PUT_INCREMENT_MODEL_VIEWS: null,
   REQ_PUT_TOGGLE_MODEL_FLAG: null,
   REQ_PUT_ADD_MODEL_SNAPSHOTS: null,
-  REQ_PUT_REMOVE_MODEL_SNAPSHOT: null
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT: null,
+  REQ_PUT_ADD_STATISTICS_POINT: null
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

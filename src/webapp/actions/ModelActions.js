@@ -8,7 +8,8 @@ import {
   REQ_PUT_INCREMENT_MODEL_VIEWS,
   REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
-  REQ_PUT_REMOVE_MODEL_SNAPSHOT
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT,
+  REQ_PUT_ADD_STATISTICS_POINT
 } from './types';
 
 export default {
@@ -114,6 +115,17 @@ export default {
       promise: apiClient => apiClient.put(`/model/${modelId}/removeSnapshot`, {
         body: {
           index
+        }
+      })
+    };
+  },
+
+  addStatisticsPoint(modelId, point) {
+    return {
+      type: REQ_PUT_ADD_STATISTICS_POINT,
+      promise: apiClient => apiClient.put(`/model/${modelId}/addStatisticsPoint`, {
+        body: {
+          point
         }
       })
     };

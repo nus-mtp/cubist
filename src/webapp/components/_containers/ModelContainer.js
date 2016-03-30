@@ -53,7 +53,6 @@ class ModelContainer extends PureComponent {
       ...this.props
     };
     const isUploader = model.getIn(['uploader', '_id']) === user.get('_id');
-
     return (
       <div className={ CLASS_NAME }>
         <h2 className={ `${CLASS_NAME}-title` }>

@@ -28,7 +28,15 @@ const Model = new Schema({
   },
   imageUrls: [{ type: String }],
   createdAt: { type: Date, index: true, default: Date.now },
-  updatedAt: { type: Date, index: true, default: Date.now }
+  updatedAt: { type: Date, index: true, default: Date.now },
+  statisticsPoints: [{
+    camLongtitude: { type: Number, default: 0 },
+    camLatitude: { type: Number, default: 0 },
+    camRadius: { type: Number, default: 0 },
+    lookAtLongtitude: { type: Number, default: 0 },
+    lookAtLatitude: { type: Number, default: 0 },
+    count: { type: Number, default: 0 }
+  }]
 });
 
 // -----------------------------------------------------
@@ -308,6 +316,33 @@ Model.statics.deleteSnapshot = function (modelId, index) {
 
   return MongooseHelper.findOneAndUpdate(this, condition, unsetUpdate)
     .then(() => MongooseHelper.findOneAndUpdate(this, condition, pullUpdate, { new: true }));
+};
+
+// -----------------------------------------------------
+// -----------------MODEL STATISTICS-------------------
+// -----------------------------------------------------
+
+Model.statics.addStatisticsPoint = function (modelId, point) {
+  const condition = {
+    _id: modelId,
+    statisticsPoints: { $elemMatch: { ...point } }
+  };
+
+  const invCondition = {
+    _id: modelId,
+    statisticsPoints: { $not: { $elemMatch: { ...point } } }
+  };
+
+  const addToSetUpdate = {
+    $addToSet: { statisticsPoints: { ...point } }
+  };
+
+  const incUpdate = {
+    $inc: { 'statisticsPoints.$.count': 1 }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, invCondition, addToSetUpdate)
+    .then(() => MongooseHelper.findOneAndUpdate(this, condition, incUpdate));
 };
 
 export default mongoose.model('Model', Model, 'Model');
