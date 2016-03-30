@@ -22,7 +22,9 @@ export default ReducerHelper.createReducer(initialState, {
   [SNAPSHOT_SUCCESS]: function (state, { payload }) {
     const { token, data } = payload;
     let nextState = state;
-    nextState = nextState.setIn(['snapshots', token], data);
+    nextState = nextState
+      .setIn(['snapshots', token], data)
+      .set('snapshotToken', undefined);
 
     return nextState;
   }

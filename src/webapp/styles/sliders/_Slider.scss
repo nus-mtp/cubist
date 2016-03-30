@@ -1,4 +1,5 @@
-.cb-snapshot-slider {
+.cb-slider {
+  min-height: 150px;
   margin-right: 25px;
   margin-left: 25px;
   border: 1px solid $cb-dark-gray;
@@ -11,7 +12,7 @@
   }
 }
 
-.cb-snapshot-slide {
+.cb-slide {
   overflow: hidden;
   height: 150px;
   border: 1px solid $cb-dark-gray;
@@ -26,12 +27,12 @@
   }
 }
 
-.cb-snapshot-slide-add {
+.cb-slide-add {
   height: 150px;
   background: $cb-dark-gray;
 }
 
-.cb-snapshot-slide-add-button {
+.cb-slide-add-button {
   display: flex;
   height: 100%;
   font-size: 45px;

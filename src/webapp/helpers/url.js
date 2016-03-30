@@ -12,5 +12,8 @@ export default {
     }
 
     return `/storage/snapshots/${url}`;
+  },
+  getBase64ImageUrl(base64data) {
+    return `data:image/png;base64,${base64data}`;
   }
 };
