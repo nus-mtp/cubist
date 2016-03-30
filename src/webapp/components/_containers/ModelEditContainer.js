@@ -1,27 +1,27 @@
-import React from 'react';
-import _ from 'lodash';
-import Immutable from 'immutable';
-import { connect } from 'react-redux';
-import PureComponent from 'react-pure-render/component';
-import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
-import { batchActions } from 'redux-batched-actions';
+ import React from 'react';
+ import _ from 'lodash';
+ import Immutable from 'immutable';
+ import { connect } from 'react-redux';
+ import PureComponent from 'react-pure-render/component';
+ import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
+ import { batchActions } from 'redux-batched-actions';
 
-import { OBJLoader, OBJMTLLoader } from '../../render';
-import { ModelViewer } from '../model';
-import { SnapshotSlider } from '../sliders';
-import { StringHelper, Constants } from 'common';
-import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
-import { GravatarHelper } from 'webapp/helpers';
-import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
+ import { OBJLoader, OBJMTLLoader } from '../../render';
+ import { ModelViewer } from '../model';
+ import { SnapshotSlider } from '../sliders';
+ import { StringHelper, Constants } from 'common';
+ import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
+ import { GravatarHelper } from 'webapp/helpers';
+ import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
-const CLASS_NAME = 'cb-ctn-model';
+ const CLASS_NAME = 'cb-ctn-model';
 
-const MODEL_TITLE_FIELD = 'title';
-const MODEL_DESC_FIELD = 'description';
-const MODEL_CATEGORY_FIELD = 'category';
-const MODEL_TAGS_FIELD = 'tags';
+ const MODEL_TITLE_FIELD = 'title';
+ const MODEL_DESC_FIELD = 'description';
+ const MODEL_CATEGORY_FIELD = 'category';
+ const MODEL_TAGS_FIELD = 'tags';
 
-class ModelEditContainer extends PureComponent {
+ class ModelEditContainer extends PureComponent {
   static fetchData({ dispatch, params }) {
     return dispatch(ModelActions.getModel(params.modelId));
   }
@@ -558,34 +558,34 @@ class ModelEditContainer extends PureComponent {
   }
 }
 
-export default connect((state) => {
-  const currentId = state.ModelStore.get('modelId');
+ export default connect((state) => {
+   const currentId = state.ModelStore.get('modelId');
 
-  return {
-    // Model Info
-    model: state.ModelStore.getIn(['models', currentId]),
-    err: state.RequestStore.getIn(['err', REQ_PUT_UPDATE_MODEL_INFO]),
-    success: state.RequestStore.getIn(['success', REQ_PUT_UPDATE_MODEL_INFO]),
+   return {
+     // Model Info
+     model: state.ModelStore.getIn(['models', currentId]),
+     err: state.RequestStore.getIn(['err', REQ_PUT_UPDATE_MODEL_INFO]),
+     success: state.RequestStore.getIn(['success', REQ_PUT_UPDATE_MODEL_INFO]),
 
-    // Viewer Data
-    wireframe: state.RenderStore.get('wireframe'),
-    shadingMode: state.RenderStore.get('shadingMode'),
-    autoRotate: state.RenderStore.get('autoRotate'),
-    resetViewToggle: state.RenderStore.get('resetViewToggle'),
-    position: state.CameraStore.get('position'),
-    up: state.CameraStore.get('up'),
-    lookAt: state.CameraStore.get('lookAt'),
-    zoom: state.CameraStore.get('zoom'),
-    quaternion: state.CameraStore.get('quaternion'),
+     // Viewer Data
+     wireframe: state.RenderStore.get('wireframe'),
+     shadingMode: state.RenderStore.get('shadingMode'),
+     autoRotate: state.RenderStore.get('autoRotate'),
+     resetViewToggle: state.RenderStore.get('resetViewToggle'),
+     position: state.CameraStore.get('position'),
+     up: state.CameraStore.get('up'),
+     lookAt: state.CameraStore.get('lookAt'),
+     zoom: state.CameraStore.get('zoom'),
+     quaternion: state.CameraStore.get('quaternion'),
 
-    // Walkthrough Data
-    walkthroughPoints: state.WalkthroughStore.get('points'),
-    playbackPoints: state.WalkthroughStore.get('playbackPoints'),
-    walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
-    viewIndex: state.WalkthroughStore.get('viewIndex'),
+     // Walkthrough Data
+     walkthroughPoints: state.WalkthroughStore.get('points'),
+     playbackPoints: state.WalkthroughStore.get('playbackPoints'),
+     walkthroughToggle: state.WalkthroughStore.get('walkthroughToggle'),
+     viewIndex: state.WalkthroughStore.get('viewIndex'),
 
-    // Snapshot Data
-    snapshots: state.SnapshotStore.get('snapshots'),
-    snapshotToken: state.SnapshotStore.get('snapshotToken')
-  };
-})(ModelEditContainer);
+     // Snapshot Data
+     snapshots: state.SnapshotStore.get('snapshots'),
+     snapshotToken: state.SnapshotStore.get('snapshotToken')
+   };
+ })(ModelEditContainer);

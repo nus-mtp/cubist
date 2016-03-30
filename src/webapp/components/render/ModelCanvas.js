@@ -45,7 +45,7 @@ class ModelCanvas extends React.Component {
       width: containerWidth,
       height: Math.floor(containerWidth / aspectRatio),
       aspectRatio
-    });
+    }, this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,6 +76,9 @@ class ModelCanvas extends React.Component {
     }
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
+
+      // wait for OrbitControls to reset camera view in update
+      setTimeout(() => this.modelScene._updateCamera(), 250);
     }
     if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
       this.modelScene.updateRenderingState({ resizedTexture: nextProps.resizedTexture });
@@ -94,26 +97,22 @@ class ModelCanvas extends React.Component {
     }
     if (nextProps.viewIndex !== this.props.viewIndex && this.modelScene) {
       const { dispatch } = this.props;
-      this.modelScene.updateWalkthroughViewIndex({
+      this.modelScene.updateWalkthroughViewIndex(this, {
         walkthroughPoints: nextProps.walkthroughPoints,
         viewIndex: nextProps.viewIndex
       });
       dispatch(WalkthroughActions.viewWalkthroughPoint(-1));
     }
-
-    // this.modelScene._onPlaybackCompleted(() => {
-    //   this._onPlaybackCompleted();
-    // });
   }
 
   componentWillUnmount() {
     this.modelScene.dispose();
   }
 
-  // _onPlaybackCompleted = (event) => {
-  //   const { dispatch } = this.props;
-  //   dispatch(WalkthroughActions.playbackWalkthrough());
-  // };
+  _onWalkthroughCompleted() {
+    const { dispatch } = this.props;
+    dispatch(WalkthroughActions.playbackWalkthrough());
+  }
 
   _onCameraOrbit(camera) {
     const { dispatch } = this.props;
@@ -157,10 +156,6 @@ class ModelCanvas extends React.Component {
     dispatch(SnapshotActions.snapshotSuccess(token, snapshotData));
   }
 
-  _onPlaybackCompleted() {
-
-  }
-
   render() {
     const { containerWidth, aspectRatio } = this.props;
     const canvasStyle = {
@@ -180,6 +175,11 @@ class ModelCanvas extends React.Component {
           ref="sceneCanvas" />
       </div>
     );
+  }
+
+  _updateCameraProps(camera) {
+    const { dispatch } = this.props;
+    dispatch(CameraActions.updateCamera(camera));
   }
 }
 
