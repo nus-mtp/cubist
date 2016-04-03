@@ -52,6 +52,12 @@ class ModelScene {
     viewIndex: -1
   };
 
+  textureState = {
+    key: [],
+    smallTexture: [],
+    origTexture: []
+  };
+
   /**
    * Constructor function of the scene
    * @param  {DOMElement} sceneCanvas [the dom element for the canvas containing the scene]
@@ -306,6 +312,11 @@ class ModelScene {
     this._initTween();
   }
 
+  updateTextureState(state) {
+    Object.assign(this.textureState, state);
+    this.updateSceneObjects();
+  }
+
   updateWalkthroughViewIndex(state) {
     Object.assign(this.walkthroughState, state);
     this.walkthroughState.points = this.walkthroughState.walkthroughPoints.toJS();
@@ -372,14 +383,19 @@ class ModelScene {
       if (child instanceof THREE.Mesh) {
         if (child.material.name) {
           // loop through each type of mapped image
-          for (let mapType = 0; mapType < 10; mapType++) {
+          for (let mapType = 0; mapType < 2; mapType++) {
             switch (mapType) {
               case 0: // texture map
                 if (child.material.map) {
-                  child.material.map.image.src = this.modifySuffix(
-                    child.material.map.image.src,
-                    isAppend
-                  );
+                  for (let i = 0; i < this.textureState.key.length; i++) {
+                    console.log(child.material.name, ' & ', this.textureState.key);
+                    if (this.textureState.key == child.material.name)
+                      console.log(child.material.name, ' found');
+                  }
+                  // child.material.map.image.src = this.modifySuffix(
+                  //   child.material.map.image.src,
+                  //   isAppend
+                  // );
                 }
                 break;
               case 1: // bumpMap
@@ -390,71 +406,6 @@ class ModelScene {
                   );
                 }
                 break;
-              case 2: // normalMap
-                if (child.material.normalMap) {
-                  child.material.normalMap.image.src = this.modifySuffix(
-                    child.material.normalMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 3: // lightMap
-                if (child.material.lightMap) {
-                  child.material.lightMap.image.src = this.modifySuffix(
-                    child.material.lightMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 4: // ambient occlusion Map
-                if (child.material.aoMap) {
-                  child.material.aoMap.image.src = this.modifySuffix(
-                    child.material.aoMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 5: // emissiveMap
-                if (child.material.emissiveMap) {
-                  child.material.emissiveMap.image.src = this.modifySuffix(
-                    child.material.emissiveMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 6: // specularMap
-                if (child.material.specularMap) {
-                  child.material.specularMap.image.src = this.modifySuffix(
-                    child.material.specularMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 7: // alphaMap
-                if (child.material.alphaMap) {
-                  child.material.alphaMap.image.src = this.modifySuffix(
-                    child.material.alphaMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 8: // displacementMap
-                if (child.material.displacementMap) {
-                  child.material.displacementMap.image.src = this.modifySuffix(
-                    child.material.displacementMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 9: // enviroment Map
-                if (child.material.envMap) {
-                  child.material.envMap.image.src = this.modifySuffix(
-                    child.material.envMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              default:
             }
           }
         }

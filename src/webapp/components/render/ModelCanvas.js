@@ -5,7 +5,7 @@ import Dimensions from 'react-dimensions';
 import _ from 'lodash';
 import Immutable from 'immutable';
 
-import { CameraActions, SnapshotActions, WalkthroughActions } from 'webapp/actions';
+import { CameraActions, SnapshotActions, WalkthroughActions, TextureLoadActions } from 'webapp/actions';
 import ModelScene from '../../render/ModelScene';
 
 const CLASS_NAME = 'cb-model-canvas';
@@ -30,7 +30,8 @@ class ModelCanvas extends React.Component {
     playbackPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List),
     walkthroughToggle: React.PropTypes.bool,
-    viewIndex: React.PropTypes.number
+    viewIndex: React.PropTypes.number,
+    key: React.PropTypes.string
   };
 
   static defaultProps = {
@@ -75,6 +76,10 @@ class ModelCanvas extends React.Component {
     if (nextProps.resetViewToggle !== this.props.resetViewToggle && this.modelScene) {
       this.modelScene.updateCameraState({ resetView: true });
     }
+    // Texture Trigger
+    if (nextProps.key !== this.props.key && this.modelScene) {
+      this.modelScene.updateTextureState({ key: nextProps.key });
+    }
     if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
       this.modelScene.updateRenderingState({ resizedTexture: nextProps.resizedTexture });
     }
@@ -98,6 +103,7 @@ class ModelCanvas extends React.Component {
       });
       dispatch(WalkthroughActions.viewWalkthroughPoint(-1));
     }
+    
 
     // this.modelScene._onPlaybackCompleted(() => {
     //   this._onPlaybackCompleted();

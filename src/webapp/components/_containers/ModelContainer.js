@@ -176,7 +176,6 @@ class ModelContainer extends PureComponent {
       }
     );
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
-    console.log(urls);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('.mtl')).get(0);
     loader.loadSmall(objUrl, mtlUrl, m => {

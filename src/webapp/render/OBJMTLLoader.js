@@ -27,7 +27,7 @@ class OBJMTLLoader {
               if (material) {
                 // action to write image to store
                 if (material.map) {
-                  this.callback(material.name, material.map.image.src);
+                  this.callback(material.name, material.map.image);
                   // dispatch(TextureLoadActions.loadSmall(o.material.name, material));
                 }
                 o.material = material;
