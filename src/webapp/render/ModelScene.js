@@ -132,37 +132,33 @@ class ModelScene {
     this.controls = new OrbitControls(this.camera, dimensions);
   }
 
+  _getCoordinateByIndexAndField(index, field) {
+    let coordinate;
+    if (field === 'position') {
+      const { x, y, z } = this.walkthroughState.points[index].pos;
+      coordinate = { x, y, z };
+    } else if (field === 'lookAt') {
+      const { x, y, z } = this.walkthroughState.points[index].lookAt;
+      coordinate = { x, y, z };
+    } else if (field === 'quaternion') {
+      const { x, y, z, w } = this.walkthroughState.points[index].quaternion;
+      coordinate = new THREE.Quaternion(x, y, z, w);
+    }
+    return coordinate;
+  }
+
   _initRotationTween(index, firstIndex, nextIndex, duration) {
-    const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
-    const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
-    const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
+    const posOrigin = this._getCoordinateByIndexAndField(firstIndex, 'position');
+    const posDest = this._getCoordinateByIndexAndField(nextIndex, 'position');
+    const lookOrigin = this._getCoordinateByIndexAndField(firstIndex, 'lookAt');
+    const lookDest = this._getCoordinateByIndexAndField(nextIndex, 'lookAt');
+    const quatOrigin = this._getCoordinateByIndexAndField(firstIndex, 'quaternion');
+    const quatTarget = this._getCoordinateByIndexAndField(nextIndex, 'quaternion');
 
-    const xDest = this.walkthroughState.points[nextIndex].pos.x;
-    const yDest = this.walkthroughState.points[nextIndex].pos.y;
-    const zDest = this.walkthroughState.points[nextIndex].pos.z;
-
-    const qm = new THREE.Quaternion();
-
-    const quatOrigin = new THREE.Quaternion(this.walkthroughState.points[firstIndex].quaternion.x,
-                                            this.walkthroughState.points[firstIndex].quaternion.y,
-                                            this.walkthroughState.points[firstIndex].quaternion.z,
-                                            this.walkthroughState.points[firstIndex].quaternion.w);
-    const quatTarget = new THREE.Quaternion(this.walkthroughState.points[nextIndex].quaternion.x,
-                                            this.walkthroughState.points[nextIndex].quaternion.y,
-                                            this.walkthroughState.points[nextIndex].quaternion.z,
-                                            this.walkthroughState.points[nextIndex].quaternion.w);
+    const quatResult = new THREE.Quaternion();
     const inverseOrigin = quatOrigin.inverse();
     const targetQuaternion = quatTarget.multiply(inverseOrigin);
     const curQuaternion = new THREE.Quaternion();
-
-    const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
-    const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
-    const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
-
-    const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
-    const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
-    const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
-    const destL = new THREE.Vector3(xDestL, yDestL, zDestL);
 
     const t1 = { t: 0 };
     const t2 = { t: 1 };
@@ -173,14 +169,14 @@ class ModelScene {
     this.tweenRotate[index] = new TWEEN.Tween(t1).to(t2, duration)
     .easing(TWEEN.Easing.Linear.None)
     .onStart(() => {
-      this.camera.position.set(xOrigin, yOrigin, zOrigin);
+      this.camera.position.set(posOrigin.x, posOrigin.y, posOrigin.z);
     });
 
     // Tween for camera lookAt
     this.tweenLook[index] = new TWEEN.Tween(s1).to(s2, duration)
     .easing(TWEEN.Easing.Linear.None)
     .onStart(() => {
-      const lookTarget = new THREE.Vector3(xOrig, yOrig, zOrig);
+      const lookTarget = new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z);
       this.controls.constraint.target = lookTarget;
     });
 
@@ -188,65 +184,49 @@ class ModelScene {
     if (this.walkthroughState.points[nextIndex].disjointMode === true ||
         this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
       this.tweenRotate[index].onComplete(() => {
-        this.camera.position.set(xDest, yDest, zDest);
-        const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
+        this.camera.position.set(posDest.x, posDest.y, posDest.z);
+        const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
         this.controls.constraint.target = lookTarget;
         this._updateCamera();
       });
     } else {
       this.tweenRotate[index].onUpdate(() => {
-        THREE.Quaternion.slerp(curQuaternion, targetQuaternion, qm, t1.t);
+        THREE.Quaternion.slerp(curQuaternion, targetQuaternion, quatResult, t1.t);
 
         // apply new quaternion to camera position
-        const cloneOrigin = new THREE.Vector3(xOrigin, yOrigin, zOrigin);
-        cloneOrigin.applyQuaternion(qm);
+        const cloneOrigin = new THREE.Vector3(posOrigin.x, posOrigin.y, posOrigin.z);
+        cloneOrigin.applyQuaternion(quatResult);
         this.camera.position.set(cloneOrigin.x, cloneOrigin.y, cloneOrigin.z);
       });
 
       this.tweenLook[index].onUpdate(() => {
-        const lookVec = new THREE.Vector3(xOrig, yOrig, zOrig);
-        lookVec.applyQuaternion(qm);
+        const lookVec = new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z);
+        lookVec.applyQuaternion(quatResult);
         this.controls.constraint.target = lookVec;
       });
     }
   }
 
   _initTranslationTween(index, firstIndex, nextIndex, duration) {
-    const xOrigin = this.walkthroughState.points[firstIndex].pos.x;
-    const yOrigin = this.walkthroughState.points[firstIndex].pos.y;
-    const zOrigin = this.walkthroughState.points[firstIndex].pos.z;
-    const origin = { x: xOrigin, y: yOrigin, z: zOrigin };
-
-    const xDest = this.walkthroughState.points[nextIndex].pos.x;
-    const yDest = this.walkthroughState.points[nextIndex].pos.y;
-    const zDest = this.walkthroughState.points[nextIndex].pos.z;
-    const destination = { x: xDest, y: yDest, z: zDest };
-
-    const xOrig = this.walkthroughState.points[firstIndex].lookAt.x;
-    const yOrig = this.walkthroughState.points[firstIndex].lookAt.y;
-    const zOrig = this.walkthroughState.points[firstIndex].lookAt.z;
-    const originLook = { x: xOrig, y: yOrig, z: zOrig };
-
-    const xDestL = this.walkthroughState.points[nextIndex].lookAt.x;
-    const yDestL = this.walkthroughState.points[nextIndex].lookAt.y;
-    const zDestL = this.walkthroughState.points[nextIndex].lookAt.z;
-    const destL = { x: xDestL, y: yDestL, z: zDestL };
+    const posOrigin = this._getCoordinateByIndexAndField(firstIndex, 'position');
+    const posDest = this._getCoordinateByIndexAndField(nextIndex, 'position');
+    const lookOrigin = this._getCoordinateByIndexAndField(firstIndex, 'lookAt');
+    const lookDest = this._getCoordinateByIndexAndField(nextIndex, 'lookAt');
 
     // Tween for camera position
-    this.tweenTranslate[index] = new TWEEN.Tween(origin)
-    .to(destination, duration)
+    this.tweenTranslate[index] = new TWEEN.Tween(posOrigin)
+    .to(posDest, duration)
     .onStart(() => {
-      this.camera.position.set(origin.x, origin.y, origin.z);
+      this.camera.position.set(posOrigin.x, posOrigin.y, posOrigin.z);
     })
     .easing(TWEEN.Easing.Linear.None);
 
     // Tween for camera lookAt
-    this.tweenLook[index] = new TWEEN.Tween(originLook)
-    .to(destL, duration)
+    this.tweenLook[index] = new TWEEN.Tween(lookOrigin)
+    .to(lookDest, duration)
     .onStart(() => {
-      const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+      const lookTarget = new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z);
       this.controls.constraint.target = lookTarget;
-      // this._updateCamera();
     })
     .easing(TWEEN.Easing.Linear.None);
 
@@ -255,17 +235,17 @@ class ModelScene {
     if (this.walkthroughState.points[nextIndex].disjointMode === true ||
         this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
       this.tweenTranslate[index].onComplete(() => {
-        this.camera.position.set(destination.x, destination.y, destination.z);
-        const lookTarget = new THREE.Vector3(destL.x, destL.y, destL.z);
+        this.camera.position.set(posDest.x, posDest.y, posDest.z);
+        const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
         this.controls.constraint.target = lookTarget;
         this._updateCamera();
       });
     } else {
       this.tweenTranslate[index].onUpdate(() => {
-        this.camera.position.set(origin.x, origin.y, origin.z);
+        this.camera.position.set(posOrigin.x, posOrigin.y, posOrigin.z);
       });
       this.tweenLook[index].onUpdate(() => {
-        const lookTarget = new THREE.Vector3(originLook.x, originLook.y, originLook.z);
+        const lookTarget = new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z);
         this.controls.constraint.target = lookTarget;
       });
     }
