@@ -488,7 +488,8 @@
     let buttonTitle = 'Play Walkthrough';
 
     if (walkthroughToggle) {
-      buttonTitle = 'Stop Walkthrough';
+      buttonTitle = 'Playing Walkthrough...';
+      disableStatus = true;
     }
 
     if (startIndex === endIndex || startIndex > endIndex) {
