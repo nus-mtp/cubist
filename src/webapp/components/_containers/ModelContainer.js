@@ -46,7 +46,8 @@ class ModelContainer extends PureComponent {
   };
 
   render() {
-    const { model, user } = this.props;
+    const { model, user, textures } = this.props;
+
     const { object } = this.state;
     const viewerProps = {
       object,
@@ -204,6 +205,10 @@ export default connect((state) => {
   return {
     // Model Info
     model: state.ModelStore.getIn(['models', currentId]),
+
+    // Mdoel's Texture Data
+    textures: state.ModelStore.get('textures'),
+    textureStatus: state.ModelStore.get('textureStatus'),
 
     // Viewer Data
     wireframe: state.RenderStore.get('wireframe'),

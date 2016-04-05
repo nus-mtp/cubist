@@ -59,5 +59,5 @@ export default (app) => {
     ModelController.request.toggleFlag
   );
 
-  app.put('/model/:modelId/addStatisticsPoint', ModelController.request.addStatisticsPoint);
+  app.get('/getTextureData', ModelController.request.getTextureData);
 };

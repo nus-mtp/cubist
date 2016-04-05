@@ -171,5 +171,25 @@ export default {
         resolve(payload);
       });
     });
+  },
+
+  obtainTextureFilesData(dir, filePaths) {
+    const promiseArr = [];
+    for (let i = 0; i < filePaths.length; i++) {
+      promiseArr[i] = new Promise(resolve => {
+        fs.readFile(dir + '/' + filePaths[i], (err, data) => {
+          if (err) throw err;
+          resolve([filePaths[i], new Buffer(data).toString('base64')]);
+        });
+      });
+    }
+
+    return Promise.all(promiseArr).then(results => {
+      const fileMap = {};
+      for (let i = 0; i < results.length; i++) {
+        fileMap[results[i][0]] = results[i][1];
+      }
+      return fileMap;
+    });
   }
 };
