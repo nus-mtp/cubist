@@ -3,7 +3,7 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup, ButtonToolbar} from 'react-bootstrap';
  import { batchActions } from 'redux-batched-actions';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
@@ -58,7 +58,11 @@
       },
 
       // Walkthrough
-      durations: props.walkthroughPoints.map(p => p.get('duration'))
+      durations: props.walkthroughPoints.map(p => p.get('duration')),
+
+      // Insert
+      selectedIndex: 0,
+      insertToggle: false
     };
   }
 
@@ -192,6 +196,23 @@
     e.preventDefault();
     const { dispatch } = this.props;
     dispatch(WalkthroughActions.viewWalkthroughPoint(index));
+  };
+
+  // Insert
+  _onInsertButtonClicked = (e) => {
+    // const newValue = this.state.insertToggle;
+    e.preventDefault();
+    this.setState({insertToggle: !this.state.insertToggle});
+  };
+
+  _onInsertSetIndex = (e, index) => {
+    e.preventDefault();
+    this.setState({selectedIndex: index});
+  };
+
+  _onInsertBefore = (e, index) => {
+    e.preventDefault();
+    console.log('shshsh');
   };
 
   render() {
@@ -345,16 +366,19 @@
         <p>{ `${x}, ${y}, ${z}` }</p>
         <h3>Current Camera lookAt:</h3>
         <p>{ `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }</p>
-        <form>
+        <div>
           {
             walkthroughPoints.map((walkthroughPoint, index) => {
               const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
               return (
                 <div key={ index }>
                   <h4>{ `Point ${index + 1}` }</h4>
-                  <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
+                  <div>
+                    <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
                     width="240px" height="135px" className="img-thumbnail"></img>
                     { this._renderViewPointButton(index, walkthroughPoint) }
+                    { this._renderInsertButton(index, walkthroughPoint) }
+                  </div>
                   <p>
                     { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
                   </p>
@@ -372,7 +396,7 @@
               );
             })
           }
-        </form>
+        </div>
         <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
           ADD NEW POINT
         </button>
@@ -394,6 +418,60 @@
         </button>
       );
     }
+  }
+
+  _renderInsertButton(index, point) {
+    const { walkthroughPoints } = this.props;
+    let canRender = true;
+    let buttonType = "btn btn-warning";
+    let buttonTitle = 'Insert';
+
+    if(this.state.insertToggle){
+      buttonTitle = 'Cancel Insert';
+      buttonType = "btn btn-danger";
+    }
+
+    if (point.get('snapshotToken') === undefined) {
+      canRender = false;
+    }
+
+    if (canRender) {
+      if (walkthroughPoints.count() > 1 && index > 0) {
+        return (
+          <ButtonGroup>
+          <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+          { buttonTitle } 
+          </button>
+          { this.state.insertToggle && this._renderInsertPointButton(index, point) }
+          </ButtonGroup>
+        )
+      }
+    }
+
+  }
+
+  _renderInsertPointButton(index, point) {
+    const { walkthroughPoints } = this.props;
+    const buttonType = "btn btn-success";
+    return (
+      <ButtonGroup>
+          <SplitButton title={ `${ this.state.selectedIndex + 1}` } pullRight id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
+                onClick={ e => this._onInsertSetIndex(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+
+          <button className={ buttonType } onClick={ e => this._onInsertBefore(e, index)} >
+          Insert Before
+          </button>
+          <button className={ buttonType } >
+          Insert After
+          </button>
+      </ButtonGroup>
+    );
   }
 
   _renderWalkthroughAnimationDropdown(index, point) {
