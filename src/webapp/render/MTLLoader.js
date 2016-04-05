@@ -1,5 +1,8 @@
 import THREE from 'three';
 
+const TEXTURE_SUFFIX = '@4';
+const USE_SMALL_TEXTURE = true;
+
 function nextHighestPowerOfTwo_(x) {
   let copyX = x;
   --copyX;
@@ -182,7 +185,13 @@ class MaterialCreator {
 
         case 'map_kd':
           // Diffuse texture map
-          params.map = this.loadTexture(this.baseUrl + value);
+          if (USE_SMALL_TEXTURE) {
+            const newvalue = value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
+            params.map = this.loadTexture(this.baseUrl + newvalue);
+          } else {
+            params.map = this.loadTexture(this.baseUrl + value);
+          }
           params.map.wrapS = this.wrap;
           params.map.wrapT = this.wrap;
           break;
@@ -211,7 +220,13 @@ class MaterialCreator {
             break; // Avoid loading twice.
           }
 
-          params.bumpMap = this.loadTexture(this.baseUrl + value);
+          if (USE_SMALL_TEXTURE) {
+            const newvalue = value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
+            params.bumpMap = this.loadTexture(this.baseUrl + newvalue);
+          } else {
+            params.bumpMap = this.loadTexture(this.baseUrl + value);
+          }
           params.bumpMap.wrapS = this.wrap;
           params.bumpMap.wrapT = this.wrap;
           break;

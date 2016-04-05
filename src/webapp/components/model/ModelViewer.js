@@ -66,7 +66,6 @@ class ModelViewer extends React.Component {
           <ModelCanvas { ...this.props } />
           <div className={ `${CLASS_NAME}-options` }>
             { this._renderWalkthroughButton() }
-            { this._renderTextureButton() }
             { this._renderShadingButton() }
             { this._renderAutoRotatebutton() }
             { this._renderWireframeButton() }
@@ -74,24 +73,6 @@ class ModelViewer extends React.Component {
           </div>
         </div>
       </div>
-    );
-  }
-
-  _renderTextureButton() {
-    const { resizedTexture } = this.props;
-    let buttonTitle;
-    if (resizedTexture === true) {
-      buttonTitle = 'HD';
-    } else { // if (resizedTexture === false)
-      buttonTitle = 'LD';
-    }
-
-    return (
-      <button type="button"
-        className="btn btn-transparent-alt"
-        onClick={ this._onToggleTextureButtonClick }>
-        { buttonTitle }
-      </button>
     );
   }
 

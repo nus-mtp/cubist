@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
-const TEXTURE_SUFFIX = '_small';
 const SCALE_FACTOR = 40;
 const SCALE_THRESHOLD = 20;
 const MIN_BOUNDING_RADIUS = 0.025;
@@ -58,6 +57,12 @@ class ModelScene {
     points: [],
     index: [0, 0],
     viewIndex: -1
+  };
+
+  modelState = {
+    textures: [],
+    textureStatus: 0,
+    mapping: []
   };
 
   /**
@@ -431,6 +436,35 @@ class ModelScene {
     }
   }
 
+  loadNewTexture(state, callback) {
+    Object.assign(this.modelState, state);
+    this.modelState.textures = this.modelState.textures;
+    const textureData = this.modelState.textures;
+    const pathMap = this.modelState.mapping;
+
+    this.model.traverse(child => {
+      if (child instanceof THREE.Mesh) {
+        if (child.material.map) {
+          for (let i = 0; i < pathMap.length; i++) {
+            if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 0) {
+              child.material.map.image.src = 'data:image;base64,' + textureData[pathMap[i].path];
+              break;
+            }
+          }
+        }
+        if (child.material.bumpMap) {
+          for (let i = 0; i < pathMap.length; i++) {
+            if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 1) {
+              child.material.bumpMap.image.src = 'data:image;base64,' + textureData[pathMap[i].path];
+              break;
+            }
+          }
+        }
+      }
+    });
+    callback();
+  }
+
   /**
    * Remove objects (models/meshes) currently displayed in the scene
    */
@@ -457,131 +491,11 @@ class ModelScene {
   }
 
   /**
-    * Appends or remove the suffix for the resized texture
-  */
-  modifySuffix(texturePath, isAppend) {
-    // Check suffix
-    const endIndex = texturePath.lastIndexOf('.');
-    const suffix = texturePath.substring(endIndex - 6, endIndex);
-    let newPath = texturePath;
-    // Replace texture if suffix match
-    if (isAppend === false) {
-      if (suffix === TEXTURE_SUFFIX) {
-        newPath = texturePath.substring(0, endIndex - 6) + texturePath.substring(endIndex);
-      }
-    } else {
-      if (suffix !== TEXTURE_SUFFIX) {
-        newPath = texturePath.substring(0, endIndex) + TEXTURE_SUFFIX + texturePath.substring(endIndex);
-      }
-    }
-    return newPath;
-  }
-
-  /**
-    * Loads the original/resized images for texture and other maps
-    * Precondition: Every texture image has a resized version named with the same suffix defined in TEXTURE_SUFFIX
-  */
-  loadTextures(isAppend) {
-    this.model.traverse(child => {
-      if (child instanceof THREE.Mesh) {
-        if (child.material.name) {
-          // loop through each type of mapped image
-          for (let mapType = 0; mapType < 10; mapType++) {
-            switch (mapType) {
-              case 0: // texture map
-                if (child.material.map && child.material.map.image) {
-                  child.material.map.image.src = this.modifySuffix(
-                    child.material.map.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 1: // bumpMap
-                if (child.material.bumpMap) {
-                  child.material.bumpMap.image.src = this.modifySuffix(
-                    child.material.bumpMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 2: // normalMap
-                if (child.material.normalMap) {
-                  child.material.normalMap.image.src = this.modifySuffix(
-                    child.material.normalMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 3: // lightMap
-                if (child.material.lightMap) {
-                  child.material.lightMap.image.src = this.modifySuffix(
-                    child.material.lightMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 4: // ambient occlusion Map
-                if (child.material.aoMap) {
-                  child.material.aoMap.image.src = this.modifySuffix(
-                    child.material.aoMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 5: // emissiveMap
-                if (child.material.emissiveMap) {
-                  child.material.emissiveMap.image.src = this.modifySuffix(
-                    child.material.emissiveMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 6: // specularMap
-                if (child.material.specularMap) {
-                  child.material.specularMap.image.src = this.modifySuffix(
-                    child.material.specularMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 7: // alphaMap
-                if (child.material.alphaMap) {
-                  child.material.alphaMap.image.src = this.modifySuffix(
-                    child.material.alphaMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 8: // displacementMap
-                if (child.material.displacementMap) {
-                  child.material.displacementMap.image.src = this.modifySuffix(
-                    child.material.displacementMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 9: // enviroment Map
-                if (child.material.envMap) {
-                  child.material.envMap.image.src = this.modifySuffix(
-                    child.material.envMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              default:
-            }
-          }
-        }
-      }
-    });
-  }
-
-  /**
    * Get the objects to display based on this.model and rendering state
    */
   _getDisplayObjects() {
     const objects = [];
-    const { wireframe, shadingMode, resizedTexture } = this.renderingState;
+    const { wireframe, shadingMode } = this.renderingState;
     // Default Shading Mode
     if (shadingMode === 0 || 1) {
       objects.push(this.model);
@@ -635,12 +549,6 @@ class ModelScene {
           objects.push(newMesh);
         }
       });
-    }
-
-    if (!resizedTexture) { // Texture to be at original resolution
-      this.loadTextures(false);
-    } else {
-      this.loadTextures(true);
     }
 
     return objects;
