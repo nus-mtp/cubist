@@ -1,14 +1,15 @@
 import Immutable from 'immutable';
 
+import { Constants } from 'common';
 import ReducerHelper from './ReducerHelper';
 import {
+  // Model Actions
+  REQ_GET_MODEL,
+  REQ_POST_CREATE_MODEL,
   // Walkthrough Actions
-  ADD_POINT,
-  UPDATE_POINT,
-  DELETE_POINT,
-  TOGGLE_DISJOINT,
-  UPDATE_ANIMATION,
-  UPDATE_DURATION,
+  REQ_PUT_ADD_WALKTHROUGH,
+  REQ_PUT_UPDATE_WALKTHROUGH,
+  REQ_PUT_DELETE_WALKTHROUGH,
   PLAYBACK_WALKTHROUGH,
   SET_PLAYBACK_START,
   SET_PLAYBACK_END,
@@ -22,68 +23,25 @@ const initialState = Immutable.fromJS({
   viewIndex: -1
 });
 
-export default ReducerHelper.createReducer(initialState, {
-
-  [ADD_POINT]: (state) => {
-    const pos = { x: 0, y: 0, z: 0 };
-    const lookAt = { x: 0, y: 0, z: 0 };
-    const quaternion = { x: 0, y: 0, z: 0, w: 0 };
-    const disjointMode = true;
-    const animationMode = 'Stationary';
-    const duration = 1.00;
-
+const WalkthroughReducerHelper = {
+  updateWalkthroughFromModel(state, { promiseState, res }) {
     let nextState = state;
-    nextState = nextState.update('points', points => {
-      return points.push(Immutable.fromJS({ pos, lookAt, quaternion, disjointMode, animationMode, duration }));
-    });
-    return nextState;
-  },
-
-  [UPDATE_POINT]: (state, { payload }) => {
-    const nextState = state;
-    const { pos, lookAt, index, quaternion, snapshotToken } = payload;
-
-    return nextState
-      .setIn(['points', index, 'pos'], Immutable.fromJS(pos))
-      .setIn(['points', index, 'lookAt'], Immutable.fromJS(lookAt))
-      .setIn(['points', index, 'quaternion'], Immutable.fromJS(quaternion))
-      .setIn(['points', index, 'snapshotToken'], snapshotToken);
-  },
-
-  [DELETE_POINT]: (state, { payload }) => {
-    const nextState = state;
-    return nextState.update('points', points => points.delete(payload.index));
-  },
-
-  [TOGGLE_DISJOINT]: (state, { payload }) => {
-    const nextState = state;
-    const { index } = payload;
-    const disjointMode = !state.get('points').getIn([index, 'disjointMode']);
-    let animationMode;
-    if (disjointMode) {
-      animationMode = 'Stationary';
-    } else {
-      animationMode = state.get('points').get(payload.index).get('animationMode');
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const model = Immutable.fromJS(res.body);
+      nextState = nextState.set('points', model.get('walkthroughs', new Immutable.List()));
     }
 
-    return nextState
-      .setIn(['points', index, 'disjointMode'], disjointMode)
-      .setIn(['points', index, 'animationMode'], animationMode);
-  },
+    return nextState;
+  }
+};
 
-  [UPDATE_ANIMATION]: (state, { payload }) => {
-    const nextState = state;
-    const { index, animationMode } = payload;
+export default ReducerHelper.createReducer(initialState, {
+  [REQ_GET_MODEL]: WalkthroughReducerHelper.updateWalkthroughFromModel,
+  [REQ_POST_CREATE_MODEL]: WalkthroughReducerHelper.updateWalkthroughFromModel,
 
-    return nextState.setIn(['points', index, 'animationMode'], animationMode);
-  },
-
-  [UPDATE_DURATION]: (state, { payload }) => {
-    const nextState = state;
-    const { index, duration } = payload;
-
-    return nextState.setIn(['points', index, 'duration'], duration);
-  },
+  [REQ_PUT_ADD_WALKTHROUGH]: WalkthroughReducerHelper.updateWalkthroughFromModel,
+  [REQ_PUT_UPDATE_WALKTHROUGH]: WalkthroughReducerHelper.updateWalkthroughFromModel,
+  [REQ_PUT_DELETE_WALKTHROUGH]: WalkthroughReducerHelper.updateWalkthroughFromModel,
 
   [PLAYBACK_WALKTHROUGH]: (state) => {
     const nextState = state;

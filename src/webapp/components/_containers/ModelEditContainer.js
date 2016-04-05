@@ -1,20 +1,20 @@
+ import Bluebird from 'bluebird';
  import React from 'react';
  import _ from 'lodash';
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
  import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
- import { batchActions } from 'redux-batched-actions';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
- import { SnapshotSlider } from '../sliders';
+ import { SnapshotSlider, WalkthroughSlider } from '../sliders';
  import { StringHelper, Constants } from 'common';
  import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
  import { GravatarHelper } from 'webapp/helpers';
  import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
- const CLASS_NAME = 'cb-ctn-model';
+ const CLASS_NAME = 'cb-ctn-model-edit';
 
  const MODEL_TITLE_FIELD = 'title';
  const MODEL_DESC_FIELD = 'description';
@@ -58,6 +58,7 @@
       },
 
       // Walkthrough
+      selectedWalkthroughIndex: undefined,
       durations: props.walkthroughPoints.map(p => p.get('duration'))
     };
   }
@@ -90,6 +91,24 @@
   }
 
   // -----------------------------------------------------
+  // -----------------MODEL LOAD HANDLER------------------
+  // -----------------------------------------------------
+
+  _onModelLoad = () => {
+    const { dispatch, walkthroughPoints } = this.props;
+    let promise = Bluebird.resolve();
+    walkthroughPoints.forEach((walkthroughPoint, index) => {
+      promise = promise
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(WalkthroughActions.viewWalkthroughPoint(index)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(walkthroughPoint.get('key'))));
+    });
+
+    return promise;
+  };
+
+  // -----------------------------------------------------
   // -----------------MODEL INFO EVENT HANDLER------------
   // -----------------------------------------------------
 
@@ -118,56 +137,90 @@
   // -----------------------------------------------------
   // ----------MODEL WALKTHROUGH EVENT HANDLER------------
   // -----------------------------------------------------
-
-  _onWalkthroughAdd = (e) => {
-    e.preventDefault();
-    const { dispatch } = this.props;
-    dispatch(WalkthroughActions.addPoint());
+  _onWalkthroughSelect = (index) => {
+    this.setState({
+      selectedWalkthroughIndex: index
+    });
   };
 
-  _onWalkthroughUpdate = (e, index) => {
-    e.preventDefault();
-    const { dispatch, position, lookAt, quaternion } = this.props;
-    const { x, y, z } = position.toJS();
-
-    const lookAtList = lookAt.toJS();
-    const snapshotToken = StringHelper.randomToken();
-
-    const quaternionList = quaternion.toJS();
-
-    dispatch(batchActions([
-      WalkthroughActions.updatePoint(index, { x, y, z }, lookAtList, quaternionList, snapshotToken),
-      SnapshotActions.triggerSnapshot(snapshotToken)
-    ]));
+  _onWalkthroughAdd = () => {
+    const { dispatch, params, position, lookAt, quaternion } = this.props;
+    const key = StringHelper.randomToken();
+    dispatch(WalkthroughActions.addWalkthrough(params.modelId, {
+      key,
+      pos: position.toJS(),
+      lookAt: lookAt.toJS(),
+      quaternion: quaternion.toJS()
+    }));
+    dispatch(SnapshotActions.triggerSnapshot(key));
   };
 
-  _onWalkthroughDelete = (e, index) => {
+  _onWalkthroughPositionUpdate = (e) => {
     e.preventDefault();
-    const lol = this.props.walkthroughPoints;
-    const { dispatch } = this.props;
-    dispatch(lol);
-    dispatch(WalkthroughActions.deletePoint(index));
+    const { walkthroughPoints, dispatch, params, position, lookAt, quaternion } = this.props;
+    const { selectedWalkthroughIndex } = this.state;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+
+    dispatch(WalkthroughActions.updateWalkthrough(
+      params.modelId,
+      selectedWalkthroughIndex,
+      {
+        pos: position.toJS(),
+        lookAt: lookAt.toJS(),
+        quaternion: quaternion.toJS()
+      }
+    ));
+    dispatch(SnapshotActions.triggerSnapshot(walkthrough.get('key')));
   };
 
-  _onWalkthroughToggleDisjointMode = (e, index) => {
+  _onWalkthroughDelete = (e) => {
     e.preventDefault();
-    const { dispatch } = this.props;
-    dispatch(WalkthroughActions.toggleDisjointMode(index));
+    const { dispatch, params } = this.props;
+    const { selectedWalkthroughIndex } = this.state;
+    dispatch(WalkthroughActions.deleteWalkthrough(params.modelId, selectedWalkthroughIndex));
   };
 
-  _onWalkthroughAnimation = (e, index, animationMode) => {
+  _onWalkthroughToggleDisjointMode = (e) => {
     e.preventDefault();
-    const { dispatch } = this.props;
-    dispatch(WalkthroughActions.updateAnimationMode(index, animationMode));
+    const { walkthroughPoints, dispatch, params } = this.props;
+    const { selectedWalkthroughIndex } = this.state;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+
+    dispatch(WalkthroughActions.updateWalkthrough(
+      params.modelId,
+      selectedWalkthroughIndex,
+      {
+        disjointMode: !walkthrough.get('disjointMode')
+      }
+    ));
   };
 
-  _onWalkthroughDurationUpdate = (e, index, duration) => {
+  _onWalkthroughAnimationUpdate = (e, animationMode) => {
     e.preventDefault();
-    const { dispatch } = this.props;
-    const durations = _.clone(this.state.durations);
-    durations[index] = duration;
-    this.setState(durations);
-    dispatch(WalkthroughActions.updateAnimationDuration(index, duration));
+    const { dispatch, params } = this.props;
+    const { selectedWalkthroughIndex } = this.state;
+
+    dispatch(WalkthroughActions.updateWalkthrough(
+      params.modelId,
+      selectedWalkthroughIndex,
+      {
+        animationMode
+      }
+    ));
+  };
+
+  _onWalkthroughDurationUpdate = (e, duration) => {
+    e.preventDefault();
+    const { dispatch, params } = this.props;
+    const { selectedWalkthroughIndex } = this.state;
+
+    dispatch(WalkthroughActions.updateWalkthrough(
+      params.modelId,
+      selectedWalkthroughIndex,
+      {
+        duration
+      }
+    ));
   };
 
   _onWalkthroughSetStart = (e, index) => {
@@ -188,14 +241,15 @@
     dispatch(WalkthroughActions.playbackWalkthrough());
   };
 
-  _onWalkthroughViewPoint = (e, index) => {
+  _onWalkthroughViewPoint = (e) => {
     e.preventDefault();
     const { dispatch } = this.props;
-    dispatch(WalkthroughActions.viewWalkthroughPoint(index));
+    const { selectedWalkthroughIndex } = this.state;
+    dispatch(WalkthroughActions.viewWalkthroughPoint(selectedWalkthroughIndex));
   };
 
   render() {
-    const { model } = this.props;
+    const { model, walkthroughPoints, snapshots } = this.props;
     const { object } = this.state;
     const viewerProps = {
       object,
@@ -213,11 +267,19 @@
             <h2>Snapshots</h2>
             <SnapshotSlider
               isEditor
-              snapshots={ model.get('imageUrls') }
+              snapshots={ model.get('imageUrls', new Immutable.List()) }
               onSnapshotsAdd={ this._onSnapshotsAdd } />
             <h2>Walkthroughs</h2>
-            { true && this._renderWalkthroughPlaybackSection() }
-            { true && this._renderWalkthroughSection() }
+            <div className={ `${CLASS_NAME}-walkthrough` }>
+              <WalkthroughSlider
+                isEditor
+                snapshots={ snapshots }
+                walkthroughs={ walkthroughPoints }
+                onWalkthroughAdd={ this._onWalkthroughAdd }
+                onWalkthroughSelect={ this._onWalkthroughSelect } />
+              { this._renderWalkthroughSection() }
+              { this._renderWalkthroughPlaybackSection() }
+            </div>
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
@@ -337,105 +399,106 @@
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { walkthroughPoints, position, lookAt } = this.props;
-    const { x, y, z } = position.map(v => Number(v).toFixed(2)).toJS();
+    const { selectedWalkthroughIndex } = this.state;
+    if (typeof selectedWalkthroughIndex === 'undefined') {
+      return undefined;
+    }
+
+    const { walkthroughPoints } = this.props;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+    const position = walkthrough.get('pos');
+    const lookAt = walkthrough.get('lookAt');
     return (
-      <div>
-        <h3>Current Camera Coordinate:</h3>
-        <p>{ `${x}, ${y}, ${z}` }</p>
-        <h3>Current Camera lookAt:</h3>
-        <p>{ `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }</p>
-        <form>
-          {
-            walkthroughPoints.map((walkthroughPoint, index) => {
-              const p = walkthroughPoint.get('pos').map(v => Number(v).toFixed(2));
-              return (
-                <div key={ index }>
-                  <h4>{ `Point ${index + 1}` }</h4>
-                  <img src={ this.props.snapshots.get(walkthroughPoint.get('snapshotToken')) }
-                    width="240px" height="135px" className="img-thumbnail"></img>
-                    { this._renderViewPointButton(index, walkthroughPoint) }
-                  <p>
-                    { `${p.get('x')}, ${p.get('y')}, ${p.get('z')}` }
-                  </p>
-                  <button className="btn btn-primary"
-                    onClick={ e => this._onWalkthroughUpdate(e, index) } >
-                    SET
-                  </button>
-                  <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e, index) } >
-                    DELETE
-                  </button>
-                  { this._renderWalkthroughToggleDisjointButton(index, walkthroughPoint.get('disjointMode')) }
-                  { this._renderWalkthroughAnimationDropdown(index, walkthroughPoint) }
-                  { this._renderAnimationDurationField(index) }
-                </div>
-              );
-            })
-          }
-        </form>
-        <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
-          ADD NEW POINT
+      <div className={ `${CLASS_NAME}-walkthrough-form` }>
+        <h5>Position</h5>
+        <p>
+          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
+        </p>
+        <h5>Look At</h5>
+        <p>
+          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
+        </p>
+        { this._renderViewPointButton() }
+        <button className="btn btn-primary cb-margin-left-10px" onClick={ this._onWalkthroughPositionUpdate }>
+          Update Position
         </button>
+        { this._renderWalkthroughToggleDisjointButton() }
+        { this._renderWalkthroughAnimationDropdown() }
+        { this._renderAnimationDurationField() }
       </div>
     );
   }
 
-  _renderViewPointButton(index, point) {
-    let canRender = true;
-
-    if (point.get('snapshotToken') === undefined) {
-      canRender = false;
-    }
-
-    if (canRender) {
-      return (
-        <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e, index) } >
+  _renderViewPointButton() {
+    return (
+      <button className="btn btn-info" onClick={ this._onWalkthroughViewPoint }>
         View Point
-        </button>
-      );
-    }
+      </button>
+    );
   }
 
-  _renderWalkthroughAnimationDropdown(index, point) {
-    const disjointMode = point.get('disjointMode');
+  _renderWalkthroughAnimationDropdown() {
+    const { selectedWalkthroughIndex } = this.state;
+    const { walkthroughPoints } = this.props;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+    const disjointMode = walkthrough.get('disjointMode');
 
     if (disjointMode) {
-      return this._renderDisjointDropdownMenu(index, point);
+      return this._renderDisjointDropdownMenu();
     } else {
-      return this._renderContinuousDropdownMenu(index, point);
+      return this._renderContinuousDropdownMenu();
     }
   }
 
-  _renderDisjointDropdownMenu(index, point) {
-    const buttonTitle = point.get('animationMode');
+  _renderDisjointDropdownMenu() {
+    const { selectedWalkthroughIndex } = this.state;
+    const { walkthroughPoints } = this.props;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+    const buttonTitle = walkthrough.get('animationMode');
+
     return (
-      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+      <DropdownButton bsStyle="info"
+        className="cb-margin-left-10px"
+        title={ buttonTitle }
+        id="dropdown-basic-info">
+        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Stationary') } >
           Stationary
         </MenuItem>
       </DropdownButton>
     );
   }
 
-  _renderContinuousDropdownMenu(index, point) {
-    const buttonTitle = point.get('animationMode');
+  _renderContinuousDropdownMenu() {
+    const { selectedWalkthroughIndex } = this.state;
+    const { walkthroughPoints } = this.props;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+    const buttonTitle = walkthrough.get('animationMode');
+
     return (
-      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
-        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimation(e, index, 'Stationary') } >
+      <DropdownButton bsStyle="info"
+        className="cb-margin-left-10px"
+        title={ buttonTitle }
+        id="dropdown-basic-info">
+        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Stationary') } >
           Stationary
         </MenuItem>
         <MenuItem divider />
-        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimation(e, index, 'Linear') } >
+        <MenuItem eventKey="2" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Linear') } >
           Linear
         </MenuItem>
-        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimation(e, index, 'Spherical') } >
+        <MenuItem eventKey="3" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Spherical') } >
           Spherical
         </MenuItem>
       </DropdownButton>
     );
   }
 
-  _renderWalkthroughToggleDisjointButton(index, status) {
+  _renderWalkthroughToggleDisjointButton() {
+    const { selectedWalkthroughIndex } = this.state;
+    const { walkthroughPoints } = this.props;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
+    const status = walkthrough.get('disjointMode');
+
     let buttonTitle;
     let disableStatus;
     if (status === true) {
@@ -444,37 +507,38 @@
       buttonTitle = 'Continuous';
     }
 
-    if (index === 0) {
+    if (selectedWalkthroughIndex === 0) {
       disableStatus = true;
     } else {
       disableStatus = false;
     }
 
-
     return (
-      <button className="btn btn-warning"
-        onClick={ e => this._onWalkthroughToggleDisjointMode(e, index) } disabled={ disableStatus }>
-      { buttonTitle }
+      <button className="btn btn-warning cb-margin-left-10px"
+        onClick={ this._onWalkthroughToggleDisjointMode }
+        disabled={ disableStatus }>
+        { buttonTitle }
       </button>
     );
   }
 
-  _renderAnimationDurationField(index) {
+  _renderAnimationDurationField() {
+    const { selectedWalkthroughIndex } = this.state;
     const { walkthroughPoints } = this.props;
-    const { durations } = this.state;
+    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
 
-    if (index !== (walkthroughPoints.size - 1)) {
+    if (selectedWalkthroughIndex !== (walkthroughPoints.size - 1)) {
       return (
         <div className="form-group">
-          <label className="control-label" htmlFor={ `walkthrough-point-duration-${index}` }>
+          <label className="control-label" htmlFor={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }>
             Duration
           </label>
-          <input id={ `walkthrough-point-duration-${index}` }
-            value={ durations[index] }
+          <input id={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }
+            value={ walkthrough.get('duration') }
             type="text"
             className="form-control"
             placeholder="Enter Duration"
-            onChange={ e => this._onWalkthroughDurationUpdate(e, index, e.target.value) } />
+            onChange={ e => this._onWalkthroughDurationUpdate(e, e.target.value) } />
         </div>
       );
     }
@@ -497,31 +561,33 @@
 
     if (walkthroughPoints.count() > 1) {
       return (
-        <div><p></p>
-        Playback From
-         <SplitButton title={ `${startIndex + 1}` } pullRight id="split-button-pull-right" >
-          { walkthroughPoints.map((walkthroughPoint, index) =>
-            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
-              onClick={ e => this._onWalkthroughSetStart(e, index) } >
-              { `${index + 1}` }
-            </MenuItem>
-          ) }
-        </SplitButton>
-         To
-        <SplitButton title={ `${endIndex + 1}` } pullRight id="split-button-pull-right" >
-          { walkthroughPoints.map((walkthroughPoint, index) =>
-            <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
-              onClick={ e => this._onWalkthroughSetEnd(e, index) } >
-              { `${index + 1}` }
-            </MenuItem>
-          ) }
-        </SplitButton>
-        <p>
-          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) }
+        <div className={ `${CLASS_NAME}-walkthrough-playback` }>
+          Playback From
+          <SplitButton title={ `${startIndex + 1}` }
+            className="cb-margin-left-10px"
+            id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+                onClick={ e => this._onWalkthroughSetStart(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+          <span className="cb-margin-left-10px">To</span>
+          <SplitButton title={ `${endIndex + 1}` }
+            className="cb-margin-left-10px"
+            id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
+                onClick={ e => this._onWalkthroughSetEnd(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+          <button className="btn btn-primary cb-margin-left-10px" onClick={ e => this._onWalkthroughPlayback(e) }
             disabled={ disableStatus } >
           { buttonTitle }
           </button>
-        </p>
         </div>
       );
     }
@@ -532,28 +598,28 @@
   // -----------------------------------------------------
   refreshModel(model) {
     if (model.get('urls').size > 1) {
-      this.loadObjMtl(model);
+      this.loadObjMtl(model, () => this._onModelLoad());
     } else {
-      this.loadObj(model);
+      this.loadObj(model, () => this._onModelLoad());
     }
   }
 
-  loadObj(model) {
+  loadObj(model, cb) {
     const loader = new OBJLoader();
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
-      this.setState({ model: m });
+      this.setState({ model: m }, cb);
     });
   }
 
-  loadObjMtl(model) {
+  loadObjMtl(model, cb) {
     const loader = new OBJMTLLoader();
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     const mtlUrl = urls.filter(url => url.endsWith('mtl')).get(0);
     loader.load(objUrl, mtlUrl, m => {
-      this.setState({ object: m });
+      this.setState({ object: m }, cb);
     });
   }
 }

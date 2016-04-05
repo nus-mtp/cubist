@@ -94,7 +94,7 @@ class ModelCanvas extends React.Component {
     }
 
     // Snapshot Trigger
-    if (nextProps.snapshotToken !== this.props.snapshotToken && this.modelScene) {
+    if (nextProps.snapshotToken !== this.props.snapshotToken && nextProps.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
 
