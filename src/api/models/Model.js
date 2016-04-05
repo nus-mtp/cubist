@@ -97,7 +97,14 @@ Model.statics.getModels = function (query = {}, options = {}) {
 };
 
 Model.statics.getModelById = function (modelId, query = {}, options = {}) {
-  return MongooseHelper.findOne(this, { ...query, _id: mongoose.Types.ObjectId(modelId) }, options);
+  return MongooseHelper.findOne(this, { ...query, _id: mongoose.Types.ObjectId(modelId) }, options)
+    .then(result => {
+      result.statisticsPoints.sort((point1, point2) => {
+        return point2.count - point1.count;
+      });
+      result.statisticsPoints = result.statisticsPoints.slice(0, 10);
+      return result;
+    });
 };
 
 Model.statics.getLatestModels = function () {
