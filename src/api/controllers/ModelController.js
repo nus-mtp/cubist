@@ -63,7 +63,7 @@ ModelController.request.deleteSnapshot = function (req, res) {
 };
 
 ModelController.request.addStatisticsPoint = function (req, res) {
-  ResponseHelper.handle(ModelController.promise.addStatistxicsPoint, req, res, DEBUG_ENV);
+  ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
 };
 
 ModelController.request.getTextureData = function (req, res) {

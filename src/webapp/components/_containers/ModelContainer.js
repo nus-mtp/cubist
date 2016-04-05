@@ -46,7 +46,7 @@ class ModelContainer extends PureComponent {
   };
 
   render() {
-    const { model, user, textures } = this.props;
+    const { model, user } = this.props;
 
     const { object } = this.state;
     const viewerProps = {
