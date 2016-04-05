@@ -61,7 +61,8 @@
       durations: props.walkthroughPoints.map(p => p.get('duration')),
 
       // Insert
-      selectedIndex: 0,
+      insertTargetIndex: 0,
+      selected: -1,
       insertToggle: false
     };
   }
@@ -199,20 +200,36 @@
   };
 
   // Insert
-  _onInsertButtonClicked = (e) => {
-    // const newValue = this.state.insertToggle;
+  _onInsertButtonClicked = (e, index) => {
     e.preventDefault();
+
+    let newValue = index;
+    if(this.state.insertToggle) {
+      newValue = -1;
+    }
+    
     this.setState({insertToggle: !this.state.insertToggle});
+    this.setState({selected: newValue});
   };
 
   _onInsertSetIndex = (e, index) => {
     e.preventDefault();
-    this.setState({selectedIndex: index});
+    this.setState({insertTargetIndex: index});
   };
 
-  _onInsertBefore = (e, index) => {
+  _onInsertIntoWalkthrough = (e, targetIndex, currentIndex, controlToggle) => {
     e.preventDefault();
-    console.log('shshsh');
+    const { dispatch, walkthroughPoints } = this.props;
+
+    // this part will need to change to statistics list instead of walkthrough list
+    const curr = walkthroughPoints.toJS()[currentIndex];
+
+    const pos = { x: curr.pos.x, y: curr.pos.y, z: curr.pos.z };
+    const lookAt = { x:curr.lookAt.x, y:curr.lookAt.y, z:curr.lookAt.z };
+    const snapshot = curr.snapshotToken;
+
+    this._onInsertButtonClicked(e);
+    dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle , pos, lookAt, snapshot ));
   };
 
   render() {
@@ -425,37 +442,47 @@
     let canRender = true;
     let buttonType = "btn btn-warning";
     let buttonTitle = 'Insert';
+    let renderAllInsertButton = true;
 
     if(this.state.insertToggle){
       buttonTitle = 'Cancel Insert';
       buttonType = "btn btn-danger";
+      renderAllInsertButton = false;
     }
 
-    if (point.get('snapshotToken') === undefined) {
+    if (point.get('snapshotToken') === undefined ) {
       canRender = false;
     }
 
-    if (canRender) {
-      if (walkthroughPoints.count() > 1 && index > 0) {
+    if (canRender && walkthroughPoints.count() > 1 && index > 0) {
+      if (renderAllInsertButton) {
         return (
-          <ButtonGroup>
-          <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
-          { buttonTitle } 
-          </button>
-          { this.state.insertToggle && this._renderInsertPointButton(index, point) }
-          </ButtonGroup>
+        <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+        { buttonTitle }
+        </button>
         )
+      } else {
+        if(this.state.selected === index) {
+          return (
+            <ButtonGroup>
+            <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+            { buttonTitle }
+            </button>
+            { this.state.insertToggle && this._renderInsertPointButton(index, point) }
+            </ButtonGroup>
+          )  
+        }
       }
     }
-
   }
 
   _renderInsertPointButton(index, point) {
     const { walkthroughPoints } = this.props;
     const buttonType = "btn btn-success";
+
     return (
       <ButtonGroup>
-          <SplitButton title={ `${ this.state.selectedIndex + 1}` } pullRight id="split-button-pull-right" >
+          <SplitButton title={ `${ this.state.insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
             { walkthroughPoints.map((walkthroughPoint, index) =>
               <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
                 onClick={ e => this._onInsertSetIndex(e, index) } >
@@ -464,10 +491,10 @@
             ) }
           </SplitButton>
 
-          <button className={ buttonType } onClick={ e => this._onInsertBefore(e, index)} >
+          <button className={ buttonType } onClick={ e => this._onInsertIntoWalkthrough(e, this.state.insertTargetIndex, index, 'before')} >
           Insert Before
           </button>
-          <button className={ buttonType } >
+          <button className={ buttonType } onClick={ e => this._onInsertIntoWalkthrough(e, this.state.insertTargetIndex, index, 'after')} >
           Insert After
           </button>
       </ButtonGroup>
