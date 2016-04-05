@@ -14,7 +14,7 @@
  import { GravatarHelper } from 'webapp/helpers';
  import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
- const CLASS_NAME = 'cb-ctn-model';
+ const CLASS_NAME = 'cb-ctn-model-edit';
 
  const MODEL_TITLE_FIELD = 'title';
  const MODEL_DESC_FIELD = 'description';
@@ -99,10 +99,10 @@
     let promise = Bluebird.resolve();
     walkthroughPoints.forEach((walkthroughPoint, index) => {
       promise = promise
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
         .then(() => dispatch(WalkthroughActions.viewWalkthroughPoint(index)))
-        .then(() => Bluebird.delay(100))
-        .then(() => dispatch(SnapshotActions.triggerSnapshot(walkthroughPoint.get('key'))))
-        .then(() => Bluebird.delay(100));
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(walkthroughPoint.get('key'))));
     });
 
     return promise;
@@ -186,7 +186,7 @@
     const { selectedWalkthroughIndex } = this.state;
     const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
 
-    dispatch(WalkthroughActions.updatePoint(
+    dispatch(WalkthroughActions.updateWalkthrough(
       params.modelId,
       selectedWalkthroughIndex,
       {
@@ -200,7 +200,7 @@
     const { dispatch, params } = this.props;
     const { selectedWalkthroughIndex } = this.state;
 
-    dispatch(WalkthroughActions.updatePoint(
+    dispatch(WalkthroughActions.updateWalkthrough(
       params.modelId,
       selectedWalkthroughIndex,
       {
@@ -214,7 +214,7 @@
     const { dispatch, params } = this.props;
     const { selectedWalkthroughIndex } = this.state;
 
-    dispatch(WalkthroughActions.updatePoint(
+    dispatch(WalkthroughActions.updateWalkthrough(
       params.modelId,
       selectedWalkthroughIndex,
       {
@@ -241,10 +241,11 @@
     dispatch(WalkthroughActions.playbackWalkthrough());
   };
 
-  _onWalkthroughViewPoint = (e, index) => {
+  _onWalkthroughViewPoint = (e) => {
     e.preventDefault();
     const { dispatch } = this.props;
-    dispatch(WalkthroughActions.viewWalkthroughPoint(index));
+    const { selectedWalkthroughIndex } = this.state;
+    dispatch(WalkthroughActions.viewWalkthroughPoint(selectedWalkthroughIndex));
   };
 
   render() {
@@ -269,14 +270,16 @@
               snapshots={ model.get('imageUrls', new Immutable.List()) }
               onSnapshotsAdd={ this._onSnapshotsAdd } />
             <h2>Walkthroughs</h2>
-            <WalkthroughSlider
-              isEditor
-              snapshots={ snapshots }
-              walkthroughs={ walkthroughPoints }
-              onWalkthroughAdd={ this._onWalkthroughAdd }
-              onWalkthroughSelect={ this._onWalkthroughSelect } />
-            { false && this._renderWalkthroughPlaybackSection() }
-            { this._renderWalkthroughSection() }
+            <div className={ `${CLASS_NAME}-walkthrough` }>
+              <WalkthroughSlider
+                isEditor
+                snapshots={ snapshots }
+                walkthroughs={ walkthroughPoints }
+                onWalkthroughAdd={ this._onWalkthroughAdd }
+                onWalkthroughSelect={ this._onWalkthroughSelect } />
+              { this._renderWalkthroughSection() }
+              { this._renderWalkthroughPlaybackSection() }
+            </div>
           </div>
           <div className="col-md-4">
             <form onSubmit={ this._onModelInfoUpdateFormSubmit }>
@@ -406,46 +409,32 @@
     const position = walkthrough.get('pos');
     const lookAt = walkthrough.get('lookAt');
     return (
-      <div>
-        <form>
-          <div>
-            <h5>Position</h5>
-            <p>
-              { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
-            </p>
-            <h5>Look At</h5>
-            <p>
-              { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
-            </p>
-            { this._renderViewPointButton() }
-            <button className="btn btn-primary" onClick={ this._onWalkthroughPositionUpdate }>
-              UPDATE POSITION
-            </button>
-            { this._renderWalkthroughToggleDisjointButton() }
-            { this._renderWalkthroughAnimationDropdown() }
-            { this._renderAnimationDurationField() }
-          </div>
-        </form>
+      <div className={ `${CLASS_NAME}-walkthrough-form` }>
+        <h5>Position</h5>
+        <p>
+          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
+        </p>
+        <h5>Look At</h5>
+        <p>
+          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
+        </p>
+        { this._renderViewPointButton() }
+        <button className="btn btn-primary cb-margin-left-10px" onClick={ this._onWalkthroughPositionUpdate }>
+          Update Position
+        </button>
+        { this._renderWalkthroughToggleDisjointButton() }
+        { this._renderWalkthroughAnimationDropdown() }
+        { this._renderAnimationDurationField() }
       </div>
     );
   }
 
   _renderViewPointButton() {
-    const { selectedWalkthroughIndex } = this.state;
-    const { walkthroughPoints } = this.props;
-    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
-    let canRender = true;
-    if (walkthrough.get('snapshotToken') === undefined) {
-      canRender = false;
-    }
-
-    if (canRender) {
-      return (
-        <button className="btn btn-info" onClick={ this._onWalkthroughViewPoint }>
-          View Point
-        </button>
-      );
-    }
+    return (
+      <button className="btn btn-info" onClick={ this._onWalkthroughViewPoint }>
+        View Point
+      </button>
+    );
   }
 
   _renderWalkthroughAnimationDropdown() {
@@ -468,7 +457,10 @@
     const buttonTitle = walkthrough.get('animationMode');
 
     return (
-      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+      <DropdownButton bsStyle="info"
+        className="cb-margin-left-10px"
+        title={ buttonTitle }
+        id="dropdown-basic-info">
         <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Stationary') } >
           Stationary
         </MenuItem>
@@ -483,7 +475,10 @@
     const buttonTitle = walkthrough.get('animationMode');
 
     return (
-      <DropdownButton bsStyle="info" title={ buttonTitle } id="dropdown-basic-info">
+      <DropdownButton bsStyle="info"
+        className="cb-margin-left-10px"
+        title={ buttonTitle }
+        id="dropdown-basic-info">
         <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Stationary') } >
           Stationary
         </MenuItem>
@@ -519,7 +514,7 @@
     }
 
     return (
-      <button className="btn btn-warning"
+      <button className="btn btn-warning cb-margin-left-10px"
         onClick={ this._onWalkthroughToggleDisjointMode }
         disabled={ disableStatus }>
         { buttonTitle }
@@ -566,31 +561,33 @@
 
     if (walkthroughPoints.count() > 1) {
       return (
-        <div><p></p>
-        Playback From
-         <SplitButton title={ `${startIndex + 1}` } pullRight id="split-button-pull-right" >
-          { walkthroughPoints.map((walkthroughPoint, index) =>
-            <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
-              onClick={ e => this._onWalkthroughSetStart(e, index) } >
-              { `${index + 1}` }
-            </MenuItem>
-          ) }
-        </SplitButton>
-         To
-        <SplitButton title={ `${endIndex + 1}` } pullRight id="split-button-pull-right" >
-          { walkthroughPoints.map((walkthroughPoint, index) =>
-            <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
-              onClick={ e => this._onWalkthroughSetEnd(e, index) } >
-              { `${index + 1}` }
-            </MenuItem>
-          ) }
-        </SplitButton>
-        <p>
-          <button className="btn btn-primary" onClick={ e => this._onWalkthroughPlayback(e) }
+        <div className={ `${CLASS_NAME}-walkthrough-playback` }>
+          Playback From
+          <SplitButton title={ `${startIndex + 1}` }
+            className="cb-margin-left-10px"
+            id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'start_' + `${index}` }
+                onClick={ e => this._onWalkthroughSetStart(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+          <span className="cb-margin-left-10px">To</span>
+          <SplitButton title={ `${endIndex + 1}` }
+            className="cb-margin-left-10px"
+            id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'end_' + `${index}` }
+                onClick={ e => this._onWalkthroughSetEnd(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+          <button className="btn btn-primary cb-margin-left-10px" onClick={ e => this._onWalkthroughPlayback(e) }
             disabled={ disableStatus } >
           { buttonTitle }
           </button>
-        </p>
         </div>
       );
     }

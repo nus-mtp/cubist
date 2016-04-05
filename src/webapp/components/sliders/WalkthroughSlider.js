@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Slider from 'react-slick';
 import Immutable from 'immutable';
 
@@ -16,6 +17,10 @@ class WalkthroughSlider extends React.Component {
     isEditor: false
   };
 
+  state = {
+    selectedIndex: undefined
+  };
+
   _onAddButtonClick = () => {
     const { onWalkthroughAdd } = this.props;
     return onWalkthroughAdd && onWalkthroughAdd();
@@ -23,6 +28,7 @@ class WalkthroughSlider extends React.Component {
 
   _onWalkthroughSelect = (index) => {
     const { onWalkthroughSelect } = this.props;
+    this.setState({ selectedIndex: index });
     return onWalkthroughSelect && onWalkthroughSelect(index);
   };
 
@@ -68,12 +74,17 @@ class WalkthroughSlider extends React.Component {
 
   _renderWalkthrough(walkthrough, index) {
     const { snapshots } = this.props;
+    const { selectedIndex } = this.state;
     const walkthroughStyle = {
       backgroundImage: `url("${snapshots.get(walkthrough.get('key'))}")`
     };
+    const slideClasses = [
+      'cb-slide',
+      { 'is-selected': index === selectedIndex }
+    ];
 
     return (
-      <div className="cb-slide"
+      <div className={ classnames(slideClasses) }
         style={ walkthroughStyle }
         key={ index }
         onClick={ () => this._onWalkthroughSelect(index) }>

@@ -16,14 +16,12 @@
   overflow: hidden;
   height: 150px;
   border: 1px solid $cb-dark-gray;
-  border-top: 0;
-  border-bottom: 0;
   background-color: rgba(0, 0, 0, .1);
   background-position: center center;
   background-size: cover;
 
-  &:first-child {
-    border-left: 0;
+  &.is-selected {
+    border: 3px solid black;
   }
 }
 
