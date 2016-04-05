@@ -11,7 +11,8 @@ import {
   REQ_PUT_UPDATE_MODEL_INFO,
   REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
-  REQ_PUT_REMOVE_MODEL_SNAPSHOT
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT,
+  REQ_GET_TEXTURES
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -21,7 +22,10 @@ const initialState = Immutable.fromJS({
   latestModelIds: new Immutable.List(),
   topModelIds: new Immutable.List(),
 
-  models: new Immutable.Map()
+  models: new Immutable.Map(),
+
+  textures: new Immutable.List(),
+  textureStatus: 0
 });
 
 const ModelReducerHelper = {
@@ -90,6 +94,17 @@ export default ReducerHelper.createReducer(initialState, {
       nextState = nextState
         .update('models', m => m.merge(fetchedModelMap))
         .set('latestModelIds', fetchedModelIds);
+    }
+
+    return nextState;
+  },
+
+  [REQ_GET_TEXTURES](state, { promiseState, res }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      const textureSet = res.body;
+      nextState = nextState
+        .update('textures', t => t.push(textureSet));
     }
 
     return nextState;

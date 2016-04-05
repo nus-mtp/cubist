@@ -66,6 +66,10 @@ ModelController.request.addStatisticsPoint = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
 };
 
+ModelController.request.getTextureData = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getTextureData, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 
 ModelController.promise.getModel = function (req) {
@@ -329,6 +333,14 @@ ModelController.promise.addStatisticsPoint = function (req) {
   }
 
   return Model.addStatisticsPoint(modelId, req.body.point);
+};
+
+ModelController.promise.getTextureData = function (req) {
+  const { filePaths } = req.query;
+
+  return ModelHelper.obtainTextureFilesData(
+    path.resolve(__dirname, '../../../storage/models'),
+    filePaths);
 };
 
 export default ModelController;
