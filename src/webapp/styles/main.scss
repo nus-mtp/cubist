@@ -20,7 +20,7 @@
 @import 'model/ModelCard';
 @import 'model/ModelViewer';
 @import 'render/ModelCanvas';
-@import 'sliders/SnapshotSlider';
+@import 'sliders/Slider';
 
 // Import Containers
 @import '_containers/RootContainer';
@@ -28,6 +28,7 @@
 @import '_containers/AuthenticationContainer';
 @import '_containers/HomeContainer';
 @import '_containers/ModelContainer';
+@import '_containers/ModelEditContainer';
 @import '_containers/UploadContainer';
 @import '_containers/BrowseContainer';
 @import '_containers/ProfileContainer';

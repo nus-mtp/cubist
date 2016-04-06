@@ -47,6 +47,15 @@ export default (app) => {
     Authorisation.requireUser,
     ModelController.request.deleteSnapshot
   );
+  app.put('/model/:modelId/addWalkthrough',
+    Authorisation.requireUser,
+    ModelController.request.addWalkthrough);
+  app.put('/model/:modelId/updateWalkthrough',
+    Authorisation.requireUser,
+    ModelController.request.updateWalkthrough);
+  app.put('/model/:modelId/deleteWalkthrough',
+    Authorisation.requireUser,
+    ModelController.request.deleteWalkthrough);
   app.put(
     '/model/:modelId/info',
     Authorisation.requireUser,

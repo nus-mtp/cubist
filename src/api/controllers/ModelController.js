@@ -66,6 +66,22 @@ ModelController.request.addStatisticsPoint = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
 };
 
+ModelController.request.addWalkthrough = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.addWalkthrough, req, res, DEBUG_ENV);
+};
+
+ModelController.request.updateWalkthrough = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.updateWalkthrough, req, res, DEBUG_ENV);
+};
+
+ModelController.request.deleteWalkthrough = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.deleteWalkthrough, req, res, DEBUG_ENV);
+};
+
+ModelController.request.addStatisticsPoint = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 
 ModelController.promise.getModel = function (req) {
@@ -212,6 +228,45 @@ ModelController.promise.deleteSnapshot = function (req) {
   }
 
   return Model.deleteSnapshot(modelId, index);
+};
+
+ModelController.promise.addWalkthrough = function (req) {
+  const walkthrough = req.body;
+  const { modelId } = req.params;
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.addWalkthrough(modelId, walkthrough);
+};
+
+ModelController.promise.updateWalkthrough = function (req) {
+  const { index, ...walkthrough } = req.body;
+  const { modelId } = req.params;
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+  if (typeof walkthrough.disjointMode !== 'undefined') {
+    walkthrough.animationMode = 'Stationary';
+  }
+
+  return Model.updateWalkthrough(modelId, index, walkthrough);
+};
+
+ModelController.promise.deleteWalkthrough = function (req) {
+  const { index } = req.body;
+  const { modelId } = req.params;
+  const error = User.validate(req.user, { _id: true })
+    || Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.deleteWalkthrough(modelId, index);
 };
 
 // ----------------------------------------------------------------------------//

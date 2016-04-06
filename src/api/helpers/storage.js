@@ -21,6 +21,7 @@ export default {
       }
     });
   },
+
   getSnapshotStorage() {
     return multer.diskStorage({
       destination(req, file, cb) {
