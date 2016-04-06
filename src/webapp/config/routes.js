@@ -3,6 +3,7 @@ import { Route, IndexRoute } from 'react-router';
 
 import {
   AppContainer,
+  AdminLoginContainer,
   AuthorisationContainer,
   HomeContainer,
   LoginContainer,
@@ -29,6 +30,7 @@ export default (
       </Route>
       <Route path="u/:username" component={ ProfileContainer } />
     </Route>
+    <Route path="/adminLogin" component={ AdminLoginContainer } />
     <Route path="/login" component={ LoginContainer } />
     <Route path="/register" component={ RegisterContainer } />
     <Route path="/resetPassword" component={ ResetPasswordContainer } />
