@@ -119,7 +119,50 @@ Model.statics.getModels = function (query = {}, options = {}) {
 };
 
 Model.statics.getModelById = function (modelId, query = {}, options = {}) {
-  return MongooseHelper.findOne(this, { ...query, _id: mongoose.Types.ObjectId(modelId) }, options);
+  return MongooseHelper.findOne(this, { ...query, _id: mongoose.Types.ObjectId(modelId) }, options)
+    .then(result => {
+      result.statisticsPoints.sort((point1, point2) => {
+        return point2.count - point1.count;
+      });
+      result.statisticsPoints = result.statisticsPoints.slice(0, 10);
+
+      const xyzCoordsPoints = [];
+      for (let i = 0; i < result.statisticsPoints.length; i++) {
+        const camAzimuth = result.statisticsPoints[i].camLongtitude;
+        const camIncline = result.statisticsPoints[i].camLatitude;
+        const camRadius = result.statisticsPoints[i].camRadius;
+        let camSegX = camRadius * Math.sin(camIncline / 180.0 * Math.PI) * Math.sin(camAzimuth / 180.0 * Math.PI);
+        let camSegY = camRadius * Math.cos(camIncline / 180.0 * Math.PI);
+        let camSegZ = camRadius * Math.sin(camIncline / 180.0 * Math.PI) * Math.cos(camAzimuth / 180.0 * Math.PI);
+        camSegX = Math.round(camSegX);
+        camSegY = Math.round(camSegY);
+        camSegZ = Math.round(camSegZ);
+
+        const lookAtAzimuth = result.statisticsPoints[i].lookAtLongtitude;
+        const lookAtIncline = result.statisticsPoints[i].lookAtLatitude;
+        let lookAtSegX = Math.sin(lookAtIncline / 180.0 * Math.PI) * Math.sin(lookAtAzimuth / 180.0 * Math.PI);
+        let lookAtSegY = Math.cos(lookAtIncline / 180.0 * Math.PI);
+        let lookAtSegZ = Math.sin(lookAtIncline / 180.0 * Math.PI) * Math.cos(lookAtAzimuth / 180.0 * Math.PI);
+        lookAtSegX = Math.round(lookAtSegX);
+        lookAtSegY = Math.round(lookAtSegY);
+        lookAtSegZ = Math.round(lookAtSegZ);
+
+        xyzCoordsPoints.push({
+          camSegX,
+          camSegY,
+          camSegZ,
+          lookAtSegX,
+          lookAtSegY,
+          lookAtSegZ,
+          count: result.statisticsPoints[i].count
+        });
+      }
+
+      const newResult = result.toObject();
+      newResult.statisticsPoints = undefined;
+      newResult.popularPoints = xyzCoordsPoints;
+      return newResult;
+    });
 };
 
 Model.statics.getLatestModels = function () {
