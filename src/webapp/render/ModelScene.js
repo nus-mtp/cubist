@@ -32,7 +32,7 @@ class ModelScene {
   renderingState = {
     wireframe: false,
     shadingMode: 0,
-    resizedTexture: false,
+    resizedTexture: undefined,
     shading: THREE.SmoothShading
   };
   // Camera State
@@ -387,15 +387,15 @@ class ModelScene {
             switch (mapType) {
               case 0: // texture map
                 if (child.material.map) {
-                  for (let i = 0; i < this.textureState.key.length; i++) {
-                    console.log(child.material.name, ' & ', this.textureState.key);
-                    if (this.textureState.key == child.material.name)
-                      console.log(child.material.name, ' found');
-                  }
-                  // child.material.map.image.src = this.modifySuffix(
-                  //   child.material.map.image.src,
-                  //   isAppend
-                  // );
+                  // for (let i = 0; i < this.textureState.key.length; i++) {
+                  //   console.log(child.material.name, ' & ', this.textureState.key);
+                  //   if (this.textureState.key == child.material.name)
+                  //     console.log(child.material.name, ' found');
+                  // }
+                  child.material.map.image.src = this.modifySuffix(
+                    child.material.map.image.src,
+                    isAppend
+                  );
                 }
                 break;
               case 1: // bumpMap
@@ -472,10 +472,14 @@ class ModelScene {
       });
     }
 
-    if (resizedTexture) { // Texture is at resized resolution
-      this.loadTextures(true);
+    if (typeof resizedTexture === "undefined") {
+      console.log('texture not ready');
     } else {
-      this.loadTextures(false);
+      if (resizedTexture) { // Texture is at resized resolution
+        this.loadTextures(true);
+      } else {
+        this.loadTextures(false);
+      }
     }
 
     return objects;

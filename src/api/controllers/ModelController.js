@@ -201,9 +201,10 @@ ModelController.helper.resizeTextures = function (files) {
       textureFiles.map(file => {
         const ext = path.extname(file.path);
         return [
-          TextureHelper.resize(2, file.path, file.path.replace(`${ext}`, `@2${ext}`)),
-          TextureHelper.resize(3, file.path, file.path.replace(`${ext}`, `@3${ext}`)),
-          TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `@4${ext}`))
+          // TextureHelper.resize(2, file.path, file.path.replace(`${ext}`, `@2${ext}`)),
+          // TextureHelper.resize(3, file.path, file.path.replace(`${ext}`, `@3${ext}`)),
+          // TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `@4${ext}`))
+          TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `_small${ext}`))
         ];
       })
     )
