@@ -37,8 +37,7 @@ class ModelCanvas extends React.Component {
     viewIndex: React.PropTypes.number,
     position: React.PropTypes.instanceOf(Immutable.Map),
     lookAt: React.PropTypes.instanceOf(Immutable.Map),
-    trigger: React.PropTypes.bool,
-    currPointSnapshotToken: React.PropTypes.string
+    trigger: React.PropTypes.bool
   };
 
   static defaultProps = {
@@ -99,14 +98,7 @@ class ModelCanvas extends React.Component {
     if (nextProps.snapshotToken !== this.props.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
-
-    // Snapshot Trigger from Statistics
-    if (nextProps.currPointSnapshotToken !== this.props.currPointSnapshotToken && this.modelScene) {
-      setTimeout(() => {
-        this._onSnapshotToken(nextProps.currPointSnapshotToken);
-      }, 500);
       
-    }
 
     // Walkthrough Trigger
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle

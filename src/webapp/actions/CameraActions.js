@@ -19,13 +19,12 @@ export default {
     };
   },
 
-  setCameraView(position, lookAt, currPointSnapshotToken) {
+  setCameraView(position, lookAt) {
     return {
       type: CAMERA_SET_VIEW,
       payload: {
         position,
-        lookAt,
-        currPointSnapshotToken
+        lookAt
       }
     };
   }

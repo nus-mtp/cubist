@@ -245,11 +245,11 @@
     const snapshotToken = StringHelper.randomToken();
     this.setState({statisticsIndex: this.state.statisticsIndex+1});
 
-    dispatch(CameraActions.setCameraView(pos, lookAt, snapshotToken));
+    setTimeout(() => { dispatch(CameraActions.setCameraView(pos, lookAt, snapshotToken));}, 200);
     // problem is here. the update is called before snapshot capturing is complete
     
     //dispatch(CameraActions.setCameraView(pos, lookAt));
-    // dispatch(SnapshotActions.triggerSnapshot(snapshotToken));
+    setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken));}, 250);
     //setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken)) }, 100);
     //setTimeout(() => { dispatch(WalkthroughActions.updatePoint(index, pos, lookAt, quat, snapshotToken)) }, 100);
 
@@ -273,7 +273,7 @@
         
         this._onWalkthroughAdd(e);
         this._onCameraSnapshot(e, index, position, look);  
-      }, 1000);
+      }, i*300 + 100);
     }
 
   };
@@ -746,7 +746,6 @@
      zoom: state.CameraStore.get('zoom'),
      quaternion: state.CameraStore.get('quaternion'),
      trigger: state.CameraStore.get('trigger'),
-     currPointSnapshotToken: state.CameraStore.get('currPointSnapshotToken'),
 
      // Walkthrough Data
      walkthroughPoints: state.WalkthroughStore.get('points'),

@@ -13,7 +13,6 @@ const initialState = Immutable.fromJS({
   up: new Immutable.Map({ x: 0, y: 1, z: 0 }),
   lookAt: new Immutable.Map({ x: 0, y: 0, z: 0 }),
   quaternion: new Immutable.Map({ x: 0, y: 0, z: 0, w: 0 }),
-  currPointSnapshotToken: undefined,
   trigger: false
 });
 
@@ -38,12 +37,11 @@ export default ReducerHelper.createReducer(initialState, {
 
   [CAMERA_SET_VIEW]: (state, { payload }) => {
     let nextState = state;
-    const { position, lookAt, currPointSnapshotToken } = payload;
+    const { position, lookAt } = payload;
 
     nextState = nextState.set('position', Immutable.fromJS(position));
     nextState = nextState.set('lookAt', Immutable.fromJS(lookAt));
     nextState = nextState.set('trigger', !nextState.get('trigger'));
-    nextState = nextState.set('currPointSnapshotToken', Immutable.fromJS(currPointSnapshotToken));
     
     return nextState;
   }
