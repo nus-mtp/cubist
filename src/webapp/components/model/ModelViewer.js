@@ -50,7 +50,7 @@ class ModelViewer extends React.Component {
     const { dispatch, walkthroughPoints } = this.props;
 
     dispatch(WalkthroughActions.setPlaybackStart(0));
-    dispatch(WalkthroughActions.setPlaybackEnd(walkthroughPoints.count()-1));
+    dispatch(WalkthroughActions.setPlaybackEnd(walkthroughPoints.count() - 1));
     dispatch(WalkthroughActions.playbackWalkthrough());
   };
 
@@ -185,7 +185,7 @@ class ModelViewer extends React.Component {
         onClick={ this._onPlayWalkthroughButtonClick }>
         { buttonTitle }
       </button>
-    )
+    );
   }
 }
 
