@@ -1,9 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 
 import { ModelCanvas } from '../render';
-import { RenderActions } from 'webapp/actions';
+import { RenderActions, WalkthroughActions } from 'webapp/actions';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -16,7 +17,8 @@ class ModelViewer extends React.Component {
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
     resizedTexture: React.PropTypes.bool,
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: React.PropTypes.func.isRequired,
+    walkthroughPoints: React.PropTypes.instanceOf(Immutable.List)
   };
 
   _onToggleWireframeButtonClick = () => {
@@ -44,12 +46,21 @@ class ModelViewer extends React.Component {
     dispatch(RenderActions.toggleTexture());
   };
 
+  _onPlayWalkthroughButtonClick = () => {
+    const { dispatch, walkthroughPoints } = this.props;
+
+    dispatch(WalkthroughActions.setPlaybackStart(0));
+    dispatch(WalkthroughActions.setPlaybackEnd(walkthroughPoints.count()-1));
+    dispatch(WalkthroughActions.playbackWalkthrough());
+  };
+
   render() {
     return (
       <div className={ CLASS_NAME }>
         <div className="cb-relative">
           <ModelCanvas { ...this.props } />
           <div className={ `${CLASS_NAME}-options` }>
+            { this._renderWalkthroughButton() }
             { this._renderTextureButton() }
             { this._renderShadingButton() }
             { this._renderAutoRotatebutton() }
@@ -158,6 +169,23 @@ class ModelViewer extends React.Component {
         { buttonTitle }
       </button>
     );
+  }
+
+  _renderWalkthroughButton() {
+    const buttonTitle = 'Play Walkthrough';
+    const resetViewButtonClasses = [
+      'btn',
+      'btn-transparent-alt',
+      `${CLASS_NAME}-play-walkthrough-button`
+    ];
+
+    return (
+      <button type="button"
+        className={ classnames(resetViewButtonClasses) }
+        onClick={ this._onPlayWalkthroughButtonClick }>
+        { buttonTitle }
+      </button>
+    )
   }
 }
 
