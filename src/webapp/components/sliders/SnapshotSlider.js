@@ -45,7 +45,7 @@ class SnapshotSlider extends React.Component {
 
   render() {
     const slideSettings = {
-      className: 'cb-snapshot-slider',
+      className: 'cb-slider',
       dots: false,
       arrows: true,
       infinite: false,
@@ -81,8 +81,8 @@ class SnapshotSlider extends React.Component {
     }
 
     return (
-      <div className="cb-snapshot-slide-add">
-        <Dropzone className="cb-snapshot-slide-add-button btn btn-transparent btn-block"
+      <div className="cb-slide-add">
+        <Dropzone className="cb-slide-add-button btn btn-transparent btn-block"
           onDrop={ this._onSnapshotFilesDrop }>
           +
         </Dropzone>
@@ -96,15 +96,15 @@ class SnapshotSlider extends React.Component {
     };
 
     return (
-      <div className="cb-snapshot-slide" style={ snapshotStyle } key={ index }>
+      <div className="cb-slide" style={ snapshotStyle } key={ index }>
       </div>
     );
   }
 
   _renderNewSnapshot(snapshot, index) {
     return (
-      <div className="cb-snapshot-slide" key={ index }>
-        <img className="cb-snapshot-slide-image" src={ snapshot.preview } />
+      <div className="cb-slide" key={ index }>
+        <img className="cb-slide-image" src={ snapshot.preview } />
       </div>
     );
   }

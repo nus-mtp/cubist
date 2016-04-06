@@ -1,10 +1,7 @@
 import {
-  ADD_POINT,
-  UPDATE_POINT,
-  DELETE_POINT,
-  TOGGLE_DISJOINT,
-  UPDATE_ANIMATION,
-  UPDATE_DURATION,
+  REQ_PUT_ADD_WALKTHROUGH,
+  REQ_PUT_UPDATE_WALKTHROUGH,
+  REQ_PUT_DELETE_WALKTHROUGH,
   PLAYBACK_WALKTHROUGH,
   SET_PLAYBACK_START,
   SET_PLAYBACK_END,
@@ -13,59 +10,42 @@ import {
 } from './types';
 
 export default {
-  addPoint() {
+  addWalkthrough(modelId, walkthrough) {
     return {
-      type: ADD_POINT
+      type: REQ_PUT_ADD_WALKTHROUGH,
+      promise: apiClient => apiClient.put(`/model/${modelId}/addWalkthrough`, {
+        body: {
+          ...walkthrough
+        }
+      })
     };
   },
 
-  updatePoint(index, pos, lookAt, quaternion, snapshotToken) {
+  updateWalkthrough(modelId, index, update) {
     return {
-      type: UPDATE_POINT,
-      payload: {
-        index,
-        pos,
-        lookAt,
-        quaternion,
-        snapshotToken
-      }
-    };
-  },
-
-  deletePoint(index) {
-    return {
-      type: DELETE_POINT,
+      type: REQ_PUT_UPDATE_WALKTHROUGH,
+      promise: apiClient => apiClient.put(`/model/${modelId}/updateWalkthrough`, {
+        body: {
+          index,
+          ...update
+        }
+      }),
       payload: {
         index
       }
     };
   },
 
-  toggleDisjointMode(index) {
+  deleteWalkthrough(modelId, index) {
     return {
-      type: TOGGLE_DISJOINT,
+      type: REQ_PUT_DELETE_WALKTHROUGH,
+      promise: apiClient => apiClient.put(`/model/${modelId}/deleteWalkthrough`, {
+        body: {
+          index
+        }
+      }),
       payload: {
         index
-      }
-    };
-  },
-
-  updateAnimationMode(index, animationMode) {
-    return {
-      type: UPDATE_ANIMATION,
-      payload: {
-        index,
-        animationMode
-      }
-    };
-  },
-
-  updateAnimationDuration(index, duration) {
-    return {
-      type: UPDATE_DURATION,
-      payload: {
-        index,
-        duration
       }
     };
   },

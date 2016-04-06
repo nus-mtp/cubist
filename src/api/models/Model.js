@@ -36,11 +36,33 @@ const Model = new Schema({
     lookAtLongtitude: { type: Number, default: 0 },
     lookAtLatitude: { type: Number, default: 0 },
     count: { type: Number, default: 0 }
+  }],
+  walkthroughs: [{
+    key: { type: String },
+    pos: {
+      x: { type: Number, default: 0 },
+      y: { type: Number, default: 0 },
+      z: { type: Number, default: 0 }
+    },
+    lookAt: {
+      x: { type: Number, default: 0 },
+      y: { type: Number, default: 0 },
+      z: { type: Number, default: 0 }
+    },
+    quaternion: {
+      x: { type: Number, default: 0 },
+      y: { type: Number, default: 0 },
+      z: { type: Number, default: 0 },
+      w: { type: Number, default: 0 }
+    },
+    disjointMode: { type: Boolean, default: true },
+    animationMode: { type: String, default: 'Stationary' },
+    duration: { type: Number, default: 0 }
   }]
 });
 
 // -----------------------------------------------------
-// -----------------MODEL VALIDATION--------------------
+// -----------------`MODEL `VALIDATION--------------------
 // -----------------------------------------------------
 
 Model.statics.validate = function (model, fields) {
@@ -311,6 +333,59 @@ Model.statics.deleteSnapshot = function (modelId, index) {
   const pullUpdate = {
     $pull: {
       imageUrls: null
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, unsetUpdate)
+    .then(() => MongooseHelper.findOneAndUpdate(this, condition, pullUpdate, { new: true }));
+};
+
+// -----------------------------------------------------
+// -----------------MODEL WALKTHROUGH-------------------
+// -----------------------------------------------------
+Model.statics.addWalkthrough = function (modelId, walkthrough) {
+  const fields = ['key', 'pos', 'lookAt', 'quaternion', 'disjointMode', 'animationMode', 'duration'];
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $push: {
+      walkthroughs: {
+        ..._.pick(walkthrough, fields)
+      }
+    }
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true });
+};
+
+Model.statics.updateWalkthrough = function (modelId, index, walkthrough) {
+  const fields = ['pos', 'lookAt', 'quaternion', 'disjointMode', 'animationMode', 'duration'];
+  const condition = {
+    _id: modelId
+  };
+  const update = {
+    $set: _.mapKeys(
+      _.pick(walkthrough, fields),
+      (value, key) => `walkthroughs.${index}.${key}`
+    )
+  };
+
+  return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true });
+};
+
+Model.statics.deleteWalkthrough = function (modelId, index) {
+  const condition = {
+    _id: modelId
+  };
+  const unsetUpdate = {
+    $unset: {
+      [`walkthroughs.${index}`]: 1
+    }
+  };
+  const pullUpdate = {
+    $pull: {
+      walkthroughs: null
     }
   };
 
