@@ -10,7 +10,7 @@
  import { ModelViewer } from '../model';
  import { SnapshotSlider } from '../sliders';
  import { StringHelper, Constants } from 'common';
- import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
+ import { ModelActions, WalkthroughActions, SnapshotActions, CameraActions } from 'webapp/actions';
  import { GravatarHelper } from 'webapp/helpers';
  import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
@@ -63,7 +63,11 @@
       // Insert
       insertTargetIndex: 0,
       selected: -1,
-      insertToggle: false
+      insertToggle: false,
+
+      // Statistics
+      statisticsIndex: 0
+
     };
   }
 
@@ -230,6 +234,48 @@
 
     this._onInsertButtonClicked(e);
     dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle , pos, lookAt, snapshot ));
+  };
+
+  // Snapshot
+  _onCameraSnapshot = (e, index, pos, lookAt) => {
+    e.preventDefault();
+    console.log('enter', index);
+    const { dispatch } = this.props;
+    const quat = { x:0, y: 0, z: 0, w: 0 };
+    const snapshotToken = StringHelper.randomToken();
+    this.setState({statisticsIndex: this.state.statisticsIndex+1});
+
+    dispatch(CameraActions.setCameraView(pos, lookAt, snapshotToken));
+    // problem is here. the update is called before snapshot capturing is complete
+    
+    //dispatch(CameraActions.setCameraView(pos, lookAt));
+    // dispatch(SnapshotActions.triggerSnapshot(snapshotToken));
+    //setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken)) }, 100);
+    //setTimeout(() => { dispatch(WalkthroughActions.updatePoint(index, pos, lookAt, quat, snapshotToken)) }, 100);
+
+    dispatch(WalkthroughActions.updatePoint(index, pos, lookAt, quat, snapshotToken));
+
+  };
+
+  _onRetrieveStatisticButtonClicked = (e, points) => {
+    e.preventDefault();
+    let index;
+    let position;
+    let look;
+
+    for( let i = 0; i < points.length; i++)
+    {
+      setTimeout(() => {
+        index = this.state.statisticsIndex;
+        console.log('outside', index);
+        position = points[index].pos;
+        look = points[index].lookAt;
+        
+        this._onWalkthroughAdd(e);
+        this._onCameraSnapshot(e, index, position, look);  
+      }, 1000);
+    }
+
   };
 
   render() {
@@ -417,7 +463,24 @@
         <button className="btn btn-success" onClick={ this._onWalkthroughAdd }>
           ADD NEW POINT
         </button>
+        { this._renderRetrieveStatisticButton() }
       </div>
+    );
+  }
+
+  _renderRetrieveStatisticButton() {
+    const point1 = { pos: { x: 40, y:120, z:160 }, lookAt: { x: 0, y:0, z:0 } };
+    const point2 = { pos: { x: 100, y:100, z:40 }, lookAt: { x: 0, y:0, z:0 } };
+    const point3 = { pos: { x: -12.2, y:87.8, z:13 }, lookAt: { x: -3.58, y: -0.87, z: 1.59 } };
+
+    const points = new Array( point1, point2, point3 );
+
+
+
+    return(
+      <button className="btn btn-default" onClick={ e => this._onRetrieveStatisticButtonClicked(e, points) } >
+          Retrieve Statistics
+      </button>
     );
   }
 
@@ -682,6 +745,8 @@
      lookAt: state.CameraStore.get('lookAt'),
      zoom: state.CameraStore.get('zoom'),
      quaternion: state.CameraStore.get('quaternion'),
+     trigger: state.CameraStore.get('trigger'),
+     currPointSnapshotToken: state.CameraStore.get('currPointSnapshotToken'),
 
      // Walkthrough Data
      walkthroughPoints: state.WalkthroughStore.get('points'),

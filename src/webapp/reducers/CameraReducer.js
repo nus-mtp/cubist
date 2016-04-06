@@ -3,7 +3,8 @@ import Immutable from 'immutable';
 import ReducerHelper from './ReducerHelper';
 import {
   CAMERA_ORBIT,
-  CAMERA_UPDATE
+  CAMERA_UPDATE,
+  CAMERA_SET_VIEW
 } from 'webapp/actions/types';
 
 // Take note that each element in the list is Vector3
@@ -11,7 +12,9 @@ const initialState = Immutable.fromJS({
   position: new Immutable.Map({ x: 0, y: 450, z: 450 }),
   up: new Immutable.Map({ x: 0, y: 1, z: 0 }),
   lookAt: new Immutable.Map({ x: 0, y: 0, z: 0 }),
-  quaternion: new Immutable.Map({ x: 0, y: 0, z: 0, w: 0 })
+  quaternion: new Immutable.Map({ x: 0, y: 0, z: 0, w: 0 }),
+  currPointSnapshotToken: undefined,
+  trigger: false
 });
 
 export default ReducerHelper.createReducer(initialState, {
@@ -31,5 +34,20 @@ export default ReducerHelper.createReducer(initialState, {
     nextState = nextState.set('quaternion', Immutable.fromJS(quaternion));
 
     return nextState;
+  },
+
+  [CAMERA_SET_VIEW]: (state, { payload }) => {
+    let nextState = state;
+    const { position, lookAt, currPointSnapshotToken } = payload;
+
+    nextState = nextState.set('position', Immutable.fromJS(position));
+    nextState = nextState.set('lookAt', Immutable.fromJS(lookAt));
+    nextState = nextState.set('trigger', !nextState.get('trigger'));
+    nextState = nextState.set('currPointSnapshotToken', Immutable.fromJS(currPointSnapshotToken));
+    
+    return nextState;
   }
+
+
+
 });
