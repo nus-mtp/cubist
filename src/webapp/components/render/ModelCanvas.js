@@ -98,7 +98,7 @@ class ModelCanvas extends React.Component {
     if (nextProps.snapshotToken !== this.props.snapshotToken && nextProps.snapshotToken && this.modelScene) {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
-      
+
 
     // Walkthrough Trigger
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle
@@ -119,7 +119,6 @@ class ModelCanvas extends React.Component {
     }
 
     if (nextProps.trigger !== this.props.trigger && this.modelScene) {
-      console.log('nssbshs', nextProps.position, nextProps.lookAt);
       this.modelScene._setCameraView(nextProps.position, nextProps.lookAt);
     }
   }

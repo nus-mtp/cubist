@@ -4,12 +4,11 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton, ButtonGroup, ButtonToolbar} from 'react-bootstrap';
- import { batchActions } from 'redux-batched-actions';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup } from 'react-bootstrap';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
- import { SnapshotSlider, WalkthroughSlider } from '../sliders';
+ import { SnapshotSlider, WalkthroughSlider, StatisticsSlider } from '../sliders';
  import { StringHelper, Constants } from 'common';
  import { ModelActions, WalkthroughActions, SnapshotActions, CameraActions } from 'webapp/actions';
  import { GravatarHelper } from 'webapp/helpers';
@@ -60,11 +59,14 @@
 
       // Insert
       insertTargetIndex: 0,
-      selected: -1,
+      selected: undefined,
       insertToggle: false,
+      statisticsPoints: undefined,
 
       // Statistics
       statisticsIndex: 0,
+
+      // Walkthrough
       selectedWalkthroughIndex: undefined
     };
   }
@@ -254,79 +256,91 @@
     dispatch(WalkthroughActions.viewWalkthroughPoint(selectedWalkthroughIndex));
   };
 
-  // Insert
+  // Statistics
+  _initStatisticsPoints = (points) => {
+    const tempArray = new Array(points.size);
+
+    for (let i = 0; i < points.size; i++) {
+      const { camSegX, camSegY, camSegZ, lookAtSegX, lookAtSegY, lookAtSegZ, count } = points.toJS()[i];
+      const pos = { x: camSegX, y: camSegY, z: camSegZ };
+      const lookAt = { x: lookAtSegX, y: lookAtSegY, z: lookAtSegZ };
+      const snapshotToken = StringHelper.randomToken();
+      const key = snapshotToken;
+
+      tempArray[i] = { key, pos, lookAt, snapshotToken, count };
+    }
+    this.setState({ statisticsPoints: Immutable.fromJS(tempArray) });
+  };
+
+  _onStatisticsViewPoint = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    const pointList = this.state.statisticsPoints.toJS();
+    const { pos, lookAt } = pointList[index];
+
+    dispatch(CameraActions.setCameraView(pos, lookAt));
+  };
+
+
+  _onStatisticsSelect = (index) => {
+    this.setState({
+      selected: index
+    });
+  };
+
   _onInsertButtonClicked = (e, index) => {
     e.preventDefault();
 
-    let newValue = index;
-    if(this.state.insertToggle) {
-      newValue = -1;
-    }
-    
-    this.setState({insertToggle: !this.state.insertToggle});
-    this.setState({selected: newValue});
+    this.setState({ insertToggle: !this.state.insertToggle });
+    this.setState({ selected: index });
   };
 
   _onInsertSetIndex = (e, index) => {
     e.preventDefault();
-    this.setState({insertTargetIndex: index});
+    this.setState({ insertTargetIndex: index });
   };
 
   _onInsertIntoWalkthrough = (e, targetIndex, currentIndex, controlToggle) => {
     e.preventDefault();
-    const { dispatch, walkthroughPoints } = this.props;
+    const { dispatch } = this.props;
+    const { statisticsPoints } = this.state;
 
     // this part will need to change to statistics list instead of walkthrough list
-    const curr = walkthroughPoints.toJS()[currentIndex];
+    const curr = statisticsPoints.toJS()[currentIndex];
 
     const pos = { x: curr.pos.x, y: curr.pos.y, z: curr.pos.z };
-    const lookAt = { x:curr.lookAt.x, y:curr.lookAt.y, z:curr.lookAt.z };
+    const lookAt = { x: curr.lookAt.x, y: curr.lookAt.y, z: curr.lookAt.z };
     const snapshot = curr.snapshotToken;
 
     this._onInsertButtonClicked(e);
-    dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle , pos, lookAt, snapshot ));
+    dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle, pos, lookAt, snapshot));
   };
 
   // Snapshot
-  _onCameraSnapshot = (e, index, pos, lookAt) => {
+  _onCameraSnapshot = (e, index, pos, lookAt, snapshotToken) => {
     e.preventDefault();
-    console.log('enter', index);
+    // console.log('enter', index);
     const { dispatch } = this.props;
-    const quat = { x:0, y: 0, z: 0, w: 0 };
-    const snapshotToken = StringHelper.randomToken();
-    this.setState({statisticsIndex: this.state.statisticsIndex+1});
+    this.setState({ statisticsIndex: this.state.statisticsIndex + 1 });
 
-    setTimeout(() => { dispatch(CameraActions.setCameraView(pos, lookAt, snapshotToken));}, 200);
-    // problem is here. the update is called before snapshot capturing is complete
-    
-    //dispatch(CameraActions.setCameraView(pos, lookAt));
+    setTimeout(() => { dispatch(CameraActions.setCameraView(pos, lookAt));}, 200);
     setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken));}, 250);
-    //setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken)) }, 100);
-    //setTimeout(() => { dispatch(WalkthroughActions.updatePoint(index, pos, lookAt, quat, snapshotToken)) }, 100);
-
-    dispatch(WalkthroughActions.updatePoint(index, pos, lookAt, quat, snapshotToken));
-
   };
 
   _onRetrieveStatisticButtonClicked = (e, points) => {
     e.preventDefault();
     let index;
-    let position;
-    let look;
+    const pointList = points.toJS();
 
-    for( let i = 0; i < points.length; i++)
-    {
+    for (let i = 0; i < pointList.length; i++) {
       setTimeout(() => {
         index = this.state.statisticsIndex;
-        console.log('outside', index);
-        position = points[index].pos;
-        look = points[index].lookAt;
-        
-        this._onWalkthroughAdd(e);
-        this._onCameraSnapshot(e, index, position, look);  
-      }, i*300 + 100);
-    }
+        const { pos, lookAt, snapshotToken } = pointList[index];
+        // console.log('outside', index, pos, lookAt, snapshotToken);
 
+        this._onCameraSnapshot(e, index, pos, lookAt, snapshotToken);
+      }, i * 300 + 50);
+    }
   };
 
   render() {
@@ -360,6 +374,16 @@
                 onWalkthroughSelect={ this._onWalkthroughSelect } />
               { this._renderWalkthroughSection() }
               { this._renderWalkthroughPlaybackSection() }
+            </div>
+            <h2>Statistics</h2>
+            { this._renderRetrieveStatisticButton() }
+            <div className={ `${CLASS_NAME}-walkthrough` }>
+              <StatisticsSlider
+                isEditor
+                snapshots={ snapshots }
+                statistics={ this.state.statisticsPoints }
+                onStatisticsSelect={ this._onStatisticsSelect } />
+              { this._renderStatisticsSection() }
             </div>
           </div>
           <div className="col-md-4">
@@ -510,91 +534,11 @@
     );
   }
 
-  _renderRetrieveStatisticButton() {
-    const point1 = { pos: { x: 40, y:120, z:160 }, lookAt: { x: 0, y:0, z:0 } };
-    const point2 = { pos: { x: 100, y:100, z:40 }, lookAt: { x: 0, y:0, z:0 } };
-    const point3 = { pos: { x: -12.2, y:87.8, z:13 }, lookAt: { x: -3.58, y: -0.87, z: 1.59 } };
-
-    const points = new Array( point1, point2, point3 );
-
-
-
-    return(
-      <button className="btn btn-default" onClick={ e => this._onRetrieveStatisticButtonClicked(e, points) } >
-          Retrieve Statistics
-      </button>
-    );
-  }
-
   _renderViewPointButton() {
     return (
-      <button className="btn btn-info" onClick={ this._onWalkthroughViewPoint }>
+      <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
         View Point
       </button>
-    );
-  }
-
-  _renderInsertButton(index, point) {
-    const { walkthroughPoints } = this.props;
-    let canRender = true;
-    let buttonType = "btn btn-warning";
-    let buttonTitle = 'Insert';
-    let renderAllInsertButton = true;
-
-    if(this.state.insertToggle){
-      buttonTitle = 'Cancel Insert';
-      buttonType = "btn btn-danger";
-      renderAllInsertButton = false;
-    }
-
-    if (point.get('snapshotToken') === undefined ) {
-      canRender = false;
-    }
-
-    if (canRender && walkthroughPoints.count() > 1 && index > 0) {
-      if (renderAllInsertButton) {
-        return (
-        <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
-        { buttonTitle }
-        </button>
-        )
-      } else {
-        if(this.state.selected === index) {
-          return (
-            <ButtonGroup>
-            <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
-            { buttonTitle }
-            </button>
-            { this.state.insertToggle && this._renderInsertPointButton(index, point) }
-            </ButtonGroup>
-          )  
-        }
-      }
-    }
-  }
-
-  _renderInsertPointButton(index, point) {
-    const { walkthroughPoints } = this.props;
-    const buttonType = "btn btn-success";
-
-    return (
-      <ButtonGroup>
-          <SplitButton title={ `${ this.state.insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
-            { walkthroughPoints.map((walkthroughPoint, index) =>
-              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
-                onClick={ e => this._onInsertSetIndex(e, index) } >
-                { `${index + 1}` }
-              </MenuItem>
-            ) }
-          </SplitButton>
-
-          <button className={ buttonType } onClick={ e => this._onInsertIntoWalkthrough(e, this.state.insertTargetIndex, index, 'before')} >
-          Insert Before
-          </button>
-          <button className={ buttonType } onClick={ e => this._onInsertIntoWalkthrough(e, this.state.insertTargetIndex, index, 'after')} >
-          Insert After
-          </button>
-      </ButtonGroup>
     );
   }
 
@@ -755,6 +699,111 @@
     }
   }
 
+
+  // -----------------------------------------------------
+  // ----------------- Statistics ------------------------
+  // -----------------------------------------------------
+  _renderStatisticsSection() {
+    const { selected, statisticsPoints } = this.state;
+    if (typeof selected === 'undefined') {
+      return undefined;
+    }
+
+    const stats = statisticsPoints.get(selected);
+    const position = stats.get('pos');
+    const lookAt = stats.get('lookAt');
+    return (
+      <div className={ `${CLASS_NAME}-walkthrough-form` }>
+        <h5>Position</h5>
+        <p>
+          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
+        </p>
+        <h5>Look At</h5>
+        <p>
+          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
+        </p>
+        { this._renderStatViewPointButton(selected) }
+        { this._renderInsertButton(selected, stats) }
+      </div>
+    );
+  }
+
+  _renderStatViewPointButton(index) {
+    return (
+      <button className="btn btn-info" onClick={ e => this._onStatisticsViewPoint(e, index) }>
+          View Point
+      </button>
+    );
+  }
+
+  _renderInsertPointButtonGroup() {
+    const { walkthroughPoints } = this.props;
+    const { insertTargetIndex, selected } = this.state;
+
+    return (
+      <ButtonGroup>
+          <SplitButton title={ `${ insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
+                onClick={ e => this._onInsertSetIndex(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+
+          <button className="btn btn-success" onClick={
+            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') } >
+          Insert Before
+          </button>
+          <button className="btn btn-success" onClick={
+            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') } >
+          Insert After
+          </button>
+      </ButtonGroup>
+    );
+  }
+
+  _renderInsertButton(index, point) {
+    const { insertToggle } = this.state;
+    let canRender = true;
+    let buttonType = 'btn btn-warning';
+    let buttonTitle = 'Insert';
+
+    if (insertToggle) {
+      buttonTitle = 'Cancel Insert';
+      buttonType = 'btn btn-danger';
+    }
+
+    if (point.get('snapshotToken') === undefined) {
+      canRender = false;
+    }
+
+    if (canRender) {
+      return (
+        <ButtonGroup>
+        <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+        { buttonTitle }
+        </button>
+        { insertToggle && this._renderInsertPointButtonGroup() }
+        </ButtonGroup>
+      );
+    }
+  }
+
+  _renderRetrieveStatisticButton() {
+    if (this.state.statisticsPoints === undefined) {
+      const { model } = this.props;
+      this._initStatisticsPoints(model.get('popularPoints'));
+    }
+    const { statisticsPoints } = this.state;
+
+    return (
+      <button className="btn btn-default" onClick={ e => this._onRetrieveStatisticButtonClicked(e, statisticsPoints) } >
+          Retrieve Statistics
+      </button>
+    );
+  }
+
   // -----------------------------------------------------
   // -----------------MODEL LOADER------------------------
   // -----------------------------------------------------
@@ -764,6 +813,8 @@
     } else {
       this.loadObj(model, () => this._onModelLoad());
     }
+
+    this._initStatisticsPoints(model.get('popularPoints'));
   }
 
   loadObj(model, cb) {

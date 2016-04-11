@@ -42,10 +42,8 @@ export default ReducerHelper.createReducer(initialState, {
     nextState = nextState.set('position', Immutable.fromJS(position));
     nextState = nextState.set('lookAt', Immutable.fromJS(lookAt));
     nextState = nextState.set('trigger', !nextState.get('trigger'));
-    
+
     return nextState;
   }
-
-
 
 });

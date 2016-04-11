@@ -75,9 +75,8 @@ export default ReducerHelper.createReducer(initialState, {
     const { index, controlToggle, pos, lookAt, snapshot } = payload;
 
     let targetIndex = index;
-    let targetFount = false;
 
-    if(controlToggle === 'after') {
+    if (controlToggle === 'after') {
       targetIndex++;
     }
 
@@ -91,10 +90,10 @@ export default ReducerHelper.createReducer(initialState, {
 
     let nextState = state;
     nextState = nextState.update('points', points => {
-      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion, 
+      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion,
                            disjointMode, animationMode, duration, snapshotToken }));
     });
     return nextState;
-  } 
+  }
 
 });
