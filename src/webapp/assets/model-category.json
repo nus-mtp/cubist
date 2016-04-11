@@ -1,34 +1,42 @@
 [
   {
-    "category": "Characters",
+    "title": "Characters",
+    "db_name": "character",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/ae2eb3e292d24a8ba33c41b88642995f/thumbnails/c1e9b9acc07c4c8489c864d5a873b3e9/640.jpeg"
   },
   {
-    "category": "Games",
+    "title": "Games",
+    "db_name": "game",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/e9d4aa11d7914544aa47bdf953eb8822/thumbnails/359f0a6d59db48e7a276cde3a2a1c92e/640.jpeg"
   },
   {
-    "category": "Animals",
+    "title": "Animals",
+    "db_name": "animal",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/78ace48418104b29a6d54bc6e6aa0133/thumbnails/9528e918dd7d4a30b2147f7744e91fba/640.jpeg"
   },
   {
-    "category": "Scenes",
+    "title": "Scenes",
+    "db_name": "scene",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/90d39d90877248afb43cd9724584a90c/thumbnails/2a969ea9fbb446f38f7d1f64ef7d3b4c/640.jpeg"
   },
   {
-    "category": "Vehicles",
+    "title": "Vehicles",
+    "db_name": "vehicle",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/86c1efe17694498a84d2ecaccc840721/thumbnails/20db08a3bf1048fa9394d238450e243a/640.jpeg"
   },
   {
-    "category": "Objects",
+    "title": "Objects",
+    "db_name": "object",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/48ddca8ad63c439c91187435d4c56aae/thumbnails/50296525abf9488fb8c76aa8ca98a4e7/640.jpeg"
   },
   {
-    "category": "Architecture",
+    "title": "Architecture",
+    "db_name": "architecture",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/faed84a829114e378be255414a7826ca/thumbnails/f1ec3ec890af45b79a23151e12d7d560/640.jpeg"
   },
   {
-    "category": "Misc",
+    "title": "Misc",
+    "db_name": "misc",
     "image_url": "https://d35krx4ujqgbcr.cloudfront.net/urls/08f02df16e054295be20af2042a3b5b7/thumbnails/f382d55115214d5d94f8ba3542c35ee0/640.jpeg"
   }
 ]
