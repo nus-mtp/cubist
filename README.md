@@ -33,7 +33,7 @@ $ npm install
   + `sudo chown -R $(whoami):admin /usr/local`
   + `brew update && brew upgrade`
 * Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
-* Go to team's Google Drive and download `Models for Database/Models_Set_1.zip`. 
+* Go to team's Google Drive and download `Models for Database/Models_Set.zip`. 
 * Unzip `Models_Set_1.zip` file and place the `storage` folder in your local repo folder.
 * Clear MongoDB database for `cubist-api-development` (if necessary)
 * Install Gulp globally by running: `npm install gulp -g`
