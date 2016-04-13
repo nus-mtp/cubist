@@ -202,15 +202,16 @@ class HomeContainer extends PureComponent {
       };
 
       return (
-        <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` }
+        <Link to={ `/browse?category=${category.db_name}` }
+          className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6 scrollup` }
           key={ i }>
           <div className={ `${CLASS_NAME}-category-item-background` } style={ style } />
           <div className={ `${CLASS_NAME}-category-item-overlay` }>
             <div className={ `${CLASS_NAME}-category-item-title` }>
-              { category.category }
+              { category.title }
             </div>
           </div>
-        </div>
+        </Link>
       );
     });
   }
