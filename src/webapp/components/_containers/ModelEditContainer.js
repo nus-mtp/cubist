@@ -113,6 +113,22 @@
         .then(() => dispatch(SnapshotActions.triggerSnapshot(walkthroughPoint.get('key'))));
     });
 
+    if (this.state.statisticsPoints === undefined) {
+      const { model } = this.props;
+      this._initStatisticsPoints(model.get('popularPoints'));
+    }
+
+    const { statisticsPoints } = this.state;
+
+    statisticsPoints.forEach((currStatsPoint) => {
+      const { pos, lookAt, snapshotToken } = currStatsPoint.toJS();
+      promise = promise
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(CameraActions.setCameraView(pos, lookAt)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(snapshotToken)));
+    });
+
     return promise;
   };
 
@@ -376,7 +392,7 @@
               { this._renderWalkthroughPlaybackSection() }
             </div>
             <h2>Statistics</h2>
-            { this._renderRetrieveStatisticButton() }
+            { false && this._renderRetrieveStatisticButton() }
             <div className={ `${CLASS_NAME}-walkthrough` }>
               <StatisticsSlider
                 isEditor
