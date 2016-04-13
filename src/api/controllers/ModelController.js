@@ -231,7 +231,7 @@ ModelController.promise.deleteSnapshot = function (req) {
 };
 
 ModelController.promise.addWalkthrough = function (req) {
-  const walkthrough = req.body;
+  const { walkthrough, index, isBefore } = req.body;
   const { modelId } = req.params;
   const error = User.validate(req.user, { _id: true })
     || Model.validate({ _id: modelId }, { _id: true });
@@ -239,7 +239,7 @@ ModelController.promise.addWalkthrough = function (req) {
     return Promise.reject(new ClientError(error));
   }
 
-  return Model.addWalkthrough(modelId, walkthrough);
+  return Model.addWalkthrough(modelId, walkthrough, index, isBefore);
 };
 
 ModelController.promise.updateWalkthrough = function (req) {

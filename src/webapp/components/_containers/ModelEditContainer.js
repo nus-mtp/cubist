@@ -319,18 +319,27 @@
 
   _onInsertIntoWalkthrough = (e, targetIndex, currentIndex, controlToggle) => {
     e.preventDefault();
-    const { dispatch } = this.props;
+    const { dispatch, params } = this.props;
     const { statisticsPoints } = this.state;
+    const key = StringHelper.randomToken();
 
-    // this part will need to change to statistics list instead of walkthrough list
     const curr = statisticsPoints.toJS()[currentIndex];
-
     const pos = { x: curr.pos.x, y: curr.pos.y, z: curr.pos.z };
     const lookAt = { x: curr.lookAt.x, y: curr.lookAt.y, z: curr.lookAt.z };
-    const snapshot = curr.snapshotToken;
-
+    const newWalkthrough = { key, pos, lookAt, quaternion: { x: 0, y: 0, z: 0, w: 0 } };
     this._onInsertButtonClicked(e);
-    dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle, pos, lookAt, snapshot));
+    dispatch(WalkthroughActions.addWalkthrough(
+      params.modelId,
+      newWalkthrough,
+      targetIndex,
+      controlToggle === 'before')
+    );
+    
+    return Promise
+        .resolve()
+        .then(() => dispatch(CameraActions.setCameraView(pos, lookAt)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(key)));
   };
 
   render() {
@@ -760,21 +769,22 @@
     return (
       <ButtonGroup>
           <SplitButton title={ `${ insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
-            { walkthroughPoints.map((walkthroughPoint, index) =>
-              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
-                onClick={ e => this._onInsertSetIndex(e, index) } >
-                { `${index + 1}` }
-              </MenuItem>
-            ) }
+            {
+              walkthroughPoints.map((walkthroughPoint, index) => (
+                <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
+                  onClick={ e => this._onInsertSetIndex(e, index) } >
+                  { `${index + 1}` }
+                </MenuItem>
+              ))
+            }
           </SplitButton>
-
-          <button className="btn btn-success" onClick={
-            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') } >
-          Insert Before
+          <button className="btn btn-success"
+            onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') }>
+            Insert Before
           </button>
-          <button className="btn btn-success" onClick={
-            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') } >
-          Insert After
+          <button className="btn btn-success"
+            onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') }>
+            Insert After
           </button>
       </ButtonGroup>
     );

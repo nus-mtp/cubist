@@ -10,12 +10,14 @@ import {
 } from './types';
 
 export default {
-  addWalkthrough(modelId, walkthrough) {
+  addWalkthrough(modelId, walkthrough, index, isBefore) {
     return {
       type: REQ_PUT_ADD_WALKTHROUGH,
       promise: apiClient => apiClient.put(`/model/${modelId}/addWalkthrough`, {
         body: {
-          ...walkthrough
+          walkthrough,
+          index,
+          isBefore
         }
       })
     };
