@@ -420,4 +420,15 @@ Model.statics.addStatisticsPoint = function (modelId, point) {
     .then(() => MongooseHelper.findOneAndUpdate(this, condition, incUpdate));
 };
 
+// -----------------------------------------------------
+// -----------------MODEL DELETE------------------------
+// -----------------------------------------------------
+Model.statics.deleteModel = function (modelId) {
+  const condition = {
+    _id: modelId
+  };
+
+  return Promise.resolve(this.remove(condition).exec());
+};
+
 export default mongoose.model('Model', Model, 'Model');

@@ -3,6 +3,8 @@ import { Route, IndexRoute } from 'react-router';
 
 import {
   AppContainer,
+  AdminContainer,
+  AdminModelsContainer,
   AdminLoginContainer,
   AuthorisationContainer,
   HomeContainer,
@@ -29,6 +31,9 @@ export default (
         <Route path="model/:modelId/edit" component={ ModelEditContainer } />
       </Route>
       <Route path="u/:username" component={ ProfileContainer } />
+      <Route path="admin" component={ AdminContainer }>
+        <IndexRoute component={ AdminModelsContainer } />
+      </Route>
     </Route>
     <Route path="/adminLogin" component={ AdminLoginContainer } />
     <Route path="/login" component={ LoginContainer } />

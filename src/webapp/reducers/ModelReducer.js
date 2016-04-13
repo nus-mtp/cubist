@@ -11,7 +11,8 @@ import {
   REQ_PUT_UPDATE_MODEL_INFO,
   REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
-  REQ_PUT_REMOVE_MODEL_SNAPSHOT
+  REQ_PUT_REMOVE_MODEL_SNAPSHOT,
+  REQ_DEL_MODEL
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -99,5 +100,15 @@ export default ReducerHelper.createReducer(initialState, {
   [REQ_PUT_UPDATE_MODEL_INFO]: ModelReducerHelper.updateModel,
   [REQ_PUT_ADD_MODEL_SNAPSHOTS]: ModelReducerHelper.updateModel,
   [REQ_PUT_REMOVE_MODEL_SNAPSHOT]: ModelReducerHelper.updateModel,
-  [REQ_PUT_TOGGLE_MODEL_FLAG]: ModelReducerHelper.updateModel
+  [REQ_PUT_TOGGLE_MODEL_FLAG]: ModelReducerHelper.updateModel,
+  [REQ_DEL_MODEL](state, { promiseState, res, payload }) {
+    let nextState = state;
+    if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
+      nextState = nextState
+        .update('modelIds', list => list.filter(m => m !== payload))
+        .deleteIn(['models', payload]);
+    }
+
+    return nextState;
+  }
 });

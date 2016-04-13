@@ -69,4 +69,6 @@ export default (app) => {
   );
 
   app.put('/model/:modelId/addStatisticsPoint', ModelController.request.addStatisticsPoint);
+
+  app.delete('/model/:modelId', ModelController.request.deleteModel);
 };

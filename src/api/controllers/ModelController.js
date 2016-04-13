@@ -82,6 +82,10 @@ ModelController.request.addStatisticsPoint = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
 };
 
+ModelController.request.deleteModel = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.deleteModel, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 
 ModelController.promise.getModel = function (req) {
@@ -384,6 +388,16 @@ ModelController.promise.addStatisticsPoint = function (req) {
   }
 
   return Model.addStatisticsPoint(modelId, req.body.point);
+};
+
+ModelController.promise.deleteModel = function (req) {
+  const { modelId } = req.params;
+  const error = Model.validate({ _id: modelId }, { _id: true });
+  if (error) {
+    return Promise.reject(new ClientError(error));
+  }
+
+  return Model.deleteModel(modelId);
 };
 
 export default ModelController;

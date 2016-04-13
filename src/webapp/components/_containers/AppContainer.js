@@ -10,7 +10,7 @@ import PureComponent from 'react-pure-render/component';
 import { pushState } from 'redux-router';
 import qs from 'qs';
 
-import { Logger } from 'common';
+import { Logger, Constants } from 'common';
 import { GravatarHelper } from 'webapp/helpers';
 import { UserActions } from 'webapp/actions';
 
@@ -140,16 +140,24 @@ class AppContainer extends PureComponent {
       <ul className="nav navbar-nav navbar-right" key={ 1 }>
         <NavDropdown className={ classnames(dropDownClasses) }
           title={ this._renderUserAvatar() } id="registeredDropdown">
+          {
+            user.get('role') === Constants.ROLE_ADMIN &&
+            <LinkContainer to="/admin">
+              <MenuItem eventKey="1">
+                Admin Panel
+              </MenuItem>
+            </LinkContainer>
+          }
           <LinkContainer to={ `/u/${user.get('name')}` }>
             <MenuItem eventKey="2">
               Manage Profile
             </MenuItem>
           </LinkContainer>
-          <MenuItem eventKey="2">
+          <MenuItem eventKey="3">
             Settings
           </MenuItem>
           <MenuItem divider />
-          <MenuItem eventKey="3">
+          <MenuItem eventKey="4">
             Log Out
           </MenuItem>
         </NavDropdown>

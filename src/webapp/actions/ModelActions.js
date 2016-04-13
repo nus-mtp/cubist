@@ -9,7 +9,8 @@ import {
   REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT,
-  REQ_PUT_ADD_STATISTICS_POINT
+  REQ_PUT_ADD_STATISTICS_POINT,
+  REQ_DEL_MODEL
 } from './types';
 
 export default {
@@ -128,6 +129,14 @@ export default {
           point
         }
       })
+    };
+  },
+
+  deleteModel(modelId) {
+    return {
+      type: REQ_DEL_MODEL,
+      promise: apiClient => apiClient.delete(`/model/${modelId}`),
+      payload: modelId
     };
   }
 };
