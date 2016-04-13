@@ -272,7 +272,9 @@
     dispatch(WalkthroughActions.viewWalkthroughPoint(selectedWalkthroughIndex));
   };
 
-  // Statistics
+  // -----------------------------------------------------
+  // -----------------STATISTICS EVENT HANDLER------------
+  // -----------------------------------------------------
   _initStatisticsPoints = (points) => {
     const tempArray = new Array(points.size);
 
@@ -296,7 +298,6 @@
 
     dispatch(CameraActions.setCameraView(pos, lookAt));
   };
-
 
   _onStatisticsSelect = (index) => {
     this.setState({
@@ -332,33 +333,6 @@
     dispatch(WalkthroughActions.insertWalkthroughPoint(targetIndex, controlToggle, pos, lookAt, snapshot));
   };
 
-  // Snapshot
-  _onCameraSnapshot = (e, index, pos, lookAt, snapshotToken) => {
-    e.preventDefault();
-    // console.log('enter', index);
-    const { dispatch } = this.props;
-    this.setState({ statisticsIndex: this.state.statisticsIndex + 1 });
-
-    setTimeout(() => { dispatch(CameraActions.setCameraView(pos, lookAt));}, 200);
-    setTimeout(() => { dispatch(SnapshotActions.triggerSnapshot(snapshotToken));}, 250);
-  };
-
-  _onRetrieveStatisticButtonClicked = (e, points) => {
-    e.preventDefault();
-    let index;
-    const pointList = points.toJS();
-
-    for (let i = 0; i < pointList.length; i++) {
-      setTimeout(() => {
-        index = this.state.statisticsIndex;
-        const { pos, lookAt, snapshotToken } = pointList[index];
-        // console.log('outside', index, pos, lookAt, snapshotToken);
-
-        this._onCameraSnapshot(e, index, pos, lookAt, snapshotToken);
-      }, i * 300 + 50);
-    }
-  };
-
   render() {
     const { model, walkthroughPoints, snapshots } = this.props;
     const { object } = this.state;
@@ -392,7 +366,6 @@
               { this._renderWalkthroughPlaybackSection() }
             </div>
             <h2>Statistics</h2>
-            { false && this._renderRetrieveStatisticButton() }
             <div className={ `${CLASS_NAME}-walkthrough` }>
               <StatisticsSlider
                 isEditor
@@ -715,7 +688,6 @@
     }
   }
 
-
   // -----------------------------------------------------
   // ----------------- Statistics ------------------------
   // -----------------------------------------------------
@@ -747,35 +719,8 @@
   _renderStatViewPointButton(index) {
     return (
       <button className="btn btn-info" onClick={ e => this._onStatisticsViewPoint(e, index) }>
-          View Point
+        View Point
       </button>
-    );
-  }
-
-  _renderInsertPointButtonGroup() {
-    const { walkthroughPoints } = this.props;
-    const { insertTargetIndex, selected } = this.state;
-
-    return (
-      <ButtonGroup>
-          <SplitButton title={ `${ insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
-            { walkthroughPoints.map((walkthroughPoint, index) =>
-              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
-                onClick={ e => this._onInsertSetIndex(e, index) } >
-                { `${index + 1}` }
-              </MenuItem>
-            ) }
-          </SplitButton>
-
-          <button className="btn btn-success" onClick={
-            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') } >
-          Insert Before
-          </button>
-          <button className="btn btn-success" onClick={
-            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') } >
-          Insert After
-          </button>
-      </ButtonGroup>
     );
   }
 
@@ -806,17 +751,30 @@
     }
   }
 
-  _renderRetrieveStatisticButton() {
-    if (this.state.statisticsPoints === undefined) {
-      const { model } = this.props;
-      this._initStatisticsPoints(model.get('popularPoints'));
-    }
-    const { statisticsPoints } = this.state;
+  _renderInsertPointButtonGroup() {
+    const { walkthroughPoints } = this.props;
+    const { insertTargetIndex, selected } = this.state;
 
     return (
-      <button className="btn btn-default" onClick={ e => this._onRetrieveStatisticButtonClicked(e, statisticsPoints) } >
-          Retrieve Statistics
-      </button>
+      <ButtonGroup>
+          <SplitButton title={ `${ insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
+            { walkthroughPoints.map((walkthroughPoint, index) =>
+              <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
+                onClick={ e => this._onInsertSetIndex(e, index) } >
+                { `${index + 1}` }
+              </MenuItem>
+            ) }
+          </SplitButton>
+
+          <button className="btn btn-success" onClick={
+            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') } >
+          Insert Before
+          </button>
+          <button className="btn btn-success" onClick={
+            e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') } >
+          Insert After
+          </button>
+      </ButtonGroup>
     );
   }
 
