@@ -365,7 +365,7 @@
               { this._renderWalkthroughSection() }
               { this._renderWalkthroughPlaybackSection() }
             </div>
-            <h2>Statistics</h2>
+            <h2>Popular View Points</h2>
             <div className={ `${CLASS_NAME}-walkthrough` }>
               <StatisticsSlider
                 isEditor
@@ -700,6 +700,7 @@
     const stats = statisticsPoints.get(selected);
     const position = stats.get('pos');
     const lookAt = stats.get('lookAt');
+    const views = stats.get('count');
     return (
       <div className={ `${CLASS_NAME}-walkthrough-form` }>
         <h5>Position</h5>
@@ -710,6 +711,7 @@
         <p>
           { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
         </p>
+        <h5>Numbers of Views: { views } </h5>
         { this._renderStatViewPointButton(selected) }
         { this._renderInsertButton(selected, stats) }
       </div>
