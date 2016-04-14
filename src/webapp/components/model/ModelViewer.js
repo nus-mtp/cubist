@@ -172,20 +172,23 @@ class ModelViewer extends React.Component {
   }
 
   _renderWalkthroughButton() {
-    const buttonTitle = 'Play Walkthrough';
-    const resetViewButtonClasses = [
-      'btn',
-      'btn-transparent-alt',
-      `${CLASS_NAME}-play-walkthrough-button`
-    ];
+    const { walkthroughPoints } = this.props;
+    if (walkthroughPoints.size !== 0) {
+      const buttonTitle = 'Play Walkthrough';
+      const resetViewButtonClasses = [
+        'btn',
+        'btn-transparent-alt',
+        `${CLASS_NAME}-play-walkthrough-button`
+      ];
 
-    return (
-      <button type="button"
-        className={ classnames(resetViewButtonClasses) }
-        onClick={ this._onPlayWalkthroughButtonClick }>
-        { buttonTitle }
-      </button>
-    );
+      return (
+        <button type="button"
+          className={ classnames(resetViewButtonClasses) }
+          onClick={ this._onPlayWalkthroughButtonClick }>
+          { buttonTitle }
+        </button>
+      );
+    }
   }
 }
 
