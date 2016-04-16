@@ -383,7 +383,7 @@ class ModelScene {
     callback(this.getCameraOrbit());
     this.controls.updateFirstPosition(camPos);
     this.controls.resetView = true;
-    this.updateObjectVertexNormals();
+    this.updateObject();
     this.updateSceneObjects();
   }
 
@@ -441,13 +441,17 @@ class ModelScene {
   }
 
   /**
-    * Run through all meshes in the model object and have threejs calculate their vertex normals
+    * Run through all meshes in the model object
+    * and update: (1) vertex normals and (2) faces to double sided
   */
-  updateObjectVertexNormals() {
+  updateObject() {
     this.model.traverse(child => {
       if (child instanceof THREE.Mesh) {
         child.geometry.computeVertexNormals();
         child.geometry.normalsNeedUpdate = true;
+        if (child.material) {
+          child.material.side = THREE.DoubleSide;
+        }
       }
     });
   }
