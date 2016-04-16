@@ -183,7 +183,7 @@ class ModelContainer extends PureComponent {
     const urls = model.get('urls').map(u => `/storage/models/${u}`);
     const objUrl = urls.filter(url => url.endsWith('.obj')).get(0);
     loader.load(objUrl, m => {
-      this.setState({ model: m });
+      this.setState({ object: m });
     });
   }
 
