@@ -23,13 +23,12 @@ describe('Render Reducer', () => {
   });
   describe('#Action: RESET_BUTTONS', () => {
     it('Should return the initial state', () => {
-      expect(reducer(undefined, { type: RESET_BUTTONS })).to.equal(Map({
+      expect(reducer({}, { type: RESET_BUTTONS })).to.equal(Map({
         wireframe: false,
         shadingMode: 0,
         autoRotate: false,
         resetViewToggle: false,
-        playbackWalkthroughToggle: false,
-        resizedTexture: false
+        playbackWalkthroughToggle: false
       }));
     });
   });
