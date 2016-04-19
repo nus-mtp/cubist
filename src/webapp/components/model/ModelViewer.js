@@ -21,6 +21,11 @@ class ModelViewer extends React.Component {
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List)
   };
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(RenderActions.resetButtons());
+  }
+
   _onToggleWireframeButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleWireframe());
