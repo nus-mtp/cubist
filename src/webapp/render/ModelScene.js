@@ -600,7 +600,8 @@ class ModelScene {
             color: 0xc0c0c0,
             shading: THREE.SmoothShading,
             wireframe: false,
-            transparent: true
+            transparent: true,
+            side: THREE.DoubleSide
           }));
           objects.push(newMesh);
         }
@@ -614,7 +615,8 @@ class ModelScene {
             color: 0xc0c0c0,
             shading: THREE.FlatShading,
             wireframe: false,
-            transparent: true
+            transparent: true,
+            side: THREE.DoubleSide
           }));
           objects.push(newMesh);
         }
