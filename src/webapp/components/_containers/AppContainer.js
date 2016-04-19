@@ -2,9 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import { NavDropdown, MenuItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 import { pushState } from 'redux-router';
@@ -92,9 +90,9 @@ class AppContainer extends PureComponent {
             <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
             </button>
-            <Link to="/" className={ classnames(navBrandClasses) }>
+            <a href="/" className={ classnames(navBrandClasses) }>
               Cubist
-            </Link>
+            </a>
           </div>
           <div className={ classnames(collapseClasses) }>
             {
@@ -114,18 +112,20 @@ class AppContainer extends PureComponent {
   _renderPublicHeader() {
     const signUpClasses = [
       'btn',
+      'btn-sm',
+      'btn-primary',
       'navbar-btn',
       `${CLASS_NAME}-navbar-register`
     ];
 
     return (
       <ul className="nav navbar-nav navbar-right">
-        <Link to="/register" className={ classnames(signUpClasses) }>
+        <a href="/register" className={ classnames(signUpClasses) }>
           SIGN UP
-        </Link>
-        <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
+        </a>
+        <a href="/login" className={ `${CLASS_NAME}-navbar-login btn btn-sm btn-success navbar-btn` }>
           LOG IN
-        </Link>
+        </a>
       </ul>
     );
   }
@@ -140,11 +140,9 @@ class AppContainer extends PureComponent {
       <ul className="nav navbar-nav navbar-right" key={ 1 }>
         <NavDropdown className={ classnames(dropDownClasses) }
           title={ this._renderUserAvatar() } id="registeredDropdown">
-          <LinkContainer to={ `/u/${user.get('name')}` }>
-            <MenuItem eventKey="2">
-              Manage Profile
-            </MenuItem>
-          </LinkContainer>
+          <MenuItem href={ `/u/${user.get('name')}` } eventKey="1">
+            Manage Profile
+          </MenuItem>
           <MenuItem eventKey="2">
             Settings
           </MenuItem>
@@ -155,9 +153,9 @@ class AppContainer extends PureComponent {
         </NavDropdown>
       </ul>,
       <ul className="nav navbar-nav navbar-right cb-margin-right-10px" key={ 2 }>
-        <Link to="/upload" className={ `${CLASS_NAME}-navbar-upload btn btn-success navbar-btn` }>
+        <a href="/upload" className={ `${CLASS_NAME}-navbar-upload btn btn-sm btn-success navbar-btn` }>
           UPLOAD
-        </Link>
+        </a>
       </ul>
     ];
   }
