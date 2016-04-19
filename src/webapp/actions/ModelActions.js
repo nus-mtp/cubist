@@ -9,7 +9,8 @@ import {
   REQ_PUT_TOGGLE_MODEL_FLAG,
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT,
-  REQ_PUT_ADD_STATISTICS_POINT
+  REQ_PUT_ADD_STATISTICS_POINT,
+  REQ_GET_TEXTURES
 } from './types';
 
 export default {
@@ -128,6 +129,21 @@ export default {
           point
         }
       })
+    };
+  },
+
+  getTextureData(filePaths, status, mapping) {
+    return {
+      type: REQ_GET_TEXTURES,
+      promise: apiClient => apiClient.get(`/getTextureData`, {
+        query: {
+          filePaths
+        }
+      }),
+      payload: {
+        status,
+        mapping
+      }
     };
   }
 };

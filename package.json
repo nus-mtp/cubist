@@ -97,7 +97,6 @@
     "superagent": "1.6.1",
     "superagent-bluebird-promise": "3.0.0",
     "three": "0.73.0",
-    "trianglify": "0.4.0",
     "tween.js": "16.3.4",
     "validator": "4.5.1",
     "winston": "2.1.1"

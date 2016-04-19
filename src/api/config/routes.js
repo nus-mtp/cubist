@@ -69,4 +69,5 @@ export default (app) => {
   );
 
   app.put('/model/:modelId/addStatisticsPoint', ModelController.request.addStatisticsPoint);
+  app.get('/getTextureData', ModelController.request.getTextureData);
 };

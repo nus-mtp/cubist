@@ -23,11 +23,12 @@ describe('Snapshot Reducer', () => {
   });
 
   describe('#Action: SNAPSHOT_SUCCESS', () => {
-    it('Should store new mapping of token to data on SNAPSHOT_SUCCESS', () => {
+    it('Should store new mapping of token to data on SNAPSHOT_SUCCESS and reset token', () => {
       expect(
-        reducer(Map({ snapshots: new Map() }), { type: SNAPSHOT_SUCCESS, payload: { token: 'foo', data: 'bar' } })
+        reducer(Map({ snapshots: new Map(), snapshotToken: 'foobar' }),
+          { type: SNAPSHOT_SUCCESS, payload: { token: 'foo', data: 'bar' } })
       ).to.equal(
-        Map({ snapshots: Map({ foo: 'bar' }) })
+        Map({ snapshots: Map({ foo: 'bar' }), snapshotToken: undefined })
       );
     });
   });

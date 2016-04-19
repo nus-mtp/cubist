@@ -25,7 +25,9 @@ class ModelCanvas extends React.Component {
     wireframe: React.PropTypes.bool,
     shadingMode: React.PropTypes.number,
     autoRotate: React.PropTypes.bool,
-    resizedTexture: React.PropTypes.bool,
+    // resizedTexture: React.PropTypes.bool,
+    textureStatus: React.PropTypes.number,
+    mapping: React.PropTypes.object,
     containerWidth: React.PropTypes.number,
     aspectRatio: React.PropTypes.number,
     object: React.PropTypes.object,
@@ -90,8 +92,32 @@ class ModelCanvas extends React.Component {
       // wait for OrbitControls to reset camera view in update
       setTimeout(() => this.modelScene._updateCamera(), 250);
     }
-    if (nextProps.resizedTexture !== this.props.resizedTexture && this.modelScene) {
-      this.modelScene.updateRenderingState({ resizedTexture: nextProps.resizedTexture });
+
+    // Texture trigger
+    if (nextProps.textureStatus !== this.props.textureStatus && this.modelScene) {
+      const mapping = nextProps.mapping.toJS();
+      const textureStatus = nextProps.textureStatus;
+      const { dispatch } = this.props;
+      this.modelScene.loadNewTexture(
+        {
+          textures: nextProps.textures.toJS(),
+          textureStatus,
+          mapping
+        },
+        () => {
+          if (textureStatus < 2) {
+            return;
+          }
+          const newMapping = mapping.map(m => {
+            const res = Object.assign({}, m);
+            const replaced = textureStatus === 2 ? '' : `@${textureStatus - 1}`;
+            res.path = res.path.replace(`@${textureStatus}`, replaced);
+            return res;
+          });
+          const filePaths = newMapping.map(m => m.path);
+          dispatch(ModelActions.getTextureData(filePaths, textureStatus - 1, newMapping));
+        }
+      );
     }
 
     // Snapshot Trigger
@@ -261,14 +287,6 @@ class ModelCanvas extends React.Component {
     camAzimuth = camAzimuth - (camAzimuth % partitionSize);
     lookIncline = lookIncline - (lookIncline % partitionSize);
     lookAzimuth = lookAzimuth - (lookAzimuth % partitionSize);
-
-    // convert polar coords of camera back to cartesian
-    // let cam_seg_x = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.sin(camAzimuth / 180 * Math.PI);
-    // let cam_seg_y = camRadius * Math.cos(camIncline / 180 * Math.PI);
-    // let cam_seg_z = camRadius * Math.sin(camIncline / 180 * Math.PI) * Math.cos(camAzimuth / 180 * Math.PI);
-    // cam_seg_x = Math.round(cam_seg_x);
-    // cam_seg_y = Math.round(cam_seg_y);
-    // cam_seg_z = Math.round(cam_seg_z);
 
     const convertedPoint = {
       camLongtitude: camAzimuth,

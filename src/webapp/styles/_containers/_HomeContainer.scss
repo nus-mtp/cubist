@@ -9,17 +9,10 @@
   overflow: hidden;
   width: 100%;
   min-height: 100vh;
-
+  background-image: url('http://i.imgur.com/DhGMJi9.png');
+  background-position: center center;
+  background-size: cover;
   align-items: center;
-
-  canvas {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: -1;
-    min-width: 100%;
-    transform: translate(-50%, -50%);
-  }
 }
 
 .cb-ctn-home-hero-content {
@@ -29,8 +22,8 @@
 
 .cb-ctn-home-hero-title {
   padding-top: 50px;
-  color: rgba(0, 0, 0, .2);
-  font-weight: 200;
+  color: rgba(0, 0, 0, .3);
+  font-weight: 600;
   font-size: 5em;
 }
 

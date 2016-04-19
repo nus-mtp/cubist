@@ -32,5 +32,7 @@ export default store => next => action => {
         { type: NAVIGATE_COMPLETE },
         action
       ]));
+      // Scroll to top after transition
+      window.scrollTo(0, 0);
     });
 };

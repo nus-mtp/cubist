@@ -21,6 +21,11 @@ class ModelViewer extends React.Component {
     walkthroughPoints: React.PropTypes.instanceOf(Immutable.List)
   };
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(RenderActions.resetButtons());
+  }
+
   _onToggleWireframeButtonClick = () => {
     const { dispatch } = this.props;
     dispatch(RenderActions.toggleWireframe());
@@ -61,7 +66,6 @@ class ModelViewer extends React.Component {
           <ModelCanvas { ...this.props } />
           <div className={ `${CLASS_NAME}-options` }>
             { this._renderWalkthroughButton() }
-            { this._renderTextureButton() }
             { this._renderShadingButton() }
             { this._renderAutoRotatebutton() }
             { this._renderWireframeButton() }
@@ -69,24 +73,6 @@ class ModelViewer extends React.Component {
           </div>
         </div>
       </div>
-    );
-  }
-
-  _renderTextureButton() {
-    const { resizedTexture } = this.props;
-    let buttonTitle;
-    if (resizedTexture === true) {
-      buttonTitle = 'HD';
-    } else { // if (resizedTexture === false)
-      buttonTitle = 'LD';
-    }
-
-    return (
-      <button type="button"
-        className="btn btn-transparent-alt"
-        onClick={ this._onToggleTextureButtonClick }>
-        { buttonTitle }
-      </button>
     );
   }
 
@@ -172,20 +158,23 @@ class ModelViewer extends React.Component {
   }
 
   _renderWalkthroughButton() {
-    const buttonTitle = 'Play Walkthrough';
-    const resetViewButtonClasses = [
-      'btn',
-      'btn-transparent-alt',
-      `${CLASS_NAME}-play-walkthrough-button`
-    ];
+    const { walkthroughPoints } = this.props;
+    if (walkthroughPoints.size !== 0) {
+      const buttonTitle = 'Play Walkthrough';
+      const resetViewButtonClasses = [
+        'btn',
+        'btn-transparent-alt',
+        `${CLASS_NAME}-play-walkthrough-button`
+      ];
 
-    return (
-      <button type="button"
-        className={ classnames(resetViewButtonClasses) }
-        onClick={ this._onPlayWalkthroughButtonClick }>
-        { buttonTitle }
-      </button>
-    );
+      return (
+        <button type="button"
+          className={ classnames(resetViewButtonClasses) }
+          onClick={ this._onPlayWalkthroughButtonClick }>
+          { buttonTitle }
+        </button>
+      );
+    }
   }
 }
 

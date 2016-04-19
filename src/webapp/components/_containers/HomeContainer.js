@@ -4,11 +4,8 @@ import classnames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import ReactDOM from 'react-dom';
 import PureComponent from 'react-pure-render/component';
-import Trianglify from 'trianglify';
 
-import { TrianglifyCanvas } from '../common';
 import { ModelCard } from '../model';
 import { ModelActions } from 'webapp/actions';
 import { UrlHelper } from 'webapp/helpers';
@@ -19,8 +16,6 @@ const categories = process.env.BROWSER
   : requireServerJson(__dirname, '../../assets/model-category.json');
 
 const CLASS_NAME = 'cb-ctn-home';
-const DEFAULT_WIDTH = 1920;
-const DEFAULT_HEIGHT = 1080;
 
 class HomeContainer extends PureComponent {
   static fetchData({ dispatch }) {
@@ -35,43 +30,6 @@ class HomeContainer extends PureComponent {
     topModels: React.PropTypes.instanceOf(Immutable.List)
   };
 
-  state = {
-    ...Trianglify.defaults,
-    width: process.env.BROWSER ? window.innerWidth : DEFAULT_WIDTH,
-    height: process.env.BROWSER ? window.innerHeight : DEFAULT_HEIGHT,
-    x_colors: 'YlGnBu',
-    cell_size: 40,
-    resize_timer: null,
-    variance: 0.75,
-    seed: Math.random()
-  };
-
-  componentDidMount() {
-    window.addEventListener('resize', this._onDebounceResize);
-    window.addEventListener('orientationchange', this._onDebounceResize);
-    this.setState({
-      // Provide some offset height at initial load
-      height: ReactDOM.findDOMNode(this.refs.hero).offsetHeight + 25
-    });
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this._onDebounceResize);
-    window.removeEventListener('orientationchange', this._debounceResize);
-  }
-
-  _onDebounceResize = () => {
-    clearTimeout(this.state.resize_timer);
-    this.setState({ resize_timer: setTimeout(this._onResize, 100) });
-  };
-
-  _onResize = () => {
-    this.setState({
-      width: window.innerWidth,
-      height: ReactDOM.findDOMNode(this.refs.hero).offsetHeight
-    });
-  };
-
   render() {
     return (
       <div className={ CLASS_NAME }>
@@ -83,19 +41,8 @@ class HomeContainer extends PureComponent {
   }
 
   _renderHeroSection() {
-    const { width, height, seed, cell_size, variance, x_colors } = this.state;
-    const trianglifyProps = {
-      variance,
-      x_colors,
-      cell_size,
-      seed,
-      width: width + 10,
-      height: height + 10
-    };
-
     return (
       <div className={ `${CLASS_NAME}-hero` } ref="hero">
-        <TrianglifyCanvas { ...trianglifyProps } />
         <div className={ `${CLASS_NAME}-hero-content` }>
           <h1 className={ `${CLASS_NAME}-hero-title` }>CUBIST</h1>
           <p className={ `${CLASS_NAME}-hero-subtitle` }>
@@ -125,13 +72,15 @@ class HomeContainer extends PureComponent {
         itemClasses = [
           `${CLASS_NAME}-hero-random-item`,
           `${CLASS_NAME}-hero-random-4-item`,
-          'col-xs-3'
+          'col-xs-12',
+          'col-sm-3'
         ];
       } else {
         itemClasses = [
           `${CLASS_NAME}-hero-random-item`,
           `${CLASS_NAME}-hero-random-6-item`,
-          'col-xs-2'
+          'col-xs-12',
+          'col-sm-2'
         ];
       }
 
@@ -202,15 +151,16 @@ class HomeContainer extends PureComponent {
       };
 
       return (
-        <div className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6` }
+        <Link to={ `/browse?category=${category.db_name}` }
+          className={ `${CLASS_NAME}-category-item col-md-3 col-sm-4 col-xs-6 scrollup` }
           key={ i }>
           <div className={ `${CLASS_NAME}-category-item-background` } style={ style } />
           <div className={ `${CLASS_NAME}-category-item-overlay` }>
             <div className={ `${CLASS_NAME}-category-item-title` }>
-              { category.category }
+              { category.title }
             </div>
           </div>
-        </div>
+        </Link>
       );
     });
   }
