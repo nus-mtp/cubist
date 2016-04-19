@@ -6,7 +6,8 @@ import {
   WIREFRAME_TOGGLE,
   AUTO_ROTATE_TOGGLE,
   SHADING_TOGGLE,
-  TEXTURE_TOGGLE
+  TEXTURE_TOGGLE,
+  RESET_BUTTONS
 } from 'webapp/actions/types';
 
 describe('Render Reducer', () => {
@@ -19,6 +20,26 @@ describe('Render Reducer', () => {
       playbackWalkthroughToggle: false,
       resizedTexture: false
     }));
+  });
+  describe('#Action: RESET_BUTTONS', () => {
+    it('Should return the initial state', () => {
+      expect(reducer(undefined, { type: RESET_BUTTONS })).to.equal(Map({
+        wireframe: false,
+        shadingMode: 0,
+        autoRotate: false,
+        resetViewToggle: false,
+        playbackWalkthroughToggle: false,
+        resizedTexture: false
+      }));
+    });
+
+    it('Should handle WIREFRAME_TOGGLE toggling from FALSE to TRUE', () => {
+      expect(
+        reducer(Map({ wireframe: false }), { type: WIREFRAME_TOGGLE })
+      ).to.equal(
+        Map({ wireframe: true })
+      );
+    });
   });
 
   describe('#Action: WIREFRAME_TOGGLE', () => {

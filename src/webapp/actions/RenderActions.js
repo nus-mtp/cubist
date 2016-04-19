@@ -4,10 +4,17 @@ import {
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
   PLAY_WALKTHROUGH,
-  TEXTURE_TOGGLE
+  TEXTURE_TOGGLE,
+  RESET_BUTTONS
 } from './types';
 
 export default {
+  resetButtons() {
+    return {
+      type: RESET_BUTTONS
+    };
+  },
+
   toggleWireframe() {
     return {
       type: WIREFRAME_TOGGLE
