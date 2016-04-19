@@ -38,8 +38,10 @@ $ npm install
 * Clear MongoDB database for `cubist-api-development` (if necessary)
 * Install Gulp globally by running: `npm install gulp -g`
 * Run script: 
-  + For basic set of system-friendly models: `gulp script --path src/api/scripts/createData/index.js`
-  + For all available models (including non-system-friendly models): `gulp script --path src/api/scripts/createData/allModels.js`
+  + For basic set of system-friendly models: 
+    `gulp script --path src/api/scripts/createData/index.js`
+  + For all available models (including non-system-friendly models): 
+    `gulp script --path src/api/scripts/createData/allModels.js`
 
 ###For development environment
 
