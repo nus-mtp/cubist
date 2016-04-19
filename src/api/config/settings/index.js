@@ -9,7 +9,14 @@ if (process.env.NODE_ENV !== 'development') {
 const config = require('./' + configFile);
 
 // Check for private configuration
-const hasPrivateConfig = fs.statSync(path.resolve(__dirname, './private.js')).isFile();
-const privateConfig = hasPrivateConfig ? require('./private') : {};
+let privateConfig;
+try {
+  const hasPrivateConfig = fs.accessSync(path.resolve(__dirname, './private.js'));
+  privateConfig = hasPrivateConfig ? require('./private') : {};
+} catch (err) {
+  /* eslint-disable no-console */
+  console.log('No `private.js` file exists');
+  /* eslint-enable no-console */
+}
 
 export default Object.assign({}, config, privateConfig);
