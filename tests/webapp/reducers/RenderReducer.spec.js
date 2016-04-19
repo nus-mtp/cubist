@@ -32,14 +32,6 @@ describe('Render Reducer', () => {
         resizedTexture: false
       }));
     });
-
-    it('Should handle WIREFRAME_TOGGLE toggling from FALSE to TRUE', () => {
-      expect(
-        reducer(Map({ wireframe: false }), { type: WIREFRAME_TOGGLE })
-      ).to.equal(
-        Map({ wireframe: true })
-      );
-    });
   });
 
   describe('#Action: WIREFRAME_TOGGLE', () => {
