@@ -334,7 +334,7 @@
       targetIndex,
       controlToggle === 'before')
     );
-    
+
     return Promise
         .resolve()
         .then(() => dispatch(CameraActions.setCameraView(pos, lookAt)))
