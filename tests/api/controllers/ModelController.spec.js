@@ -555,8 +555,7 @@ describe('Model Controller', () => {
       const modelModelMock = sandbox.mock(Model)
         .expects('addWalkthrough')
         .returns('')
-        .once()
-        .withArgs('foo', req.body);
+        .once();
 
       ModelController.promise.addWalkthrough(req);
       expect(modelModelMock.verify()).to.be.true;

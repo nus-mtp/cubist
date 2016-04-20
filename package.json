@@ -13,7 +13,7 @@
     "cover-ci": "NODE_PATH=src babel-node ./node_modules/isparta/bin/isparta cover _mocha -- tests/**/*.spec.js --recursive --reporter spec --require tests/init.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "webapp-dev": "NODE_PATH=src gulp webapp-dev",
-    "webpapp-prod": "NODE_PATH=src gulp webapp-prod",
+    "webapp-prod": "NODE_PATH=src gulp webapp-prod",
     "api-dev": "NODE_PATH=src gulp api-dev",
     "api-prod": "NODE_PATH=src gulp api-prod",
     "pm2": "NODE_PATH=src gulp pm2"

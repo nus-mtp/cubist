@@ -13,7 +13,8 @@ import {
   PLAYBACK_WALKTHROUGH,
   SET_PLAYBACK_START,
   SET_PLAYBACK_END,
-  VIEW_WALKTHROUGH_POINT
+  VIEW_WALKTHROUGH_POINT,
+  INSERT_POINT
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -68,6 +69,31 @@ export default ReducerHelper.createReducer(initialState, {
     const { index } = payload;
 
     return nextState.set('viewIndex', index);
+  },
+
+  [INSERT_POINT]: (state, { payload }) => {
+    const { index, controlToggle, pos, lookAt, snapshot } = payload;
+
+    let targetIndex = index;
+
+    if (controlToggle === 'after') {
+      targetIndex++;
+    }
+
+    const snapshotToken = snapshot;
+
+    const disjointMode = true;
+    const quaternion = { x: 0, y: 0, z: 0, w: 0 };
+    const animationMode = 'Stationary';
+    const duration = 1.00;
+
+
+    let nextState = state;
+    nextState = nextState.update('points', points => {
+      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion,
+                           disjointMode, animationMode, duration, snapshotToken }));
+    });
+    return nextState;
   }
 
 });

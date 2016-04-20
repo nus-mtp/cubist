@@ -38,7 +38,8 @@ class ModelCanvas extends React.Component {
     walkthroughToggle: React.PropTypes.bool,
     viewIndex: React.PropTypes.number,
     position: React.PropTypes.instanceOf(Immutable.Map),
-    lookAt: React.PropTypes.instanceOf(Immutable.Map)
+    lookAt: React.PropTypes.instanceOf(Immutable.Map),
+    trigger: React.PropTypes.bool
   };
 
   static defaultProps = {
@@ -124,6 +125,7 @@ class ModelCanvas extends React.Component {
       this._onSnapshotToken(nextProps.snapshotToken);
     }
 
+
     // Walkthrough Trigger
     if (nextProps.walkthroughToggle !== this.props.walkthroughToggle
       && nextProps.walkthroughToggle === true && this.modelScene) {
@@ -140,6 +142,10 @@ class ModelCanvas extends React.Component {
         viewIndex: nextProps.viewIndex
       });
       dispatch(WalkthroughActions.viewWalkthroughPoint(-1));
+    }
+
+    if (nextProps.trigger !== this.props.trigger && this.modelScene) {
+      this.modelScene._setCameraView(nextProps.position, nextProps.lookAt);
     }
   }
 

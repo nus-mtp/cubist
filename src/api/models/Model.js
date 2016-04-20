@@ -386,18 +386,28 @@ Model.statics.deleteSnapshot = function (modelId, index) {
 // -----------------------------------------------------
 // -----------------MODEL WALKTHROUGH-------------------
 // -----------------------------------------------------
-Model.statics.addWalkthrough = function (modelId, walkthrough) {
+Model.statics.addWalkthrough = function (modelId, walkthrough, index, isBefore) {
   const fields = ['key', 'pos', 'lookAt', 'quaternion', 'disjointMode', 'animationMode', 'duration'];
   const condition = {
     _id: modelId
   };
-  const update = {
-    $push: {
-      walkthroughs: {
-        ..._.pick(walkthrough, fields)
+  let update;
+  if (index !== null) {
+    update = {
+      $push: {
+        walkthroughs: {
+          $each: [_.pick(walkthrough, fields)],
+          $position: isBefore ? index : index + 1
+        }
       }
-    }
-  };
+    };
+  } else {
+    update = {
+      $push: {
+        walkthroughs: _.pick(walkthrough, fields)
+      }
+    };
+  }
 
   return MongooseHelper.findOneAndUpdate(this, condition, update, { new: true });
 };

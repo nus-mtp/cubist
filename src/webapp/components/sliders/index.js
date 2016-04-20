@@ -1,4 +1,5 @@
 export default {
   SnapshotSlider: require('./SnapshotSlider'),
-  WalkthroughSlider: require('./WalkthroughSlider')
+  WalkthroughSlider: require('./WalkthroughSlider'),
+  StatisticsSlider: require('./StatisticsSlider')
 };

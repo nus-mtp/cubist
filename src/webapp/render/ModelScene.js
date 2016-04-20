@@ -320,6 +320,16 @@ class ModelScene {
     this._updateCamera();
   }
 
+  _setCameraView(position, lookAt) {
+    const pos = position.toJS();
+    const look = lookAt.toJS();
+
+    this.camera.position.set(pos.x, pos.y, pos.z);
+    const lookTarget = new THREE.Vector3(look.x, look.y, look.z);
+    this.controls.constraint.target = lookTarget;
+    this._updateCamera();
+  }
+
   _updateCamera() {
     this.getCameraOrbit();
 

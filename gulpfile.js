@@ -20,6 +20,16 @@ gulp.task('script', function() {
   });
 });
 
+gulp.task('prod-script', function() {
+  var env = _.cloneDeep(process.env);
+  env.NODE_ENV = 'production';
+  env.NODE_PATH = 'src';
+  spawn('node_modules/.bin/babel-node', [argv.path], {
+    env: env,
+    stdio: 'inherit'
+  });
+});
+
 /**
  * Run Web Application Rendering Server in development environement
  * Static files will be bundled and served by Webpack development server to enable hot reload

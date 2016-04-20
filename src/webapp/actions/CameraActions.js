@@ -1,6 +1,7 @@
 import {
   CAMERA_ORBIT,
-  CAMERA_UPDATE
+  CAMERA_UPDATE,
+  CAMERA_SET_VIEW
 } from './types';
 
 export default {
@@ -16,5 +17,16 @@ export default {
       type: CAMERA_UPDATE,
       payload: camera
     };
+  },
+
+  setCameraView(position, lookAt) {
+    return {
+      type: CAMERA_SET_VIEW,
+      payload: {
+        position,
+        lookAt
+      }
+    };
   }
+
 };

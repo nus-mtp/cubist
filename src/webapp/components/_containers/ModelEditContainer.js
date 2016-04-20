@@ -4,13 +4,13 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton } from 'react-bootstrap';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup } from 'react-bootstrap';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
- import { SnapshotSlider, WalkthroughSlider } from '../sliders';
+ import { SnapshotSlider, WalkthroughSlider, StatisticsSlider } from '../sliders';
  import { StringHelper, Constants } from 'common';
- import { ModelActions, WalkthroughActions, SnapshotActions } from 'webapp/actions';
+ import { ModelActions, WalkthroughActions, SnapshotActions, CameraActions } from 'webapp/actions';
  import { GravatarHelper } from 'webapp/helpers';
  import { REQ_PUT_UPDATE_MODEL_INFO } from 'webapp/actions/types';
 
@@ -57,9 +57,17 @@
         [MODEL_TAGS_FIELD]: props.model.get(MODEL_TAGS_FIELD).toJS().join(', ')
       },
 
+      // Insert
+      insertTargetIndex: 0,
+      selected: undefined,
+      insertToggle: false,
+      statisticsPoints: undefined,
+
+      // Statistics
+      statisticsIndex: 0,
+
       // Walkthrough
-      selectedWalkthroughIndex: undefined,
-      durations: props.walkthroughPoints.map(p => p.get('duration'))
+      selectedWalkthroughIndex: undefined
     };
   }
 
@@ -103,6 +111,22 @@
         .then(() => dispatch(WalkthroughActions.viewWalkthroughPoint(index)))
         .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
         .then(() => dispatch(SnapshotActions.triggerSnapshot(walkthroughPoint.get('key'))));
+    });
+
+    if (this.state.statisticsPoints === undefined) {
+      const { model } = this.props;
+      this._initStatisticsPoints(model.get('popularPoints'));
+    }
+
+    const { statisticsPoints } = this.state;
+
+    statisticsPoints.forEach((currStatsPoint) => {
+      const { pos, lookAt, snapshotToken } = currStatsPoint.toJS();
+      promise = promise
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(CameraActions.setCameraView(pos, lookAt)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(snapshotToken)));
     });
 
     return promise;
@@ -248,6 +272,76 @@
     dispatch(WalkthroughActions.viewWalkthroughPoint(selectedWalkthroughIndex));
   };
 
+  // -----------------------------------------------------
+  // -----------------STATISTICS EVENT HANDLER------------
+  // -----------------------------------------------------
+  _initStatisticsPoints = (points) => {
+    const tempArray = new Array(points.size);
+
+    for (let i = 0; i < points.size; i++) {
+      const { camSegX, camSegY, camSegZ, lookAtSegX, lookAtSegY, lookAtSegZ, count } = points.toJS()[i];
+      const pos = { x: camSegX, y: camSegY, z: camSegZ };
+      const lookAt = { x: lookAtSegX, y: lookAtSegY, z: lookAtSegZ };
+      const snapshotToken = StringHelper.randomToken();
+      const key = snapshotToken;
+
+      tempArray[i] = { key, pos, lookAt, snapshotToken, count };
+    }
+    this.setState({ statisticsPoints: Immutable.fromJS(tempArray) });
+  };
+
+  _onStatisticsViewPoint = (e, index) => {
+    e.preventDefault();
+    const { dispatch } = this.props;
+    const pointList = this.state.statisticsPoints.toJS();
+    const { pos, lookAt } = pointList[index];
+
+    dispatch(CameraActions.setCameraView(pos, lookAt));
+  };
+
+  _onStatisticsSelect = (index) => {
+    this.setState({
+      selected: index
+    });
+  };
+
+  _onInsertButtonClicked = (e, index) => {
+    e.preventDefault();
+
+    this.setState({ insertToggle: !this.state.insertToggle });
+    this.setState({ selected: index });
+  };
+
+  _onInsertSetIndex = (e, index) => {
+    e.preventDefault();
+    this.setState({ insertTargetIndex: index });
+  };
+
+  _onInsertIntoWalkthrough = (e, targetIndex, currentIndex, controlToggle) => {
+    e.preventDefault();
+    const { dispatch, params } = this.props;
+    const { statisticsPoints } = this.state;
+    const key = StringHelper.randomToken();
+
+    const curr = statisticsPoints.toJS()[currentIndex];
+    const pos = { x: curr.pos.x, y: curr.pos.y, z: curr.pos.z };
+    const lookAt = { x: curr.lookAt.x, y: curr.lookAt.y, z: curr.lookAt.z };
+    const newWalkthrough = { key, pos, lookAt, quaternion: { x: 0, y: 0, z: 0, w: 0 } };
+    this._onInsertButtonClicked(e);
+    dispatch(WalkthroughActions.addWalkthrough(
+      params.modelId,
+      newWalkthrough,
+      targetIndex,
+      controlToggle === 'before')
+    );
+
+    return Promise
+        .resolve()
+        .then(() => dispatch(CameraActions.setCameraView(pos, lookAt)))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        .then(() => dispatch(SnapshotActions.triggerSnapshot(key)));
+  };
+
   render() {
     const { model, walkthroughPoints, snapshots } = this.props;
     const { object } = this.state;
@@ -264,13 +358,15 @@
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            <h2>Snapshots</h2>
-            <SnapshotSlider
-              isEditor
-              snapshots={ model.get('imageUrls', new Immutable.List()) }
-              onSnapshotsAdd={ this._onSnapshotsAdd } />
+            <h2>Thumbnails</h2>
+            <div className={ `${CLASS_NAME}-section-container` }>
+              <SnapshotSlider
+                isEditor
+                snapshots={ model.get('imageUrls', new Immutable.List()) }
+                onSnapshotsAdd={ this._onSnapshotsAdd } />
+            </div>
             <h2>Walkthroughs</h2>
-            <div className={ `${CLASS_NAME}-walkthrough` }>
+            <div className={ `${CLASS_NAME}-section-container` }>
               <WalkthroughSlider
                 isEditor
                 snapshots={ snapshots }
@@ -279,6 +375,15 @@
                 onWalkthroughSelect={ this._onWalkthroughSelect } />
               { this._renderWalkthroughSection() }
               { this._renderWalkthroughPlaybackSection() }
+            </div>
+            <h2>Popular View Points</h2>
+            <div className={ `${CLASS_NAME}-section-container` }>
+              <StatisticsSlider
+                isEditor
+                snapshots={ snapshots }
+                statistics={ this.state.statisticsPoints }
+                onStatisticsSelect={ this._onStatisticsSelect } />
+              { this._renderStatisticsSection() }
             </div>
           </div>
           <div className="col-md-4">
@@ -431,7 +536,7 @@
 
   _renderViewPointButton() {
     return (
-      <button className="btn btn-info" onClick={ this._onWalkthroughViewPoint }>
+      <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
         View Point
       </button>
     );
@@ -595,6 +700,102 @@
   }
 
   // -----------------------------------------------------
+  // ----------------- Statistics ------------------------
+  // -----------------------------------------------------
+  _renderStatisticsSection() {
+    const { selected, statisticsPoints } = this.state;
+    if (typeof selected === 'undefined') {
+      return undefined;
+    }
+
+    const stats = statisticsPoints.get(selected);
+    const position = stats.get('pos');
+    const lookAt = stats.get('lookAt');
+    const views = stats.get('count');
+    return (
+      <div className={ `${CLASS_NAME}-walkthrough-form` }>
+        <h5>Position</h5>
+        <p>
+          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
+        </p>
+        <h5>Look At</h5>
+        <p>
+          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
+        </p>
+        <h5>Numbers of Views: { views } </h5>
+        { this._renderStatViewPointButton(selected) }
+        { this._renderInsertButton(selected, stats) }
+      </div>
+    );
+  }
+
+  _renderStatViewPointButton(index) {
+    return (
+      <button className="btn btn-info" onClick={ e => this._onStatisticsViewPoint(e, index) }>
+        View Point
+      </button>
+    );
+  }
+
+  _renderInsertButton(index, point) {
+    const { insertToggle } = this.state;
+    let canRender = true;
+    let buttonType = 'btn btn-warning cb-margin-left-10px';
+    let buttonTitle = 'Insert';
+
+    if (insertToggle) {
+      buttonTitle = 'Cancel Insert';
+      buttonType = 'btn btn-danger cb-margin-left-10px';
+    }
+
+    if (point.get('snapshotToken') === undefined) {
+      canRender = false;
+    }
+
+    if (canRender) {
+      return (
+        <ButtonGroup>
+          <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+            { buttonTitle }
+          </button>
+          { insertToggle && this._renderInsertPointButtonGroup() }
+        </ButtonGroup>
+      );
+    }
+  }
+
+  _renderInsertPointButtonGroup() {
+    const { walkthroughPoints } = this.props;
+    const { insertTargetIndex, selected } = this.state;
+
+    return (
+      <ButtonGroup>
+          <SplitButton className="cb-margin-left-10px"
+            title={ `${ insertTargetIndex + 1}` }
+            pullRight
+            id="split-button-pull-right">
+            {
+              walkthroughPoints.map((walkthroughPoint, index) => (
+                <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
+                  onClick={ e => this._onInsertSetIndex(e, index) } >
+                  { `${index + 1}` }
+                </MenuItem>
+              ))
+            }
+          </SplitButton>
+          <button className="btn btn-success cb-margin-left-10px"
+            onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') }>
+            Insert Before
+          </button>
+          <button className="btn btn-success cb-margin-left-10px"
+            onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') }>
+            Insert After
+          </button>
+      </ButtonGroup>
+    );
+  }
+
+  // -----------------------------------------------------
   // -----------------MODEL LOADER------------------------
   // -----------------------------------------------------
   refreshModel(model) {
@@ -603,6 +804,8 @@
     } else {
       this.loadObj(model, () => this._onModelLoad());
     }
+
+    this._initStatisticsPoints(model.get('popularPoints'));
   }
 
   loadObj(model, cb) {
@@ -644,6 +847,7 @@
      lookAt: state.CameraStore.get('lookAt'),
      zoom: state.CameraStore.get('zoom'),
      quaternion: state.CameraStore.get('quaternion'),
+     trigger: state.CameraStore.get('trigger'),
 
      // Walkthrough Data
      walkthroughPoints: state.WalkthroughStore.get('points'),

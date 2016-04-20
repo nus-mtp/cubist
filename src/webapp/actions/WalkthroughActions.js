@@ -5,16 +5,19 @@ import {
   PLAYBACK_WALKTHROUGH,
   SET_PLAYBACK_START,
   SET_PLAYBACK_END,
-  VIEW_WALKTHROUGH_POINT
+  VIEW_WALKTHROUGH_POINT,
+  INSERT_POINT
 } from './types';
 
 export default {
-  addWalkthrough(modelId, walkthrough) {
+  addWalkthrough(modelId, walkthrough, index, isBefore) {
     return {
       type: REQ_PUT_ADD_WALKTHROUGH,
       promise: apiClient => apiClient.put(`/model/${modelId}/addWalkthrough`, {
         body: {
-          ...walkthrough
+          walkthrough,
+          index,
+          isBefore
         }
       })
     };
@@ -78,6 +81,19 @@ export default {
       type: VIEW_WALKTHROUGH_POINT,
       payload: {
         index
+      }
+    };
+  },
+
+  insertWalkthroughPoint(index, controlToggle, pos, lookAt, snapshot) {
+    return {
+      type: INSERT_POINT,
+      payload: {
+        index,
+        controlToggle,
+        pos,
+        lookAt,
+        snapshot
       }
     };
   }
