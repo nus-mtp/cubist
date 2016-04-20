@@ -358,13 +358,15 @@
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            <h2>Snapshots</h2>
-            <SnapshotSlider
-              isEditor
-              snapshots={ model.get('imageUrls', new Immutable.List()) }
-              onSnapshotsAdd={ this._onSnapshotsAdd } />
+            <h2>Thumbnails</h2>
+            <div className={ `${CLASS_NAME}-section-container` }>
+              <SnapshotSlider
+                isEditor
+                snapshots={ model.get('imageUrls', new Immutable.List()) }
+                onSnapshotsAdd={ this._onSnapshotsAdd } />
+            </div>
             <h2>Walkthroughs</h2>
-            <div className={ `${CLASS_NAME}-walkthrough` }>
+            <div className={ `${CLASS_NAME}-section-container` }>
               <WalkthroughSlider
                 isEditor
                 snapshots={ snapshots }
@@ -375,7 +377,7 @@
               { this._renderWalkthroughPlaybackSection() }
             </div>
             <h2>Popular View Points</h2>
-            <div className={ `${CLASS_NAME}-walkthrough` }>
+            <div className={ `${CLASS_NAME}-section-container` }>
               <StatisticsSlider
                 isEditor
                 snapshots={ snapshots }
@@ -738,12 +740,12 @@
   _renderInsertButton(index, point) {
     const { insertToggle } = this.state;
     let canRender = true;
-    let buttonType = 'btn btn-warning';
+    let buttonType = 'btn btn-warning cb-margin-left-10px';
     let buttonTitle = 'Insert';
 
     if (insertToggle) {
       buttonTitle = 'Cancel Insert';
-      buttonType = 'btn btn-danger';
+      buttonType = 'btn btn-danger cb-margin-left-10px';
     }
 
     if (point.get('snapshotToken') === undefined) {
@@ -753,10 +755,10 @@
     if (canRender) {
       return (
         <ButtonGroup>
-        <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
-        { buttonTitle }
-        </button>
-        { insertToggle && this._renderInsertPointButtonGroup() }
+          <button className={ buttonType } onClick={ e => this._onInsertButtonClicked(e, index) } >
+            { buttonTitle }
+          </button>
+          { insertToggle && this._renderInsertPointButtonGroup() }
         </ButtonGroup>
       );
     }
@@ -768,7 +770,10 @@
 
     return (
       <ButtonGroup>
-          <SplitButton title={ `${ insertTargetIndex + 1}` } pullRight id="split-button-pull-right" >
+          <SplitButton className="cb-margin-left-10px"
+            title={ `${ insertTargetIndex + 1}` }
+            pullRight
+            id="split-button-pull-right">
             {
               walkthroughPoints.map((walkthroughPoint, index) => (
                 <MenuItem eventKey={ `${index + 1}` } key={ 'insert_' + `${index}` }
@@ -778,11 +783,11 @@
               ))
             }
           </SplitButton>
-          <button className="btn btn-success"
+          <button className="btn btn-success cb-margin-left-10px"
             onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'before') }>
             Insert Before
           </button>
-          <button className="btn btn-success"
+          <button className="btn btn-success cb-margin-left-10px"
             onClick={ e => this._onInsertIntoWalkthrough(e, insertTargetIndex, selected, 'after') }>
             Insert After
           </button>
