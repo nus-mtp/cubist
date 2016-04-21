@@ -88,7 +88,8 @@ export default ReducerHelper.createReducer(initialState, {
 
     let nextState = state;
     nextState = nextState.update('points', points => {
-      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion, animationMode, duration, snapshotToken }));
+      return points.insert(targetIndex,
+        Immutable.fromJS({ pos, lookAt, quaternion, animationMode, duration, snapshotToken }));
     });
     return nextState;
   }

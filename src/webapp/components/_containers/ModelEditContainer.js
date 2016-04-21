@@ -4,7 +4,7 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton, ButtonGroup } from 'react-bootstrap';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup, Grid, Row, Col } from 'react-bootstrap';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
@@ -500,44 +500,43 @@
     const lookAt = walkthrough.get('lookAt');
     return (
       <div className={ `${CLASS_NAME}-walkthrough-form` }>
-        <h5>Position</h5>
-        <p>
-          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
-        </p>
-        <h5>Look At</h5>
-        <p>
-          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
-        </p>
-        { this._renderViewPointButton() }
+        <Grid>
+          <Row className="show-grid">
+            <Col sm={ 3 } md={ 3 }><h5>Index: </h5></Col>
+            <Col sm={ 3 } md={ 3 }><h5>Position: </h5></Col>
+            <Col sm={ 3 } md={ 3 }><h5>Look At: </h5></Col>
+          </Row>
+          <Row className="show-grid">
+            <Col sm={ 3 } md={ 3 }>{ selectedWalkthroughIndex + 1 }</Col>
+            <Col sm={ 3 } md={ 3 }>
+            { `${position.get('x').toFixed(0)}, ${position.get('y').toFixed(0)}, ${position.get('z').toFixed(0)}` }
+            </Col>
+            <Col sm={ 3 } md={ 3 }>
+            { `${lookAt.get('x').toFixed(0)}, ${lookAt.get('y').toFixed(0)}, ${lookAt.get('z').toFixed(0)}` }
+            </Col>
+          </Row>
+          <p></p>
+        </Grid>
+        <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
+          View Point
+        </button>
         <button className="btn btn-primary cb-margin-left-10px" onClick={ this._onWalkthroughPositionUpdate }>
           Update Position
         </button>
         { selectedWalkthroughIndex < walkthroughPoints.size - 1 && this._renderWalkthroughAnimationDropdown() }
-        { this._renderAnimationDurationField() }
+        <p></p>{ this._renderAnimationDurationField() }
       </div>
     );
   }
 
-  _renderViewPointButton() {
-    return (
-      <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
-        View Point
-      </button>
-    );
-  }
-
   _renderWalkthroughAnimationDropdown() {
-    return this._renderContinuousDropdownMenu();
-  }
-
-  _renderContinuousDropdownMenu() {
     const { selectedWalkthroughIndex } = this.state;
     const { walkthroughPoints } = this.props;
     const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
     const buttonTitle = walkthrough.get('animationMode');
 
     return (
-      <DropdownButton bsStyle="info"
+      <DropdownButton bsStyle="warning"
         className="cb-margin-left-10px"
         title={ buttonTitle }
         id="dropdown-basic-info">
@@ -562,17 +561,17 @@
 
     if (selectedWalkthroughIndex !== (walkthroughPoints.size - 1)) {
       return (
-        <div className="form-group">
-          <label className="control-label" htmlFor={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }>
-            Duration
-          </label>
+        <Row className="show-grid">
+        <Col sm={ 3 } md={ 2 }>Duration to next point</Col>
+        <Col sm={ 2 } md={ 2 }>
           <input id={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }
             value={ walkthrough.get('duration') }
             type="text"
             className="form-control"
             placeholder="Enter Duration"
             onChange={ e => this._onWalkthroughDurationUpdate(e, e.target.value) } />
-        </div>
+        </Col>
+        </Row>
       );
     }
   }
