@@ -573,8 +573,7 @@ describe('Model Controller', () => {
         },
         body: {
           walkthrough: {
-            animationMode: undefined,
-            disjointedMode: undefined
+            animationMode: undefined
           }
         }
       };
@@ -626,40 +625,6 @@ describe('Model Controller', () => {
         .returns('')
         .once()
         .withArgs('foo', 0, ...update);
-
-      ModelController.promise.updateWalkthrough(req);
-      expect(modelModelMock.verify()).to.be.true;
-    });
-
-    it('Should change animationMode to Stationary if it is a disjoint point', () => {
-      const update = {
-        animationMode: 'test',
-        disjointMode: true
-      };
-      const req = {
-        params: {
-          modelId: 'foo'
-        },
-        user: {
-          _id: 'bar'
-        },
-        body: {
-          index: 0,
-          ...update
-        }
-      };
-
-      const edittedPoint = { ...update };
-      edittedPoint.animationMode = 'Stationary';
-
-      sandbox.stub(User, 'validate').returns(null);
-      sandbox.stub(Model, 'validate').returns(null);
-
-      const modelModelMock = sandbox.mock(Model)
-        .expects('updateWalkthrough')
-        .returns('')
-        .once()
-        .withArgs('foo', 0, edittedPoint);
 
       ModelController.promise.updateWalkthrough(req);
       expect(modelModelMock.verify()).to.be.true;

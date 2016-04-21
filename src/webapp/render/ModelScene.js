@@ -160,10 +160,23 @@ class ModelScene {
     const quatOrigin = this._getCoordinateByIndexAndField(firstIndex, 'quaternion');
     const quatTarget = this._getCoordinateByIndexAndField(nextIndex, 'quaternion');
 
+    const sourceQuaternion = new THREE.Quaternion();
+    let targetQuaternion = new THREE.Quaternion();
     const quatResult = new THREE.Quaternion();
-    const inverseOrigin = quatOrigin.inverse();
-    const targetQuaternion = quatTarget.multiply(inverseOrigin);
-    const curQuaternion = new THREE.Quaternion();
+
+    if (!quatOrigin.equals(new THREE.Quaternion()) ||
+        !quatTarget.equals(new THREE.Quaternion())) {
+      const inverseOrigin = quatOrigin.inverse();
+      targetQuaternion = quatTarget.multiply(inverseOrigin);
+    } else {
+      const fromVec = new THREE.Vector3().subVectors(
+                      new THREE.Vector3(posOrigin.x, posOrigin.y, posOrigin.z),
+                      new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z)).normalize();
+      const toVec = new THREE.Vector3().subVectors(
+                    new THREE.Vector3(posDest.x, posDest.y, posDest.z),
+                    new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z)).normalize();
+      targetQuaternion = targetQuaternion.setFromUnitVectors(fromVec, toVec);
+    }
 
     const t1 = { t: 0 };
     const t2 = { t: 1 };
@@ -186,8 +199,7 @@ class ModelScene {
     });
 
     // if Second Point is disjoint, do not UPDATE tween to next Point.
-    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
-        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+    if (this.walkthroughState.points[firstIndex].animationMode === 'Stationary') {
       this.tweenRotate[index].onComplete(() => {
         this.camera.position.set(posDest.x, posDest.y, posDest.z);
         const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
@@ -196,7 +208,7 @@ class ModelScene {
       });
     } else {
       this.tweenRotate[index].onUpdate(() => {
-        THREE.Quaternion.slerp(curQuaternion, targetQuaternion, quatResult, t1.t);
+        THREE.Quaternion.slerp(sourceQuaternion, targetQuaternion, quatResult, t1.t);
 
         // apply new quaternion to camera position
         const cloneOrigin = new THREE.Vector3(posOrigin.x, posOrigin.y, posOrigin.z);
@@ -237,8 +249,7 @@ class ModelScene {
 
 
     // if Second Point is disjoint, do not UPDATE tween to next Point.
-    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
-        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+    if (this.walkthroughState.points[firstIndex].animationMode === 'Stationary') {
       this.tweenTranslate[index].onComplete(() => {
         this.camera.position.set(posDest.x, posDest.y, posDest.z);
         const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
@@ -279,9 +290,9 @@ class ModelScene {
         this.tweenRotate[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
         this.tweenLook[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
 
-        if (this.walkthroughState.points[nextIndex].animationMode === 'Linear') {
+        if (this.walkthroughState.points[firstIndex].animationMode === 'Linear') {
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
-        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Spherical') {
+        } else if (this.walkthroughState.points[firstIndex].animationMode === 'Spherical') {
           this._initRotationTween(i, firstIndex, nextIndex, duration);
         } else {
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
@@ -457,7 +468,8 @@ class ModelScene {
         if (child.material.map) {
           for (let i = 0; i < pathMap.length; i++) {
             if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 0) {
-              child.material.map.image.src = 'data:image;base64,' + textureData[pathMap[i].path];
+              child.material.map = THREE.ImageUtils.loadTexture('data:image;base64,' + textureData[pathMap[i].path]);
+              child.material.needsUpdate = true;
               break;
             }
           }
@@ -465,7 +477,9 @@ class ModelScene {
         if (child.material.bumpMap) {
           for (let i = 0; i < pathMap.length; i++) {
             if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 1) {
-              child.material.bumpMap.image.src = 'data:image;base64,' + textureData[pathMap[i].path];
+              child.material.bumpMap = THREE.ImageUtils.loadTexture('data:image;base64,'
+                                                                    + textureData[pathMap[i].path]);
+              child.material.needsUpdate = true;
               break;
             }
           }

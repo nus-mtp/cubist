@@ -55,7 +55,6 @@ const Model = new Schema({
       z: { type: Number, default: 0 },
       w: { type: Number, default: 0 }
     },
-    disjointMode: { type: Boolean, default: true },
     animationMode: { type: String, default: 'Stationary' },
     duration: { type: Number, default: 0 }
   }]
@@ -387,7 +386,7 @@ Model.statics.deleteSnapshot = function (modelId, index) {
 // -----------------MODEL WALKTHROUGH-------------------
 // -----------------------------------------------------
 Model.statics.addWalkthrough = function (modelId, walkthrough, index, isBefore) {
-  const fields = ['key', 'pos', 'lookAt', 'quaternion', 'disjointMode', 'animationMode', 'duration'];
+  const fields = ['key', 'pos', 'lookAt', 'quaternion', 'animationMode', 'duration'];
   const condition = {
     _id: modelId
   };
@@ -413,7 +412,7 @@ Model.statics.addWalkthrough = function (modelId, walkthrough, index, isBefore) 
 };
 
 Model.statics.updateWalkthrough = function (modelId, index, walkthrough) {
-  const fields = ['pos', 'lookAt', 'quaternion', 'disjointMode', 'animationMode', 'duration'];
+  const fields = ['pos', 'lookAt', 'quaternion', 'animationMode', 'duration'];
   const condition = {
     _id: modelId
   };

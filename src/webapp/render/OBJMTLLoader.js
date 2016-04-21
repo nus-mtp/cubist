@@ -18,7 +18,7 @@ class OBJMTLLoader {
   }
 
   loadSmall(url, mtlurl, onLoad, onProgress, onError) {
-    const mtlLoader = new MTLLoader(this.manager);
+    const mtlLoader = new MTLLoader(this.manager, true);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
     mtlLoader.load(mtlurl, materials => {
@@ -63,7 +63,7 @@ class OBJMTLLoader {
   }
 
   load(url, mtlurl, onLoad, onProgress, onError) {
-    const mtlLoader = new MTLLoader(this.manager);
+    const mtlLoader = new MTLLoader(this.manager, false);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
     mtlLoader.load(mtlurl, materials => {

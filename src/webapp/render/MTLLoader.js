@@ -1,7 +1,6 @@
 import THREE from 'three';
 
 const TEXTURE_SUFFIX = '@4';
-const USE_SMALL_TEXTURE = true;
 
 function nextHighestPowerOfTwo_(x) {
   let copyX = x;
@@ -43,7 +42,7 @@ function ensurePowerOfTwo_(image) {
  * @constructor
  */
 class MaterialCreator {
-  constructor(baseUrl, options) {
+  constructor(baseUrl, options, useSmallTexture) {
     this.baseUrl = baseUrl;
     this.options = options;
     this.materialsInfo = {};
@@ -53,6 +52,7 @@ class MaterialCreator {
 
     this.side = (this.options && this.options.side) ? this.options.side : THREE.FrontSide;
     this.wrap = (this.options && this.options.wrap) ? this.options.wrap : THREE.RepeatWrapping;
+    this.useSmallTexture = useSmallTexture;
   }
 
   setCrossOrigin(value) {
@@ -185,7 +185,7 @@ class MaterialCreator {
 
         case 'map_kd':
           // Diffuse texture map
-          if (USE_SMALL_TEXTURE) {
+          if (this.useSmallTexture) {
             const newvalue = value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
             params.map = this.loadTexture(this.baseUrl + newvalue);
@@ -220,7 +220,7 @@ class MaterialCreator {
             break; // Avoid loading twice.
           }
 
-          if (USE_SMALL_TEXTURE) {
+          if (this.useSmallTexture) {
             const newvalue = value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
             params.bumpMap = this.loadTexture(this.baseUrl + newvalue);
@@ -269,8 +269,9 @@ class MaterialCreator {
 }
 
 class MTLLoader {
-  constructor(manager) {
+  constructor(manager, useSmallTexture) {
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
+    this.useSmallTexture = useSmallTexture;
   }
 
   load(url, onLoad, onProgress, onError) {
@@ -327,7 +328,7 @@ class MTLLoader {
       }
     }
 
-    const materialCreator = new MaterialCreator(this.baseUrl, this.materialOptions);
+    const materialCreator = new MaterialCreator(this.baseUrl, this.materialOptions, this.useSmallTexture);
     materialCreator.setCrossOrigin(this.crossOrigin);
     materialCreator.setManager(this.manager);
     materialCreator.setMaterials(materialsInfo);

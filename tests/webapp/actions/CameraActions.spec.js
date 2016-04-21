@@ -12,7 +12,8 @@ describe('Camera Actions', () => {
   });
 
   it('Should create an action to notify success of snapshot taking with token and data', () => {
-    expect(actions.setCameraView('foo', 'boo')).to.deep.equal({ type: CAMERA_SET_VIEW, payload: { position: 'foo', lookAt: 'boo' }});
+    expect(actions.setCameraView('foo', 'boo')).to.deep.equal(
+      { type: CAMERA_SET_VIEW, payload: { position: 'foo', lookAt: 'boo' }
+    });
   });
 });
-

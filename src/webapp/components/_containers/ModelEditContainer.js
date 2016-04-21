@@ -4,7 +4,7 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton, ButtonGroup } from 'react-bootstrap';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup, Grid, Row, Col } from 'react-bootstrap';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
@@ -204,21 +204,6 @@
     dispatch(WalkthroughActions.deleteWalkthrough(params.modelId, selectedWalkthroughIndex));
   };
 
-  _onWalkthroughToggleDisjointMode = (e) => {
-    e.preventDefault();
-    const { walkthroughPoints, dispatch, params } = this.props;
-    const { selectedWalkthroughIndex } = this.state;
-    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
-
-    dispatch(WalkthroughActions.updateWalkthrough(
-      params.modelId,
-      selectedWalkthroughIndex,
-      {
-        disjointMode: !walkthrough.get('disjointMode')
-      }
-    ));
-  };
-
   _onWalkthroughAnimationUpdate = (e, animationMode) => {
     e.preventDefault();
     const { dispatch, params } = this.props;
@@ -358,13 +343,6 @@
         <div className="row">
           <div className="col-md-8">
             <ModelViewer { ...viewerProps } />
-            <h2>Thumbnails</h2>
-            <div className={ `${CLASS_NAME}-section-container` }>
-              <SnapshotSlider
-                isEditor
-                snapshots={ model.get('imageUrls', new Immutable.List()) }
-                onSnapshotsAdd={ this._onSnapshotsAdd } />
-            </div>
             <h2>Walkthroughs</h2>
             <div className={ `${CLASS_NAME}-section-container` }>
               <WalkthroughSlider
@@ -384,6 +362,13 @@
                 statistics={ this.state.statisticsPoints }
                 onStatisticsSelect={ this._onStatisticsSelect } />
               { this._renderStatisticsSection() }
+            </div>
+            <h2>Thumbnails</h2>
+            <div className={ `${CLASS_NAME}-section-container` }>
+              <SnapshotSlider
+                isEditor
+                snapshots={ model.get('imageUrls', new Immutable.List()) }
+                onSnapshotsAdd={ this._onSnapshotsAdd } />
             </div>
           </div>
           <div className="col-md-4">
@@ -515,30 +500,32 @@
     const lookAt = walkthrough.get('lookAt');
     return (
       <div className={ `${CLASS_NAME}-walkthrough-form` }>
-        <h5>Position</h5>
-        <p>
-          { `${position.get('x')}, ${position.get('y')}, ${position.get('z')}` }
-        </p>
-        <h5>Look At</h5>
-        <p>
-          { `${lookAt.get('x')}, ${lookAt.get('y')}, ${lookAt.get('z')}` }
-        </p>
-        { this._renderViewPointButton() }
+        <Grid>
+          <Row className="show-grid">
+            <Col sm={ 3 } md={ 3 }><h5>Index: </h5></Col>
+            <Col sm={ 3 } md={ 3 }><h5>Position: </h5></Col>
+            <Col sm={ 3 } md={ 3 }><h5>Look At: </h5></Col>
+          </Row>
+          <Row className="show-grid">
+            <Col sm={ 3 } md={ 3 }>{ selectedWalkthroughIndex + 1 }</Col>
+            <Col sm={ 3 } md={ 3 }>
+            { `${position.get('x').toFixed(0)}, ${position.get('y').toFixed(0)}, ${position.get('z').toFixed(0)}` }
+            </Col>
+            <Col sm={ 3 } md={ 3 }>
+            { `${lookAt.get('x').toFixed(0)}, ${lookAt.get('y').toFixed(0)}, ${lookAt.get('z').toFixed(0)}` }
+            </Col>
+          </Row>
+          <p></p>
+        </Grid>
+        <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
+          View Point
+        </button>
         <button className="btn btn-primary cb-margin-left-10px" onClick={ this._onWalkthroughPositionUpdate }>
           Update Position
         </button>
-        { this._renderWalkthroughToggleDisjointButton() }
-        { this._renderWalkthroughAnimationDropdown() }
-        { this._renderAnimationDurationField() }
+        { selectedWalkthroughIndex < walkthroughPoints.size - 1 && this._renderWalkthroughAnimationDropdown() }
+        <p></p>{ this._renderAnimationDurationField() }
       </div>
-    );
-  }
-
-  _renderViewPointButton() {
-    return (
-      <button className="btn btn-info" onClick={ e => this._onWalkthroughViewPoint(e) }>
-        View Point
-      </button>
     );
   }
 
@@ -546,41 +533,10 @@
     const { selectedWalkthroughIndex } = this.state;
     const { walkthroughPoints } = this.props;
     const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
-    const disjointMode = walkthrough.get('disjointMode');
-
-    if (disjointMode) {
-      return this._renderDisjointDropdownMenu();
-    } else {
-      return this._renderContinuousDropdownMenu();
-    }
-  }
-
-  _renderDisjointDropdownMenu() {
-    const { selectedWalkthroughIndex } = this.state;
-    const { walkthroughPoints } = this.props;
-    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
     const buttonTitle = walkthrough.get('animationMode');
 
     return (
-      <DropdownButton bsStyle="info"
-        className="cb-margin-left-10px"
-        title={ buttonTitle }
-        id="dropdown-basic-info">
-        <MenuItem eventKey="1" onClick={ e => this._onWalkthroughAnimationUpdate(e, 'Stationary') } >
-          Stationary
-        </MenuItem>
-      </DropdownButton>
-    );
-  }
-
-  _renderContinuousDropdownMenu() {
-    const { selectedWalkthroughIndex } = this.state;
-    const { walkthroughPoints } = this.props;
-    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
-    const buttonTitle = walkthrough.get('animationMode');
-
-    return (
-      <DropdownButton bsStyle="info"
+      <DropdownButton bsStyle="warning"
         className="cb-margin-left-10px"
         title={ buttonTitle }
         id="dropdown-basic-info">
@@ -598,35 +554,6 @@
     );
   }
 
-  _renderWalkthroughToggleDisjointButton() {
-    const { selectedWalkthroughIndex } = this.state;
-    const { walkthroughPoints } = this.props;
-    const walkthrough = walkthroughPoints.get(selectedWalkthroughIndex);
-    const status = walkthrough.get('disjointMode');
-
-    let buttonTitle;
-    let disableStatus;
-    if (status === true) {
-      buttonTitle = 'Disjoint';
-    } else {
-      buttonTitle = 'Continuous';
-    }
-
-    if (selectedWalkthroughIndex === 0) {
-      disableStatus = true;
-    } else {
-      disableStatus = false;
-    }
-
-    return (
-      <button className="btn btn-warning cb-margin-left-10px"
-        onClick={ this._onWalkthroughToggleDisjointMode }
-        disabled={ disableStatus }>
-        { buttonTitle }
-      </button>
-    );
-  }
-
   _renderAnimationDurationField() {
     const { selectedWalkthroughIndex } = this.state;
     const { walkthroughPoints } = this.props;
@@ -634,17 +561,17 @@
 
     if (selectedWalkthroughIndex !== (walkthroughPoints.size - 1)) {
       return (
-        <div className="form-group">
-          <label className="control-label" htmlFor={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }>
-            Duration
-          </label>
+        <Row className="show-grid">
+        <Col sm={ 3 } md={ 2 }>Duration to next point</Col>
+        <Col sm={ 1 } md={ 1 }>
           <input id={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }
             value={ walkthrough.get('duration') }
             type="text"
             className="form-control"
             placeholder="Enter Duration"
             onChange={ e => this._onWalkthroughDurationUpdate(e, e.target.value) } />
-        </div>
+        </Col>
+        </Row>
       );
     }
   }
