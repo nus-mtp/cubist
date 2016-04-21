@@ -85,7 +85,6 @@ class AppContainer extends PureComponent {
 
     return (
       <nav className={ classnames(navClasses) }>
-        <div className="container">
           <div className="navbar-header">
             <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
@@ -104,7 +103,6 @@ class AppContainer extends PureComponent {
               this._renderSearchForm()
             }
           </div>
-        </div>
       </nav>
     );
   }
@@ -174,9 +172,9 @@ class AppContainer extends PureComponent {
       return undefined;
     }
     return (
-      <div className="col-sm-6 pull-left">
+      <div className="col-sm-9 pull-left">
         <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
-          <div className="input-group">
+          <div className="input-group" style={ { width: '100%' } }>
             <input id={ SEARCH_FIELD }
               type="text"
               className="form-control"
