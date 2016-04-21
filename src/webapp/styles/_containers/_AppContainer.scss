@@ -5,6 +5,7 @@
 
 // NavBar
 .cb-ctn-app-navbar {
+  padding-right: 20px;
   border: 1px solid $cb-medium-gray;
   border-width: 0 0 1px;
   background-color: $cb-white;
@@ -13,6 +14,7 @@
 // NavBar Brand
 .cb-ctn-app-navbar-brand {
   color: $cb-default;
+  padding: 28px 50px;
 }
 
 // NavBar Button
@@ -32,4 +34,8 @@
 .cb-ctn-app-content {
   height: 100%;
   padding: 65px 0 0;
+}
+
+.cb-navbar-form {
+ padding: 1% 10%;
 }

@@ -2,12 +2,52 @@ import THREE from 'three';
 import MTLLoader from './MTLLoader';
 
 class OBJMTLLoader {
-  constructor(manager) {
+  constructor(callback, manager) {
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
+    this.callback = callback;
+  }
+
+  modifySuffix(path, key, replaced) {
+    let newPath = path.replace(key, replaced);
+    newPath = newPath.substring(newPath.lastIndexOf('/models/') + 8);
+
+    return newPath;
+  }
+
+  loadSmall(url, mtlurl, onLoad, onProgress, onError) {
+    const mtlLoader = new MTLLoader(
+      (textureArray, pathMapping) => {
+        this.callback(textureArray, pathMapping);
+      },
+      this.manager,
+      true
+    );
+    mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
+    mtlLoader.setCrossOrigin(this.crossOrigin);
+    mtlLoader.load(mtlurl, materials => {
+      const materialsCreator = materials;
+      materialsCreator.preload();
+      const loader = new THREE.XHRLoader(this.manager);
+      loader.setCrossOrigin(this.crossOrigin);
+      loader.load(url, (text) => {
+        const object = this.parse(text);
+        object.traverse(o => {
+          if (o instanceof THREE.Mesh) {
+            if (o.material.name) {
+              const material = materialsCreator.create(o.material.name);
+              if (material) {
+                o.material = material;
+              }
+            }
+          }
+        });
+        onLoad(object);
+      }, onProgress, onError);
+    }, onProgress, onError);
   }
 
   load(url, mtlurl, onLoad, onProgress, onError) {
-    const mtlLoader = new MTLLoader(this.manager);
+    const mtlLoader = new MTLLoader(null, this.manager, false);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
     mtlLoader.load(mtlurl, materials => {

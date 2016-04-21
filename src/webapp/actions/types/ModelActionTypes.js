@@ -20,8 +20,8 @@ const promiseTypes = {
   REQ_PUT_ADD_MODEL_SNAPSHOTS: null,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT: null,
   REQ_PUT_ADD_STATISTICS_POINT: null,
-
-  REQ_DEL_MODEL: null
+  REQ_DEL_MODEL: null,
+  REQ_GET_TEXTURES: null
 };
 
 export default TypeHelper.combineTypes(normalTypes, promiseTypes);

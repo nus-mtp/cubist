@@ -4,7 +4,7 @@
     "uploader": "user_1",
     "category": "object",
     "urls": ["L9gh2PGI/test.obj", "L9gh2PGI/test.mtl"],
-    "imageUrls": ["XXX3AA/snapshot.png"],
+    "imageUrls": ["XXX3AA/snapshot.png", "XXX3AA/chair_2.png", "XXX3AA/chair_3.png"],
     "zipUrl": "L9gh2PGI/model.zip",
     "description": "Credits: clara.io",
     "tags": "furniture",
@@ -16,6 +16,7 @@
      }
   },
   {
+    "highRes": true,
     "title": "Anime Character",
     "uploader": "user_1",
     "category": "character",
@@ -80,6 +81,7 @@
      }
   },
   {
+  	"highRes": true,
     "title": "Architecture Ornament",
     "uploader": "user_2",
     "category": "architecture",
@@ -96,6 +98,7 @@
      }
   },
   {
+  	"highRes": true,
     "title": "Ireland Clock Tower",
     "uploader": "user_2",
     "category": "architecture",
@@ -128,6 +131,7 @@
      }
   },
   {
+  	"highRes": true,
     "title": "Arbor Bench",
     "uploader": "user_3",
     "category": "object",
@@ -144,6 +148,7 @@
      }
   },
   {
+  	"highRes": true,
     "title": "VG Remix - Skyrim",
     "uploader": "user_3",
     "category": "game",
@@ -160,9 +165,10 @@
      }
   },
   {
+  	"highRes": true,
     "title": "Papercraft Windmill",
     "uploader": "user_3",
-    "category": "misc",
+    "category": "scene",
     "urls": ["3MuO2zDu/Papercraft Windmills.obj", "3MuO2zDu/Papercraft Windmills.mtl"],
     "imageUrls": ["XXX3AJ/Snapshot.png"],
     "zipUrl": "3MuO2zDu/model.zip",
@@ -176,6 +182,7 @@
      }
   },
   {
+  	"highRes": true,
     "title": "Master Yoda",
     "uploader": "user_3",
     "category": "character",
@@ -192,6 +199,7 @@
      }
    },
    {
+   	"highRes": true,
     "title": "Van Gogh Room",
     "uploader": "user_2",
     "category": "architecture",
@@ -208,6 +216,7 @@
      }
    },
    {
+   	"highRes": true,
     "title": "3D Scan - Shell",
     "uploader": "user_2",
     "category": "object",
@@ -221,6 +230,295 @@
       "faces": 151073,
       "hasExternalTexture": true,
       "boundingRadius": 8.672281
+     }
+   },
+   {
+    "title": "Car",
+    "uploader": "user_2",
+    "category": "vehicle",
+    "urls": ["mEuJZMJB/car02.obj", "mEuJZMJB/car02.mtl"],
+    "imageUrls": ["XXX3AN/Screenshot.png"],
+    "zipUrl": "mEuJZMJB/model.zip",
+    "description": "Credits: tomkranis, Downloaded from Sketchfab",
+    "tags": "white",
+    "metaData": {
+      "vertices": 8732,
+      "faces": 8382,
+      "hasExternalTexture": true,
+      "boundingRadius": 17.6296
+     }
+   },
+   {
+    "title": "Ori",
+    "uploader": "user_3",
+    "category": "character",
+    "urls": ["vLpKZdBC/test.obj", "vLpKZdBC/test.mtl"],
+    "imageUrls": ["XXX3AO/Snapshot.png"],
+    "zipUrl": "vLpKZdBC/model.zip",
+    "description": "Credits: vincentskc, Downloaded from Sketchfab",
+    "tags": "game OriandtheBlindForest",
+    "metaData": {
+      "vertices": 4754,
+      "faces": 4748,
+      "hasExternalTexture": false,
+      "boundingRadius": 5.996938
+     }
+   },
+   {
+   	"highRes": true,
+    "title": "Space Jame Lola Bunny",
+    "uploader": "user_2",
+    "category": "character",
+    "urls": ["iAMSRzKO/lola_bunny_lowres_model.obj", "iAMSRzKO/lola_bunny_lowres_model.mtl"],
+    "imageUrls": ["XXX3AP/Snapshot.png"],
+    "zipUrl": "iAMSRzKO/model.zip",
+    "description": "Credits: bionicsix88, Downloaded from Sketchfab",
+    "tags": "cartoon",
+    "metaData": {
+      "vertices": 17630,
+      "faces": 17608,
+      "hasExternalTexture": true,
+      "boundingRadius": 2.76585
+     }
+   },
+   {
+    "title": "Vi - LoL Fan Art",
+    "uploader": "user_2",
+    "category": "game",
+    "urls": ["3C8satp3/Vi.obj", "3C8satp3/Vi.mtl"],
+    "imageUrls": ["XXX3AQ/Screenshot.png"],
+    "zipUrl": "3C8satp3/model.zip",
+    "description": "Credits: Yulius Krisna, Downloaded from Sketchfab",
+    "tags": "LeagueOfLegends",
+    "metaData": {
+      "vertices": 931,
+      "faces": 953,
+      "hasExternalTexture": true,
+      "boundingRadius": 208.56414999999998
+     }
+   },
+   {
+    "title": "Medieval Street Arcade",
+    "uploader": "user_1",
+    "category": "architecture",
+    "urls": ["vCP8txJI/arcades2_v001.obj", "vCP8txJI/arcades2_v001.mtl"],
+    "imageUrls": ["XXX3AR/Screenshot.png"],
+    "zipUrl": "vCP8txJI/model.zip",
+    "description": "Credits: captainmarlowe, Downloaded from Sketchfab",
+    "tags": "house",
+    "metaData": {
+      "vertices": 2461,
+      "faces": 4919,
+      "hasExternalTexture": true,
+      "boundingRadius": 8.038743700000001
+     }
+   },
+   {
+    "title": "Bench",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["31rnsUYp/bench.obj", "31rnsUYp/bench.mtl"],
+    "imageUrls": ["TWBH1/bench_snapshot.png"],
+    "zipUrl": "31rnsUYp/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "chair TheWayBackHome game",
+    "metaData": {
+      "vertices": 448,
+      "faces": 414,
+      "hasExternalTexture": true,
+      "boundingRadius": 2.3751125
+     }
+   },
+   {
+    "title": "Diarama Restaurant",
+    "uploader": "user_1",
+    "category": "scene",
+    "urls": ["KebGfJyK/DioramaRestaurant(BakedLighting).obj", "KebGfJyK/DioramaRestaurant(BakedLighting).mtl"],
+    "imageUrls": ["XXX3AS/Screenshot.png","XXX3AS/restaurant_2.png", "XXX3AS/restaurant_3.png", "XXX3AS/restaurant_4.png"],
+    "zipUrl": "KebGfJyK/model.zip",
+    "description": "Credits: Thomas Kole, Downloaded from Sketchfab",
+    "tags": "place",
+    "metaData": {
+      "vertices": 2394,
+      "faces": 3222,
+      "hasExternalTexture": true,
+      "boundingRadius": 988.5653500000001
+     }
+   },
+   {
+    "title": "Bus Stop",
+    "uploader": "user_3",
+    "category": "scene",
+    "urls": ["xo9L69hi/bus_stop.obj", "xo9L69hi/bus_stop.mtl"],
+    "imageUrls": ["XXX3AT/Screenshot.png"],
+    "zipUrl": "xo9L69hi/model.zip",
+    "description": "Credits: Raid, Downloaded from Sketchfab",
+    "tags": "place",
+    "metaData": {
+      "vertices": 954,
+      "faces": 914,
+      "hasExternalTexture": true,
+      "boundingRadius": 35.190267999999996
+     }
+   },
+   {
+    "title": "Cafe Table",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["CuMNOnuf/cake.mtl.obj", "CuMNOnuf/cake.mtl.mtl"],
+    "imageUrls": ["TWBH2/untitled.jpg"],
+    "zipUrl": "CuMNOnuf/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "cake TheWayBackHome game",
+    "metaData": {
+      "vertices": 278,
+      "faces": 342,
+      "hasExternalTexture": true,
+      "boundingRadius": 1.224583
+     }
+   },
+   {
+    "title": "Flower",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["e5ZVpLKC/flower.obj", "e5ZVpLKC/flower.mtl"],
+    "imageUrls": ["TWBH3/flower_screenshot.png"],
+    "zipUrl": "e5ZVpLKC/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "flowerpot plant TheWayBackHome game",
+    "metaData": {
+      "vertices": 624,
+      "faces": 558,
+      "hasExternalTexture": true,
+      "boundingRadius": 0.4672965
+     }
+   },
+   {
+    "title": "Water Cooler",
+    "uploader": "user_1",
+    "category": "misc",
+    "urls": ["g3kVypCl/waterCooler.obj", "g3kVypCl/waterCooler.mtl"],
+    "imageUrls": ["TWBH10/watercooler_screenshot.png"],
+    "zipUrl": "g3kVypCl/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "TheWayBackHome game",
+    "metaData": {
+      "vertices": 124,
+      "faces": 128,
+      "hasExternalTexture": true,
+      "boundingRadius": 1.1614375
+     }
+   },
+   {
+    "title": "Storage Shelf",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["srLjwmZv/storageShelf.obj", "srLjwmZv/storageShelf.mtl"],
+    "imageUrls": ["TWBH4/boxes_screenshot.png"],
+    "zipUrl": "srLjwmZv/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "furniture boxes TheWayBackHome game",
+    "metaData": {
+      "vertices": 672,
+      "faces": 650,
+      "hasExternalTexture": true,
+      "boundingRadius": 3.8175325
+     }
+   },
+   {
+    "title": "Wooden Table",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["aPUdvLh9/table.obj", "aPUdvLh9/table.mtl"],
+    "imageUrls": ["TWBH5/table_screenshot.png"],
+    "zipUrl": "aPUdvLh9/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "furniture TheWayBackHome game",
+    "metaData": {
+      "vertices": 140,
+      "faces": 132,
+      "hasExternalTexture": true,
+      "boundingRadius": 1.3833735
+     }
+   },
+   {
+    "title": "Trash Can",
+    "uploader": "user_1",
+    "category": "object",
+    "urls": ["Yptxhegi/thrashBin.obj", "Yptxhegi/thrashBin.mtl"],
+    "imageUrls": ["TWBH6/trash_screenshot.png"],
+    "zipUrl": "Yptxhegi/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "furniture TheWayBackHome game",
+    "metaData": {
+      "vertices": 128,
+      "faces": 124,
+      "hasExternalTexture": true,
+      "boundingRadius": 1.029927
+     }
+   },
+   {
+    "title": "Clock Tower",
+    "uploader": "user_1",
+    "category": "architecture",
+    "urls": ["SvEdZCEs/tower.obj", "SvEdZCEs/tower.mtl"],
+    "imageUrls": ["TWBH7/tower_screenshot.png"],
+    "zipUrl": "SvEdZCEs/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "building TheWayBackHome game",
+    "metaData": {
+      "vertices": 187,
+      "faces": 370,
+      "hasExternalTexture": true,
+      "boundingRadius": 4.90042
+     }
+   },
+   {
+    "title": "Train",
+    "uploader": "user_1",
+    "category": "vehicle",
+    "urls": ["1o63OKkT/train.obj", "1o63OKkT/train.mtl"],
+    "imageUrls": ["TWBH8/train_screenshot.png"],
+    "zipUrl": "1o63OKkT/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "highspeedtrain TheWayBackHome game",
+    "metaData": {
+      "vertices": 1140,
+      "faces": 2268,
+      "hasExternalTexture": true,
+      "boundingRadius": 10.8216815
+     }
+   },
+   {
+    "title": "Vending Machine",
+    "uploader": "user_1",
+    "category": "misc",
+    "urls": ["4spkzC7K/vendingMachine.obj", "4spkzC7K/vendingMachine.mtl"],
+    "imageUrls": ["TWBH9/vendingmachine_screenshot.png"],
+    "zipUrl": "4spkzC7K/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "drinks TheWayBackHome game",
+    "metaData": {
+      "vertices": 160,
+      "faces": 158,
+      "hasExternalTexture": true,
+      "boundingRadius": 2.998462
+     }
+   },
+   {
+    "title": "ChunZhen Station",
+    "uploader": "user_1",
+    "category": "scene",
+    "urls": ["vLAUIbTH/scene.obj", "vLAUIbTH/scene.mtl"],
+    "imageUrls": ["TWBH11/scene_screenshot.png", "TWBH11/scene_screenshot2.png", "TWBH11/scene_screenshot3.png"],
+    "zipUrl": "vLAUIbTH/model.zip",
+    "description": "From the game The Way Back Home. Copyright Team Blackprint.",
+    "tags": "trainstation TheWayBackHome game",
+    "metaData": {
+      "vertices": 18514,
+      "faces": 30793,
+      "hasExternalTexture": true,
+      "boundingRadius": 172.93623350000001
      }
    }
 ]

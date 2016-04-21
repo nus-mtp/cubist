@@ -7,7 +7,8 @@ import {
   AUTO_ROTATE_TOGGLE,
   RESET_VIEW_TOGGLE,
   PLAY_WALKTHROUGH,
-  TEXTURE_TOGGLE
+  TEXTURE_TOGGLE,
+  RESET_BUTTONS
 } from 'webapp/actions/types';
 
 const initialState = Immutable.fromJS({
@@ -20,6 +21,17 @@ const initialState = Immutable.fromJS({
 });
 
 export default ReducerHelper.createReducer(initialState, {
+  [RESET_BUTTONS]: (state) => {
+    let nextState = state;
+    nextState = nextState.set('wireframe', false);
+    nextState = nextState.set('shadingMode', 0);
+    nextState = nextState.set('autoRotate', false);
+    nextState = nextState.set('resetViewToggle', false);
+    nextState = nextState.set('playbackWalkthroughToggle', false);
+
+    return nextState;
+  },
+
   [WIREFRAME_TOGGLE]: (state) => {
     let nextState = state;
     nextState = nextState.set('wireframe', !nextState.get('wireframe'));

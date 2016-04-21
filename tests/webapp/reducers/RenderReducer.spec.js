@@ -4,9 +4,12 @@ import { Map } from 'immutable';
 import reducer from 'webapp/reducers/RenderReducer';
 import {
   WIREFRAME_TOGGLE,
-  AUTO_ROTATE_TOGGLE,
   SHADING_TOGGLE,
-  TEXTURE_TOGGLE
+  AUTO_ROTATE_TOGGLE,
+  RESET_VIEW_TOGGLE,
+  PLAY_WALKTHROUGH,
+  TEXTURE_TOGGLE,
+  RESET_BUTTONS
 } from 'webapp/actions/types';
 
 describe('Render Reducer', () => {
@@ -19,6 +22,17 @@ describe('Render Reducer', () => {
       playbackWalkthroughToggle: false,
       resizedTexture: false
     }));
+  });
+  describe('#Action: RESET_BUTTONS', () => {
+    it('Should return the initial state', () => {
+      expect(reducer({}, { type: RESET_BUTTONS })).to.equal(Map({
+        wireframe: false,
+        shadingMode: 0,
+        autoRotate: false,
+        resetViewToggle: false,
+        playbackWalkthroughToggle: false
+      }));
+    });
   });
 
   describe('#Action: WIREFRAME_TOGGLE', () => {
@@ -99,6 +113,42 @@ describe('Render Reducer', () => {
         reducer(Map({ resizedTexture: false }), { type: TEXTURE_TOGGLE })
       ).to.equal(
         Map({ resizedTexture: true })
+      );
+    });
+  });
+
+  describe('#Action: PLAY_WALKTHROUGH', () => {
+    it('Should handle PLAY_WALKTHROUGH toggling from TRUE to FALSE', () => {
+      expect(
+        reducer(Map({ playbackWalkthroughToggle: true }), { type: PLAY_WALKTHROUGH })
+      ).to.equal(
+        Map({ playbackWalkthroughToggle: false })
+      );
+    });
+
+    it('Should handle PLAY_WALKTHROUGH toggling from FALSE to TRUE', () => {
+      expect(
+        reducer(Map({ playbackWalkthroughToggle: false }), { type: PLAY_WALKTHROUGH })
+      ).to.equal(
+        Map({ playbackWalkthroughToggle: true })
+      );
+    });
+  });
+
+  describe('#Action: RESET_VIEW_TOGGLE', () => {
+    it('Should handle RESET_VIEW_TOGGLE toggling from TRUE to FALSE', () => {
+      expect(
+        reducer(Map({ resetViewToggle: true }), { type: RESET_VIEW_TOGGLE })
+      ).to.equal(
+        Map({ resetViewToggle: false })
+      );
+    });
+
+    it('Should handle RESET_VIEW_TOGGLE toggling from FALSE to TRUE', () => {
+      expect(
+        reducer(Map({ resetViewToggle: false }), { type: RESET_VIEW_TOGGLE })
+      ).to.equal(
+        Map({ resetViewToggle: true })
       );
     });
   });

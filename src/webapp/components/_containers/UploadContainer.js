@@ -74,7 +74,7 @@ class UploadContainer extends PureComponent {
             <div className="col-sm-6 col-md-4">
               <button type="submit"
                 className="btn btn-success btn-block cb-margin-bottom-10px">
-                UPLOAD
+                CONFIRM UPLOAD
               </button>
               {
                 err &&
@@ -97,14 +97,20 @@ class UploadContainer extends PureComponent {
     return (
       <Dropzone className={ `${CLASS_NAME}-model-dropzone` }
         onDrop={ this._onModelFileDrop }>
-        <div>
-          Try dropping some files here, or click to select files to upload.
-        </div>
+        { files.length === 0 && this._renderHintText() }
         <div>
           { files.length > 0 && <h4>Files List:</h4> }
           { files.length > 0 && this._renderFilesList() }
         </div>
       </Dropzone>
+    );
+  }
+
+  _renderHintText() {
+    return (
+      <div className="cb-ctn-upload-hint-text">
+        Try dropping some files here, or click to select files to upload.
+      </div>
     );
   }
 
@@ -171,7 +177,7 @@ class UploadContainer extends PureComponent {
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor={ `model-${MODEL_CATEGORY_FIELD}` }>
-              Model Category
+              Model Category*
             </label>
             <select onChange={ e => this._onModelInfoInputChange(MODEL_CATEGORY_FIELD, e.target.value) }
               value={ modelInfoData[MODEL_CATEGORY_FIELD] }

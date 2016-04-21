@@ -1,5 +1,10 @@
 import THREE from 'three';
 
+const TEXTURE_SUFFIX = '@4';
+const TEXTURE_SUFFIX_NEXT = '@3';
+const materialArray = [];
+const pathMapping = [];
+
 function nextHighestPowerOfTwo_(x) {
   let copyX = x;
   --copyX;
@@ -40,7 +45,7 @@ function ensurePowerOfTwo_(image) {
  * @constructor
  */
 class MaterialCreator {
-  constructor(baseUrl, options) {
+  constructor(baseUrl, options, useSmallTexture) {
     this.baseUrl = baseUrl;
     this.options = options;
     this.materialsInfo = {};
@@ -50,6 +55,7 @@ class MaterialCreator {
 
     this.side = (this.options && this.options.side) ? this.options.side : THREE.FrontSide;
     this.wrap = (this.options && this.options.wrap) ? this.options.wrap : THREE.RepeatWrapping;
+    this.useSmallTexture = useSmallTexture;
   }
 
   setCrossOrigin(value) {
@@ -182,7 +188,21 @@ class MaterialCreator {
 
         case 'map_kd':
           // Diffuse texture map
-          params.map = this.loadTexture(this.baseUrl + value);
+          if (this.useSmallTexture) {
+            const smallTex = value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
+            params.map = this.loadTexture(this.baseUrl + smallTex);
+            // finds the encoded model id
+            let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
+            modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
+            // returns the texture path and mapping
+            const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
+            materialArray.push(nextTex);
+            pathMapping.push({ matName: materialName, mapType: 0, path: nextTex });
+          } else {
+            params.map = this.loadTexture(this.baseUrl + value);
+          }
           params.map.wrapS = this.wrap;
           params.map.wrapT = this.wrap;
           break;
@@ -211,7 +231,21 @@ class MaterialCreator {
             break; // Avoid loading twice.
           }
 
-          params.bumpMap = this.loadTexture(this.baseUrl + value);
+          if (this.useSmallTexture) {
+            const smallTex = value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
+            params.bumpMap = this.loadTexture(this.baseUrl + smallTex);
+            // finds the encoded model id
+            let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
+            modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
+            // returns the texture path and mapping
+            const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
+            materialArray.push(nextTex);
+            pathMapping.push({ matName: materialName, mapType: 1, path: nextTex });
+          } else {
+            params.bumpMap = this.loadTexture(this.baseUrl + value);
+          }
           params.bumpMap.wrapS = this.wrap;
           params.bumpMap.wrapT = this.wrap;
           break;
@@ -254,8 +288,10 @@ class MaterialCreator {
 }
 
 class MTLLoader {
-  constructor(manager) {
+  constructor(callback, manager, useSmallTexture) {
+    this.callback = callback;
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
+    this.useSmallTexture = useSmallTexture;
   }
 
   load(url, onLoad, onProgress, onError) {
@@ -312,10 +348,19 @@ class MTLLoader {
       }
     }
 
-    const materialCreator = new MaterialCreator(this.baseUrl, this.materialOptions);
+    const materialCreator = new MaterialCreator(
+      this.baseUrl,
+      this.materialOptions,
+      this.useSmallTexture
+    );
     materialCreator.setCrossOrigin(this.crossOrigin);
     materialCreator.setManager(this.manager);
     materialCreator.setMaterials(materialsInfo);
+    materialCreator.getAsArray();
+
+    if (this.useSmallTexture) {
+      this.callback(materialArray, pathMapping);
+    }
     return materialCreator;
   }
 }

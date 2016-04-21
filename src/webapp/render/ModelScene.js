@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import OrbitControls from './OrbitControls';
 
-const TEXTURE_SUFFIX = '_small';
 const SCALE_FACTOR = 40;
 const SCALE_THRESHOLD = 20;
 const MIN_BOUNDING_RADIUS = 0.025;
@@ -58,6 +57,12 @@ class ModelScene {
     points: [],
     index: [0, 0],
     viewIndex: -1
+  };
+
+  modelState = {
+    textures: [],
+    textureStatus: 0,
+    mapping: []
   };
 
   /**
@@ -155,10 +160,23 @@ class ModelScene {
     const quatOrigin = this._getCoordinateByIndexAndField(firstIndex, 'quaternion');
     const quatTarget = this._getCoordinateByIndexAndField(nextIndex, 'quaternion');
 
+    const sourceQuaternion = new THREE.Quaternion();
+    let targetQuaternion = new THREE.Quaternion();
     const quatResult = new THREE.Quaternion();
-    const inverseOrigin = quatOrigin.inverse();
-    const targetQuaternion = quatTarget.multiply(inverseOrigin);
-    const curQuaternion = new THREE.Quaternion();
+
+    if (!quatOrigin.equals(new THREE.Quaternion()) ||
+        !quatTarget.equals(new THREE.Quaternion())) {
+      const inverseOrigin = quatOrigin.inverse();
+      targetQuaternion = quatTarget.multiply(inverseOrigin);
+    } else {
+      const fromVec = new THREE.Vector3().subVectors(
+                      new THREE.Vector3(posOrigin.x, posOrigin.y, posOrigin.z),
+                      new THREE.Vector3(lookOrigin.x, lookOrigin.y, lookOrigin.z)).normalize();
+      const toVec = new THREE.Vector3().subVectors(
+                    new THREE.Vector3(posDest.x, posDest.y, posDest.z),
+                    new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z)).normalize();
+      targetQuaternion = targetQuaternion.setFromUnitVectors(fromVec, toVec);
+    }
 
     const t1 = { t: 0 };
     const t2 = { t: 1 };
@@ -181,8 +199,7 @@ class ModelScene {
     });
 
     // if Second Point is disjoint, do not UPDATE tween to next Point.
-    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
-        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+    if (this.walkthroughState.points[firstIndex].animationMode === 'Stationary') {
       this.tweenRotate[index].onComplete(() => {
         this.camera.position.set(posDest.x, posDest.y, posDest.z);
         const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
@@ -191,7 +208,7 @@ class ModelScene {
       });
     } else {
       this.tweenRotate[index].onUpdate(() => {
-        THREE.Quaternion.slerp(curQuaternion, targetQuaternion, quatResult, t1.t);
+        THREE.Quaternion.slerp(sourceQuaternion, targetQuaternion, quatResult, t1.t);
 
         // apply new quaternion to camera position
         const cloneOrigin = new THREE.Vector3(posOrigin.x, posOrigin.y, posOrigin.z);
@@ -232,8 +249,7 @@ class ModelScene {
 
 
     // if Second Point is disjoint, do not UPDATE tween to next Point.
-    if (this.walkthroughState.points[nextIndex].disjointMode === true ||
-        this.walkthroughState.points[nextIndex].animationMode === 'Stationary') {
+    if (this.walkthroughState.points[firstIndex].animationMode === 'Stationary') {
       this.tweenTranslate[index].onComplete(() => {
         this.camera.position.set(posDest.x, posDest.y, posDest.z);
         const lookTarget = new THREE.Vector3(lookDest.x, lookDest.y, lookDest.z);
@@ -274,9 +290,9 @@ class ModelScene {
         this.tweenRotate[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
         this.tweenLook[i] = new TWEEN.Tween({ x: 0 }).to({ x: 0 }, duration);
 
-        if (this.walkthroughState.points[nextIndex].animationMode === 'Linear') {
+        if (this.walkthroughState.points[firstIndex].animationMode === 'Linear') {
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
-        } else if (this.walkthroughState.points[nextIndex].animationMode === 'Spherical') {
+        } else if (this.walkthroughState.points[firstIndex].animationMode === 'Spherical') {
           this._initRotationTween(i, firstIndex, nextIndex, duration);
         } else {
           this._initTranslationTween(i, firstIndex, nextIndex, duration);
@@ -311,6 +327,16 @@ class ModelScene {
 
     this.camera.position.set(pos.x, pos.y, pos.z);
     const lookTarget = new THREE.Vector3(lookAt.x, lookAt.y, lookAt.z);
+    this.controls.constraint.target = lookTarget;
+    this._updateCamera();
+  }
+
+  _setCameraView(position, lookAt) {
+    const pos = position.toJS();
+    const look = lookAt.toJS();
+
+    this.camera.position.set(pos.x, pos.y, pos.z);
+    const lookTarget = new THREE.Vector3(look.x, look.y, look.z);
     this.controls.constraint.target = lookTarget;
     this._updateCamera();
   }
@@ -383,7 +409,7 @@ class ModelScene {
     callback(this.getCameraOrbit());
     this.controls.updateFirstPosition(camPos);
     this.controls.resetView = true;
-    this.updateObjectVertexNormals();
+    this.updateObject();
     this.updateSceneObjects();
   }
 
@@ -431,6 +457,41 @@ class ModelScene {
     }
   }
 
+  loadNewTexture(state, callback) {
+    Object.assign(this.modelState, state);
+    this.modelState.textures = this.modelState.textures;
+    const textureData = this.modelState.textures;
+    const pathMap = this.modelState.mapping;
+
+    this.model.traverse(child => {
+      if (child instanceof THREE.Mesh) {
+        if (child.material.map) {
+          for (let i = 0; i < pathMap.length; i++) {
+            if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 0) {
+              child.material.map = THREE.ImageUtils.loadTexture(
+                'data:image;base64,' + textureData[pathMap[i].path]
+              );
+              child.material.needsUpdate = true;
+              break;
+            }
+          }
+        }
+        if (child.material.bumpMap) {
+          for (let i = 0; i < pathMap.length; i++) {
+            if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 1) {
+              child.material.bumpMap = THREE.ImageUtils.loadTexture(
+                'data:image;base64,' + textureData[pathMap[i].path]
+              );
+              child.material.needsUpdate = true;
+              break;
+            }
+          }
+        }
+      }
+    });
+    callback();
+  }
+
   /**
    * Remove objects (models/meshes) currently displayed in the scene
    */
@@ -441,132 +502,16 @@ class ModelScene {
   }
 
   /**
-    * Run through all meshes in the model object and have threejs calculate their vertex normals
+    * Run through all meshes in the model object
+    * and update: (1) vertex normals and (2) faces to double sided
   */
-  updateObjectVertexNormals() {
+  updateObject() {
     this.model.traverse(child => {
       if (child instanceof THREE.Mesh) {
         child.geometry.computeVertexNormals();
         child.geometry.normalsNeedUpdate = true;
-      }
-    });
-  }
-
-  /**
-    * Appends or remove the suffix for the resized texture
-  */
-  modifySuffix(texturePath, isAppend) {
-    // Check suffix
-    const endIndex = texturePath.lastIndexOf('.');
-    const suffix = texturePath.substring(endIndex - 6, endIndex);
-    let newPath = texturePath;
-    // Replace texture if suffix match
-    if (isAppend === false) {
-      if (suffix === TEXTURE_SUFFIX) {
-        newPath = texturePath.substring(0, endIndex - 6) + texturePath.substring(endIndex);
-      }
-    } else {
-      if (suffix !== TEXTURE_SUFFIX) {
-        newPath = texturePath.substring(0, endIndex) + TEXTURE_SUFFIX + texturePath.substring(endIndex);
-      }
-    }
-    return newPath;
-  }
-
-  /**
-    * Loads the original/resized images for texture and other maps
-    * Precondition: Every texture image has a resized version named with the same suffix defined in TEXTURE_SUFFIX
-  */
-  loadTextures(isAppend) {
-    this.model.traverse(child => {
-      if (child instanceof THREE.Mesh) {
-        if (child.material.name) {
-          // loop through each type of mapped image
-          for (let mapType = 0; mapType < 10; mapType++) {
-            switch (mapType) {
-              case 0: // texture map
-                if (child.material.map && child.material.map.image) {
-                  child.material.map.image.src = this.modifySuffix(
-                    child.material.map.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 1: // bumpMap
-                if (child.material.bumpMap) {
-                  child.material.bumpMap.image.src = this.modifySuffix(
-                    child.material.bumpMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 2: // normalMap
-                if (child.material.normalMap) {
-                  child.material.normalMap.image.src = this.modifySuffix(
-                    child.material.normalMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 3: // lightMap
-                if (child.material.lightMap) {
-                  child.material.lightMap.image.src = this.modifySuffix(
-                    child.material.lightMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 4: // ambient occlusion Map
-                if (child.material.aoMap) {
-                  child.material.aoMap.image.src = this.modifySuffix(
-                    child.material.aoMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 5: // emissiveMap
-                if (child.material.emissiveMap) {
-                  child.material.emissiveMap.image.src = this.modifySuffix(
-                    child.material.emissiveMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 6: // specularMap
-                if (child.material.specularMap) {
-                  child.material.specularMap.image.src = this.modifySuffix(
-                    child.material.specularMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 7: // alphaMap
-                if (child.material.alphaMap) {
-                  child.material.alphaMap.image.src = this.modifySuffix(
-                    child.material.alphaMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 8: // displacementMap
-                if (child.material.displacementMap) {
-                  child.material.displacementMap.image.src = this.modifySuffix(
-                    child.material.displacementMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              case 9: // enviroment Map
-                if (child.material.envMap) {
-                  child.material.envMap.image.src = this.modifySuffix(
-                    child.material.envMap.image.src,
-                    isAppend
-                  );
-                }
-                break;
-              default:
-            }
-          }
+        if (child.material) {
+          child.material.side = THREE.DoubleSide;
         }
       }
     });
@@ -577,7 +522,7 @@ class ModelScene {
    */
   _getDisplayObjects() {
     const objects = [];
-    const { wireframe, shadingMode, resizedTexture } = this.renderingState;
+    const { wireframe, shadingMode } = this.renderingState;
     // Default Shading Mode
     if (shadingMode === 0 || 1) {
       objects.push(this.model);
@@ -596,7 +541,8 @@ class ModelScene {
             color: 0xc0c0c0,
             shading: THREE.SmoothShading,
             wireframe: false,
-            transparent: true
+            transparent: true,
+            side: THREE.DoubleSide
           }));
           objects.push(newMesh);
         }
@@ -610,7 +556,8 @@ class ModelScene {
             color: 0xc0c0c0,
             shading: THREE.FlatShading,
             wireframe: false,
-            transparent: true
+            transparent: true,
+            side: THREE.DoubleSide
           }));
           objects.push(newMesh);
         }
@@ -629,12 +576,6 @@ class ModelScene {
           objects.push(newMesh);
         }
       });
-    }
-
-    if (!resizedTexture) { // Texture to be at original resolution
-      this.loadTextures(false);
-    } else {
-      this.loadTextures(true);
     }
 
     return objects;

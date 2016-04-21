@@ -66,6 +66,10 @@ ModelController.request.addStatisticsPoint = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addStatisticsPoint, req, res, DEBUG_ENV);
 };
 
+ModelController.request.getTextureData = function (req, res) {
+  ResponseHelper.handle(ModelController.promise.getTextureData, req, res, DEBUG_ENV);
+};
+
 ModelController.request.addWalkthrough = function (req, res) {
   ResponseHelper.handle(ModelController.promise.addWalkthrough, req, res, DEBUG_ENV);
 };
@@ -235,7 +239,7 @@ ModelController.promise.deleteSnapshot = function (req) {
 };
 
 ModelController.promise.addWalkthrough = function (req) {
-  const walkthrough = req.body;
+  const { walkthrough, index, isBefore } = req.body;
   const { modelId } = req.params;
   const error = User.validate(req.user, { _id: true })
     || Model.validate({ _id: modelId }, { _id: true });
@@ -243,7 +247,7 @@ ModelController.promise.addWalkthrough = function (req) {
     return Promise.reject(new ClientError(error));
   }
 
-  return Model.addWalkthrough(modelId, walkthrough);
+  return Model.addWalkthrough(modelId, walkthrough, index, isBefore);
 };
 
 ModelController.promise.updateWalkthrough = function (req) {
@@ -253,9 +257,6 @@ ModelController.promise.updateWalkthrough = function (req) {
     || Model.validate({ _id: modelId }, { _id: true });
   if (error) {
     return Promise.reject(new ClientError(error));
-  }
-  if (typeof walkthrough.disjointMode !== 'undefined') {
-    walkthrough.animationMode = 'Stationary';
   }
 
   return Model.updateWalkthrough(modelId, index, walkthrough);
@@ -318,9 +319,9 @@ ModelController.helper.resizeTextures = function (files) {
       textureFiles.map(file => {
         const ext = path.extname(file.path);
         return [
-          TextureHelper.resize(2, file.path, file.path.replace(`${ext}`, `@2${ext}`)),
-          TextureHelper.resize(3, file.path, file.path.replace(`${ext}`, `@3${ext}`)),
-          TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `@4${ext}`))
+          TextureHelper.resize(4, file.path, file.path.replace(`${ext}`, `@2${ext}`)),
+          TextureHelper.resize(9, file.path, file.path.replace(`${ext}`, `@3${ext}`)),
+          TextureHelper.resize(16, file.path, file.path.replace(`${ext}`, `@4${ext}`))
         ];
       })
     )
@@ -398,6 +399,15 @@ ModelController.promise.deleteModel = function (req) {
   }
 
   return Model.deleteModel(modelId);
+};
+
+ModelController.promise.getTextureData = function (req) {
+  const { filePaths } = req.query;
+
+  return ModelHelper.obtainTextureFilesData(
+    path.resolve(__dirname, '../../../storage/models'),
+    filePaths
+  );
 };
 
 export default ModelController;

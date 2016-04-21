@@ -10,7 +10,8 @@ import {
   REQ_PUT_ADD_MODEL_SNAPSHOTS,
   REQ_PUT_REMOVE_MODEL_SNAPSHOT,
   REQ_PUT_ADD_STATISTICS_POINT,
-  REQ_DEL_MODEL
+  REQ_DEL_MODEL,
+  REQ_GET_TEXTURES
 } from './types';
 
 export default {
@@ -137,6 +138,21 @@ export default {
       type: REQ_DEL_MODEL,
       promise: apiClient => apiClient.delete(`/model/${modelId}`),
       payload: modelId
+    };
+  },
+
+  getTextureData(filePaths, status, mapping) {
+    return {
+      type: REQ_GET_TEXTURES,
+      promise: apiClient => apiClient.get(`/getTextureData`, {
+        query: {
+          filePaths
+        }
+      }),
+      payload: {
+        status,
+        mapping
+      }
     };
   }
 };

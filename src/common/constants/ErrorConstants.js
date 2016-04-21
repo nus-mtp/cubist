@@ -42,7 +42,7 @@ const ErrorConstants = {
   ERROR_MODEL_NOT_OWNER: 'Model is not owned by this user account',
   ERROR_MODEL_OBJ_FILE_NOT_UNIQUE: 'There can only be one OBJ file',
   ERROR_MODEL_MTL_FILE_NOT_UNIQUE: 'There can only be one MTL file',
-  ERROR_MODEL_MTL_TEXTURE_MISSING: 'Model MTL file misses some required textures',
+  ERROR_MODEL_MTL_TEXTURE_MISSING: 'Model MTL file has some required textures missing',
   ERROR_MODEL_REDUNDANT_TEXTURES: 'Model has some redundant textures'
 };
 

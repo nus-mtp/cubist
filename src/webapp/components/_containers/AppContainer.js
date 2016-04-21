@@ -2,9 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import { NavDropdown, MenuItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import classnames from 'classnames';
 import PureComponent from 'react-pure-render/component';
 import { pushState } from 'redux-router';
@@ -87,14 +85,13 @@ class AppContainer extends PureComponent {
 
     return (
       <nav className={ classnames(navClasses) }>
-        <div className="container">
           <div className="navbar-header">
             <button type="button" className="navbar-toggle collapsed" onClick={ this._onMenuToggle }>
               MENU
             </button>
-            <Link to="/" className={ classnames(navBrandClasses) }>
-              Cubist
-            </Link>
+            <a href="/" className={ classnames(navBrandClasses) }>
+              CUBIST
+            </a>
           </div>
           <div className={ classnames(collapseClasses) }>
             {
@@ -106,7 +103,6 @@ class AppContainer extends PureComponent {
               this._renderSearchForm()
             }
           </div>
-        </div>
       </nav>
     );
   }
@@ -114,18 +110,20 @@ class AppContainer extends PureComponent {
   _renderPublicHeader() {
     const signUpClasses = [
       'btn',
+      'btn-sm',
+      'btn-primary',
       'navbar-btn',
       `${CLASS_NAME}-navbar-register`
     ];
 
     return (
       <ul className="nav navbar-nav navbar-right">
-        <Link to="/register" className={ classnames(signUpClasses) }>
+        <a href="/register" className={ classnames(signUpClasses) }>
           SIGN UP
-        </Link>
-        <Link to="/login" className={ `${CLASS_NAME}-navbar-login btn btn-success navbar-btn` }>
+        </a>
+        <a href="/login" className={ `${CLASS_NAME}-navbar-login btn btn-sm btn-success navbar-btn` }>
           LOG IN
-        </Link>
+        </a>
       </ul>
     );
   }
@@ -142,17 +140,13 @@ class AppContainer extends PureComponent {
           title={ this._renderUserAvatar() } id="registeredDropdown">
           {
             user.get('role') === Constants.ROLE_ADMIN &&
-            <LinkContainer to="/admin">
-              <MenuItem eventKey="1">
-                Admin Panel
-              </MenuItem>
-            </LinkContainer>
-          }
-          <LinkContainer to={ `/u/${user.get('name')}` }>
-            <MenuItem eventKey="2">
-              Manage Profile
+            <MenuItem eventKey="1" href="/admin">
+              Admin Panel
             </MenuItem>
-          </LinkContainer>
+          }
+          <MenuItem href={ `/u/${user.get('name')}` } eventKey="1">
+            Manage Profile
+          </MenuItem>
           <MenuItem eventKey="3">
             Settings
           </MenuItem>
@@ -163,9 +157,9 @@ class AppContainer extends PureComponent {
         </NavDropdown>
       </ul>,
       <ul className="nav navbar-nav navbar-right cb-margin-right-10px" key={ 2 }>
-        <Link to="/upload" className={ `${CLASS_NAME}-navbar-upload btn btn-success navbar-btn` }>
+        <a href="/upload" className={ `${CLASS_NAME}-navbar-upload btn btn-sm btn-success navbar-btn` }>
           UPLOAD
-        </Link>
+        </a>
       </ul>
     ];
   }
@@ -184,9 +178,9 @@ class AppContainer extends PureComponent {
       return undefined;
     }
     return (
-      <div className="col-sm-4 pull-left">
-        <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
-          <div className="input-group">
+      <div className="col-sm-9 pull-left">
+        <form className="cb-navbar-form" onSubmit={ this._onSearchFormSubmit }>
+          <div className="input-group" style={ { width: '100%' } }>
             <input id={ SEARCH_FIELD }
               type="text"
               className="form-control"
