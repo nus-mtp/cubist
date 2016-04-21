@@ -36,6 +36,9 @@ class HomeContainer extends PureComponent {
         { this._renderHeroSection() }
         { this._renderPopularSection() }
         { this._renderCategorySection() }
+        <div className={ `${CLASS_NAME}-footer` }>
+          <h4>Developed by Studio/Slash 2016</h4>
+        </div>
       </div>
     );
   }

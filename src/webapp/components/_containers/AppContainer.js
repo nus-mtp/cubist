@@ -91,7 +91,7 @@ class AppContainer extends PureComponent {
               MENU
             </button>
             <a href="/" className={ classnames(navBrandClasses) }>
-              Cubist
+              CUBIST
             </a>
           </div>
           <div className={ classnames(collapseClasses) }>
@@ -174,7 +174,7 @@ class AppContainer extends PureComponent {
       return undefined;
     }
     return (
-      <div className="col-sm-4 pull-left">
+      <div className="col-sm-6 pull-left">
         <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
           <div className="input-group">
             <input id={ SEARCH_FIELD }
