@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 
 import { ModelCanvas } from '../render';
 import { RenderActions, WalkthroughActions } from 'webapp/actions';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const CLASS_NAME = 'cb-model-viewer';
 
@@ -78,6 +79,11 @@ class ModelViewer extends React.Component {
 
   _renderWireframeButton() {
     const { wireframe } = this.props;
+    let tootipTitle = 'Show Wireframe';
+    if (wireframe) {
+      tootipTitle = 'Hide Wireframe';
+    }
+    const tooltip = (<Tooltip><p><strong>{ tootipTitle }</strong></p>Render Wireframe on Model</Tooltip>);
     const wireframeButtonClasses = [
       'btn',
       'btn-transparent-alt',
@@ -88,16 +94,19 @@ class ModelViewer extends React.Component {
     ];
 
     return (
-      <button type="button"
-        className={ classnames(wireframeButtonClasses) }
-        onClick={ this._onToggleWireframeButtonClick }>
-        <i className="fa fa-codepen" />
-      </button>
+      <OverlayTrigger placement="top" overlay={ tooltip }>
+        <button type="button"
+          className={ classnames(wireframeButtonClasses) }
+          onClick={ this._onToggleWireframeButtonClick }>
+          <i className="fa fa-codepen" />
+        </button>
+      </OverlayTrigger>
     );
   }
 
   _renderAutoRotatebutton() {
     const { autoRotate } = this.props;
+    const tooltip = (<Tooltip><p><strong>Auto-Rotate</strong></p>Rotate Camera Around Model</Tooltip>);
     const autoRotateButtonClasses = [
       'btn',
       'btn-transparent-alt',
@@ -108,11 +117,13 @@ class ModelViewer extends React.Component {
     ];
 
     return (
-      <button type="button"
-        className={ classnames(autoRotateButtonClasses) }
-        onClick={ this._onToggleAutoRotateButtonClick }>
-        <i className="fa fa-street-view" />
-      </button>
+      <OverlayTrigger placement="top" overlay={ tooltip }>
+        <button type="button"
+          className={ classnames(autoRotateButtonClasses) }
+          onClick={ this._onToggleAutoRotateButtonClick }>
+          <i className="fa fa-street-view" />
+        </button>
+      </OverlayTrigger>
     );
   }
 
@@ -130,18 +141,22 @@ class ModelViewer extends React.Component {
     } else {
       buttonTitle = 'NIL';
     }
+    const tooltip = (<Tooltip><p><strong>Shading Mode</strong></p>Render Model with { buttonTitle }</Tooltip>);
 
     return (
-      <button type="button"
-        className="btn btn-transparent-alt"
-        onClick={ this._onToggleShadingButtonClick }>
-        { buttonTitle }
-      </button>
+      <OverlayTrigger placement="top" overlay={ tooltip }>
+        <button type="button"
+          className="btn btn-transparent-alt"
+          onClick={ this._onToggleShadingButtonClick }>
+          { buttonTitle }
+        </button>
+      </OverlayTrigger>
     );
   }
 
   _renderResetViewButton() {
     const buttonTitle = 'Reset View';
+    const tooltip = (<Tooltip><p><strong>Reset View</strong></p>Reset Camera Back to Default Position</Tooltip>);
     const resetViewButtonClasses = [
       'btn',
       'btn-transparent-alt',
@@ -149,16 +164,20 @@ class ModelViewer extends React.Component {
     ];
 
     return (
-      <button type="button"
-        className={ classnames(resetViewButtonClasses) }
-        onClick={ this._onToggleResetViewButtonClick }>
-        { buttonTitle }
-      </button>
+      <OverlayTrigger placement="top" overlay={ tooltip }>
+        <button type="button"
+          className={ classnames(resetViewButtonClasses) }
+          onClick={ this._onToggleResetViewButtonClick }>
+          { buttonTitle }
+        </button>
+      </OverlayTrigger>
     );
   }
 
   _renderWalkthroughButton() {
     const { walkthroughPoints } = this.props;
+    const tooltip = (<Tooltip><p><strong>Play Walkthrough</strong></p>
+                     Playback Walkthrough Path Defined by Uploader</Tooltip>);
     if (walkthroughPoints.size !== 0) {
       const buttonTitle = 'Play Walkthrough';
       const resetViewButtonClasses = [
@@ -168,11 +187,13 @@ class ModelViewer extends React.Component {
       ];
 
       return (
-        <button type="button"
-          className={ classnames(resetViewButtonClasses) }
-          onClick={ this._onPlayWalkthroughButtonClick }>
-          { buttonTitle }
-        </button>
+        <OverlayTrigger placement="top" overlay={ tooltip }>
+          <button type="button"
+            className={ classnames(resetViewButtonClasses) }
+            onClick={ this._onPlayWalkthroughButtonClick }>
+            { buttonTitle }
+          </button>
+        </OverlayTrigger>
       );
     }
   }
