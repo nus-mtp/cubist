@@ -74,7 +74,7 @@ class UploadContainer extends PureComponent {
             <div className="col-sm-6 col-md-4">
               <button type="submit"
                 className="btn btn-success btn-block cb-margin-bottom-10px">
-                UPLOAD
+                CONFIRM UPLOAD
               </button>
               {
                 err &&
@@ -171,7 +171,7 @@ class UploadContainer extends PureComponent {
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor={ `model-${MODEL_CATEGORY_FIELD}` }>
-              Model Category
+              Model Category*
             </label>
             <select onChange={ e => this._onModelInfoInputChange(MODEL_CATEGORY_FIELD, e.target.value) }
               value={ modelInfoData[MODEL_CATEGORY_FIELD] }
