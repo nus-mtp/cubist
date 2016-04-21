@@ -195,7 +195,6 @@ class MaterialCreator {
             // finds the encoded model id
             let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
             modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
-            // console.log('model id is ', modelID);
             // returns the texture path and mapping
             const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
@@ -239,7 +238,6 @@ class MaterialCreator {
             // finds the encoded model id
             let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
             modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
-            // console.log('model id is ', modelID);
             // returns the texture path and mapping
             const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
@@ -360,14 +358,7 @@ class MTLLoader {
     materialCreator.setMaterials(materialsInfo);
     materialCreator.getAsArray();
 
-    // let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/') );
-    // modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
-    // console.log('model id is ', modelID);
-
     if (this.useSmallTexture) {
-      // console.log(materialCreator.getAsArray());
-      console.log(materialArray, ' in MTL');
-      console.log(pathMapping, ' in MTL');
       this.callback(materialArray, pathMapping);
     }
     return materialCreator;
