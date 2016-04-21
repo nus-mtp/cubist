@@ -76,7 +76,7 @@ class ModelContainer extends PureComponent {
             { this._renderUploaderCard() }
             { this._renderModelInfoCard() }
             { this._renderModelDownloadLink() }
-            { user.get('_id') && this._renderModelFlagButton() }
+            { !isUploader && this._renderModelFlagButton() }
           </div>
         </div>
       </div>
