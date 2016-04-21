@@ -192,6 +192,8 @@ class ModelContainer extends PureComponent {
     const loader = new OBJMTLLoader(
       (textureArray, pathMapping) => {
         const { dispatch } = this.props;
+        console.log(textureArray, ' in ModelContainer');
+        console.log(pathMapping, ' in ModelContainer');
         dispatch(ModelActions.getTextureData(textureArray, 3, pathMapping));
       }
     );

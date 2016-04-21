@@ -1,6 +1,9 @@
 import THREE from 'three';
 
 const TEXTURE_SUFFIX = '@4';
+const TEXTURE_SUFFIX_NEXT = '@3';
+const materialArray = [];
+const pathMapping = [];
 
 function nextHighestPowerOfTwo_(x) {
   let copyX = x;
@@ -186,9 +189,18 @@ class MaterialCreator {
         case 'map_kd':
           // Diffuse texture map
           if (this.useSmallTexture) {
-            const newvalue = value.substring(0, value.lastIndexOf('.')) +
+            const smallTex = value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
-            params.map = this.loadTexture(this.baseUrl + newvalue);
+            params.map = this.loadTexture(this.baseUrl + smallTex);
+            // finds the encoded model id
+            let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
+            modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
+            // console.log('model id is ', modelID);
+            // returns the texture path and mapping
+            const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
+            materialArray.push(nextTex);
+            pathMapping.push({ matName: materialName, mapType: 0, path: nextTex });
           } else {
             params.map = this.loadTexture(this.baseUrl + value);
           }
@@ -221,9 +233,18 @@ class MaterialCreator {
           }
 
           if (this.useSmallTexture) {
-            const newvalue = value.substring(0, value.lastIndexOf('.')) +
+            const smallTex = value.substring(0, value.lastIndexOf('.')) +
               TEXTURE_SUFFIX + value.substring(value.lastIndexOf('.'));
-            params.bumpMap = this.loadTexture(this.baseUrl + newvalue);
+            params.bumpMap = this.loadTexture(this.baseUrl + smallTex);
+            // finds the encoded model id
+            let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/'));
+            modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
+            // console.log('model id is ', modelID);
+            // returns the texture path and mapping
+            const nextTex = modelID + value.substring(0, value.lastIndexOf('.')) +
+              TEXTURE_SUFFIX_NEXT + value.substring(value.lastIndexOf('.'));
+            materialArray.push(nextTex);
+            pathMapping.push({ matName: materialName, mapType: 1, path: nextTex });
           } else {
             params.bumpMap = this.loadTexture(this.baseUrl + value);
           }
@@ -269,7 +290,8 @@ class MaterialCreator {
 }
 
 class MTLLoader {
-  constructor(manager, useSmallTexture) {
+  constructor(callback, manager, useSmallTexture) {
+    this.callback = callback;
     this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
     this.useSmallTexture = useSmallTexture;
   }
@@ -328,10 +350,26 @@ class MTLLoader {
       }
     }
 
-    const materialCreator = new MaterialCreator(this.baseUrl, this.materialOptions, this.useSmallTexture);
+    const materialCreator = new MaterialCreator(
+      this.baseUrl,
+      this.materialOptions,
+      this.useSmallTexture
+    );
     materialCreator.setCrossOrigin(this.crossOrigin);
     materialCreator.setManager(this.manager);
     materialCreator.setMaterials(materialsInfo);
+    materialCreator.getAsArray();
+
+    // let modelID = this.baseUrl.substr(0, this.baseUrl.lastIndexOf('/') );
+    // modelID = modelID.substr(modelID.lastIndexOf('/'), modelID.length) + '/';
+    // console.log('model id is ', modelID);
+
+    if (this.useSmallTexture) {
+      // console.log(materialCreator.getAsArray());
+      console.log(materialArray, ' in MTL');
+      console.log(pathMapping, ' in MTL');
+      this.callback(materialArray, pathMapping);
+    }
     return materialCreator;
   }
 }
