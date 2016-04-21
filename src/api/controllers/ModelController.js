@@ -4,9 +4,15 @@ import JSZip from 'jszip';
 import fs from 'fs';
 import path from 'path';
 
-import { ClientError, Constants, StringHelper } from 'common';
-import { MongooseHelper, ResponseHelper, TextureHelper, ModelHelper } from 'api/helpers';
-import { Model, User } from 'api/models';
+import ClientError from 'common/errors/ClientError';
+import Constants from 'common/constants';
+import StringHelper from 'common/string';
+import MongooseHelper from 'api/helpers/mongoose';
+import ResponseHelper from 'api/helpers/response';
+import TextureHelper from 'api/helpers/texture';
+import ModelHelper from 'api/helpers/model';
+import Model from 'api/models/Model';
+import User from 'api/models/User';
 
 const DEBUG_ENV = 'UserController';
 

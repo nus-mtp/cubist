@@ -5,6 +5,7 @@ import {
   AppContainer,
   AdminContainer,
   AdminModelsContainer,
+  AdminUsersContainer,
   AdminLoginContainer,
   AuthorisationContainer,
   HomeContainer,
@@ -33,6 +34,7 @@ export default (
       <Route path="u/:username" component={ ProfileContainer } />
       <Route path="admin" component={ AdminContainer }>
         <IndexRoute component={ AdminModelsContainer } />
+        <Route path="user" component={ AdminUsersContainer } />
       </Route>
     </Route>
     <Route path="/adminLogin" component={ AdminLoginContainer } />

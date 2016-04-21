@@ -4,7 +4,7 @@
  import Immutable from 'immutable';
  import { connect } from 'react-redux';
  import PureComponent from 'react-pure-render/component';
- import { DropdownButton, MenuItem, SplitButton, ButtonGroup, Grid, Row, Col } from 'react-bootstrap';
+ import { DropdownButton, MenuItem, SplitButton, ButtonGroup, Grid, Row, Col, Modal } from 'react-bootstrap';
 
  import { OBJLoader, OBJMTLLoader } from '../../render';
  import { ModelViewer } from '../model';
@@ -67,7 +67,8 @@
       statisticsIndex: 0,
 
       // Walkthrough
-      selectedWalkthroughIndex: undefined
+      selectedWalkthroughIndex: undefined,
+      deleteConfirm: false
     };
   }
 
@@ -193,10 +194,18 @@
     dispatch(SnapshotActions.triggerSnapshot(walkthrough.get('key')));
   };
 
+  _onWalkthroughDeletePrompt = (e) => {
+    e.preventDefault();
+    const { deleteConfirm } = this.state;
+    this.setState({ deleteConfirm: !deleteConfirm });
+  };
+
   _onWalkthroughDelete = (e) => {
     e.preventDefault();
     const { dispatch, params } = this.props;
     const { selectedWalkthroughIndex } = this.state;
+    this.setState({ deleteConfirm: false });
+    this.setState({ selectedWalkthroughIndex: undefined });
     dispatch(WalkthroughActions.deleteWalkthrough(params.modelId, selectedWalkthroughIndex));
   };
 
@@ -485,7 +494,7 @@
   // ----------------- WALKTHROUGH RENDER-----------------
   // -----------------------------------------------------
   _renderWalkthroughSection() {
-    const { selectedWalkthroughIndex } = this.state;
+    const { selectedWalkthroughIndex, deleteConfirm } = this.state;
     if (typeof selectedWalkthroughIndex === 'undefined') {
       return undefined;
     }
@@ -520,7 +529,32 @@
           Update Position
         </button>
         { selectedWalkthroughIndex < walkthroughPoints.size - 1 && this._renderWalkthroughAnimationDropdown() }
+        <button className="btn btn-danger cb-margin-left-10px" onClick={ e => this._onWalkthroughDeletePrompt(e) }>
+          Delete Point
+        </button>
         <p></p>{ this._renderAnimationDurationField() }
+        { deleteConfirm && this._renderDeleteWarning() }
+      </div>
+    );
+  }
+
+  _renderDeleteWarning() {
+    return (
+      <div className="static-modal">
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title><h4>Delete Point Warning</h4></Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            Are you sure that you want to delete this point?
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button className="btn btn-primary" onClick={ e => this._onWalkthroughDeletePrompt(e) }>Cancel</button>
+            <button className="btn btn-danger" onClick={ e => this._onWalkthroughDelete(e) }>Confirm Delete</button>
+          </Modal.Footer>
+        </Modal.Dialog>
       </div>
     );
   }

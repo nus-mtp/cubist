@@ -90,6 +90,7 @@
     "redux-router": "1.0.0-beta7",
     "redux-thunk": "1.0.3",
     "sendgrid": "2.0.0",
+    "serialize-javascript": "^1.2.0",
     "serve-favicon": "2.3.0",
     "sharp": "0.12.2",
     "slick-carousel": "1.5.9",

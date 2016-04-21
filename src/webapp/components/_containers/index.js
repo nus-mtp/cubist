@@ -1,6 +1,7 @@
 export default {
   AdminContainer: require('./AdminContainer'),
   AdminModelsContainer: require('./AdminModelsContainer'),
+  AdminUsersContainer: require('./AdminUsersContainer'),
   AdminLoginContainer: require('./AdminLoginContainer'),
   AppContainer: require('./AppContainer'),
   AuthorisationContainer: require('./AuthorisationContainer'),

@@ -2,8 +2,8 @@ import mongoose, { Schema } from 'mongoose';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
-import { MongooseHelper } from 'api/helpers';
-import { Constants } from 'common';
+import MongooseHelper from 'api/helpers/mongoose';
+import Constants from 'common/constants';
 
 const ObjectId = Schema.Types.ObjectId;
 

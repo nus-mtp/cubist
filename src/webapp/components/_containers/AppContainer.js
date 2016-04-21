@@ -179,7 +179,7 @@ class AppContainer extends PureComponent {
     }
     return (
       <div className="col-sm-9 pull-left">
-        <form className="cb-navbar-form" onSubmit={ this._onSearchFormSubmit }>
+        <form className="navbar-form" onSubmit={ this._onSearchFormSubmit }>
           <div className="input-group" style={ { width: '100%' } }>
             <input id={ SEARCH_FIELD }
               type="text"

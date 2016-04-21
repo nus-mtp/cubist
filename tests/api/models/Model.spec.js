@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import Model from 'api/models/Model';
-import { MongooseHelper } from 'api/helpers';
-import { Constants } from 'common';
+import MongooseHelper from 'api/helpers/mongoose';
+import Constants from 'common/constants';
 
 describe('Model Schema', () => {
   let sandbox;

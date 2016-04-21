@@ -21,6 +21,10 @@ UserController.request.getUser = function (req, res) {
   ResponseHelper.handle(UserController.promise.getUser, req, res, DEBUG_ENV);
 };
 
+UserController.request.getUsers = function (req, res) {
+  ResponseHelper.handle(UserController.promise.getUsers, req, res, DEBUG_ENV);
+};
+
 UserController.request.me = function (req, res) {
   ResponseHelper.handle(UserController.promise.me, req, res, DEBUG_ENV);
 };
@@ -66,11 +70,19 @@ UserController.request.changePassword = function (req, res) {
   ResponseHelper.handle(UserController.promise.changePassword, req, res, DEBUG_ENV);
 };
 
+UserController.request.deleteUser = function (req, res) {
+  ResponseHelper.handle(UserController.promise.deleteUser, req, res, DEBUG_ENV);
+};
+
 // ---------------------------------------------------------------------------- //
 
 UserController.promise.getUser = function (req) {
   const { query, options } = req.query;
   return User.findUser(query, options);
+};
+
+UserController.promise.getUsers = function () {
+  return Promise.resolve(User.find({}).exec());
 };
 
 UserController.promise.me = function (req, needAuthorized = false) {
@@ -207,6 +219,11 @@ UserController.promise.changePassword = function (req) {
         password: newPassword
       });
     });
+};
+
+UserController.promise.deleteUser = function (req) {
+  const { userId } = req.params;
+  return Promise.resolve(User.remove({ _id: userId }).exec());
 };
 
 export default UserController;

@@ -1,2 +1,3 @@
 instrumentation:
   root: src
+  excludes: ['**/api/helpers/**/*.js', '**/api/controllers/**/*.js', '**/api/models/Model.js']

@@ -1,10 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import path from 'path';
 import Promise from 'bluebird';
 
 import ModelController from 'api/controllers/ModelController';
-import { Model, User } from 'api/models';
-import path from 'path';
+import Model from 'api/models/Model';
+import User from 'api/models/User';
 
 describe('Model Controller', () => {
   let sandbox;

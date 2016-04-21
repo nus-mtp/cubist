@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { match } from 'redux-router/server';
 import Promise from 'bluebird';
+import serialize from 'serialize-javascript';
 
 import { Logger, ClientError } from 'common';
 import appRender from 'webapp/config/render';
@@ -58,7 +59,7 @@ const render = function (req, res, next) {
       <HtmlDocument
         title="Cubist 3D"
         markup={ componentMarkup }
-        store={ JSON.stringify(store.getState()) }
+        store={ serialize(store.getState()) }
         script={ assets.script }
         css={ assets.css } />
     );
