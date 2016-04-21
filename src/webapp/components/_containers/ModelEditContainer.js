@@ -563,7 +563,7 @@
       return (
         <Row className="show-grid">
         <Col sm={ 3 } md={ 2 }>Duration to next point</Col>
-        <Col sm={ 1 } md={ 1 }>
+        <Col sm={ 2 } md={ 2 }>
           <input id={ `walkthrough-point-duration-${selectedWalkthroughIndex}` }
             value={ walkthrough.get('duration') }
             type="text"
