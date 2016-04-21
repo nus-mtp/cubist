@@ -176,7 +176,8 @@ class ModelViewer extends React.Component {
 
   _renderWalkthroughButton() {
     const { walkthroughPoints } = this.props;
-    const tooltip = (<Tooltip><p><strong>Play Walkthrough</strong></p>Playback Walkthrough Path Defined by Uploader</Tooltip>);
+    const tooltip = (<Tooltip><p><strong>Play Walkthrough</strong></p>
+                     Playback Walkthrough Path Defined by Uploader</Tooltip>);
     if (walkthroughPoints.size !== 0) {
       const buttonTitle = 'Play Walkthrough';
       const resetViewButtonClasses = [
@@ -186,7 +187,7 @@ class ModelViewer extends React.Component {
       ];
 
       return (
-        <OverlayTrigger placement="top" overlay={tooltip}>
+        <OverlayTrigger placement="top" overlay={ tooltip }>
           <button type="button"
             className={ classnames(resetViewButtonClasses) }
             onClick={ this._onPlayWalkthroughButtonClick }>
