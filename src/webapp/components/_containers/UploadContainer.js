@@ -97,7 +97,7 @@ class UploadContainer extends PureComponent {
     return (
       <Dropzone className={ `${CLASS_NAME}-model-dropzone` }
         onDrop={ this._onModelFileDrop }>
-        <div>
+        <div className="cb-ctn-upload-hint-text">
           Try dropping some files here, or click to select files to upload.
         </div>
         <div>
