@@ -76,10 +76,6 @@
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.model !== this.props.model) {
-      this.refreshModel(nextProps.model);
-    }
-
     if (nextProps.walkthroughPoints !== this.props.walkthroughPoints) {
       this.setState({
         durations: nextProps.walkthroughPoints.map(p => p.get('duration')).toJS()

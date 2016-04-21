@@ -50,7 +50,7 @@ const ModelReducerHelper = {
     if (promiseState === Constants.PROMISE_STATE_SUCCESS) {
       const model = Immutable.fromJS(res.body);
       nextState = nextState
-        .setIn(['models', model.get('_id')], model)
+        .mergeIn(['models', model.get('_id')], model)
         .set('modelId', model.get('_id'));
     }
 
