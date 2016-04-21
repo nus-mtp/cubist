@@ -1,4 +1,5 @@
 import {
+  REQ_GET_USERS,
   REQ_GET_USER,
   REQ_GET_USER_ME,
   REQ_GET_USER_USER_INFO,
@@ -6,7 +7,8 @@ import {
   REQ_POST_USER_REGISTER,
   REQ_POST_USER_LOGIN,
   REQ_POST_USER_LOGOUT,
-  REQ_POST_USER_RESET_PASSWORD
+  REQ_POST_USER_RESET_PASSWORD,
+  REQ_DEL_USER
 } from './types';
 
 export default {
@@ -18,6 +20,13 @@ export default {
           query
         }
       })
+    };
+  },
+
+  getUsers() {
+    return {
+      type: REQ_GET_USERS,
+      promise: apiClient => apiClient.get('/userS')
     };
   },
 
@@ -85,6 +94,14 @@ export default {
           email
         }
       })
+    };
+  },
+
+  deleteUser(userId) {
+    return {
+      type: REQ_DEL_USER,
+      promise: apiClient => apiClient.delete(`/user/${userId}`),
+      payload: userId
     };
   }
 };

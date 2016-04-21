@@ -10,6 +10,7 @@ const snapshotUpload = multer({ storage: StorageHelper.getSnapshotStorage() });
 export default (app) => {
   // Authentication
   app.get('/user', UserController.request.getUser);
+  app.get('/users', Authorisation.requireAdmin, UserController.request.getUsers);
   app.get('/user/me', Authorisation.checkUser, UserController.request.me);
   app.get('/user/userInfo', Authorisation.requireUser, UserController.request.info);
   app.get('/user/adminInfo', Authorisation.requireAdmin, UserController.request.info);
@@ -19,6 +20,8 @@ export default (app) => {
   app.post('/user/adminLogin', UserController.request.adminLogin);
   app.post('/user/resetPassword', UserController.request.resetPassword);
   app.post('/user/logout', Authorisation.requireUser, UserController.request.logout);
+
+  app.delete('/user/:userId', Authorisation.requireAdmin, UserController.request.deleteUser);
 
   // Model
   app.get('/model', ModelController.request.getModels);
