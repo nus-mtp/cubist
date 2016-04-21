@@ -3,6 +3,7 @@ import sinon from 'sinon';
 
 import Model from 'api/models/Model';
 import { MongooseHelper } from 'api/helpers';
+import { Constants } from 'common';
 
 describe('Model Schema', () => {
   let sandbox;
@@ -13,6 +14,137 @@ describe('Model Schema', () => {
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('Validate Model', () => {
+    it('Should pass if model object is valid', () => {
+      const model = {
+        _id: 'foo',
+        title: 'bar'
+      };
+
+      const fields = {
+        _id: true,
+        title: true
+      };
+
+      expect(Model.validate(model, fields)).to.equal(null);
+    });
+
+    it('Should give error if model id is not valid', () => {
+      const model1 = {
+      };
+
+      const model2 = {
+        _id: ' '
+      };
+
+      const model3 = {
+        _id: true
+      };
+
+      const fields = {
+        _id: true
+      };
+
+      expect(Model.validate(model1, fields)).to.equal(Constants.ERROR_MODEL_ID_REQUIRED);
+      expect(Model.validate(model2, fields)).to.equal(Constants.ERROR_MOEDL_ID_INVALID);
+      expect(Model.validate(model3, fields)).to.equal(Constants.ERROR_MOEDL_ID_INVALID);
+    });
+
+    it('Should give error if model title is not valid', () => {
+      const model1 = {
+      };
+
+      const model2 = {
+        title: ' '
+      };
+
+      const model3 = {
+        title: 'a'.repeat(201)
+      };
+
+      const fields = {
+        title: true
+      };
+
+      expect(Model.validate(model1, fields)).to.equal(Constants.ERROR_MODEL_TITLE_REQUIRED);
+      expect(Model.validate(model2, fields)).to.equal(Constants.ERROR_MODEL_TITLE_MIN_LENGTH);
+      expect(Model.validate(model3, fields)).to.equal(Constants.ERROR_MODEL_TITLE_MAX_LENGTH);
+    });
+  });
+
+  describe('Validate Model Filepaths', () => {
+    it('Should pass if filepaths are valid', () => {
+      const filePaths = ['foo.obj', 'test.mtl'];
+      expect(Model.validateFilePaths(filePaths)).to.equal(null);
+    });
+
+    it('Should not pass if there is more than one obj or mtl file', () => {
+      const filePaths1 = ['foo.obj', 'foo2.obj', 'test.mtl'];
+      const filePaths2 = ['foo.obj', 'test.mtl', 'test2.mtl'];
+      expect(Model.validateFilePaths(filePaths1)).to.equal(Constants.ERROR_MODEL_OBJ_FILE_NOT_UNIQUE);
+      expect(Model.validateFilePaths(filePaths2)).to.equal(Constants.ERROR_MODEL_MTL_FILE_NOT_UNIQUE);
+    });
+
+    it('Should not pass if there is extra files without and mtl file', () => {
+      const filePaths = ['foo.obj', 'bar.png'];
+      expect(Model.validateFilePaths(filePaths)).to.equal(Constants.ERROR_MODEL_REDUNDANT_TEXTURES);
+    });
+  });
+
+  describe('getModels', () => {
+    it('Should call moongooseHelper with the given query and options', () => {
+      const query = { foo: 'bar' };
+      const options = { test: 'testtest' };
+
+      const moongooseHelperMock = sandbox.mock(MongooseHelper)
+        .expects('find')
+        .returns('')
+        .once()
+        .withArgs(Model, query, options);
+
+      Model.getModels(query, options);
+      expect(moongooseHelperMock.verify()).to.be.true;
+    });
+  });
+
+  describe('getLatestModels', () => {
+    it('Should call moongooseHelper to obtain the latest models', () => {
+      const options = {
+        limit: 20,
+        sort: '-updatedAt',
+        populate: 'uploader'
+      };
+
+      const moongooseHelperMock = sandbox.mock(MongooseHelper)
+        .expects('find')
+        .returns('')
+        .once()
+        .withArgs(Model, {}, options);
+
+      Model.getLatestModels();
+      expect(moongooseHelperMock.verify()).to.be.true;
+    });
+  });
+
+  describe('getTopModels', () => {
+    it('Should call moongooseHelper to obtain the top 9 models', () => {
+      const options = {
+        limit: 9,
+        sort: '-socialData.views',
+        populate: 'uploader'
+      };
+
+      const moongooseHelperMock = sandbox.mock(MongooseHelper)
+        .expects('find')
+        .returns('')
+        .once()
+        .withArgs(Model, {}, options);
+
+      Model.getTopModels();
+      expect(moongooseHelperMock.verify()).to.be.true;
+    });
   });
 
   describe('getBrowsePageModels', () => {
