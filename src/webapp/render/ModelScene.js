@@ -457,7 +457,9 @@ class ModelScene {
         if (child.material.map) {
           for (let i = 0; i < pathMap.length; i++) {
             if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 0) {
-              child.material.map = THREE.ImageUtils.loadTexture('data:image;base64,' + textureData[pathMap[i].path]);
+              child.material.map = THREE.ImageUtils.loadTexture(
+                'data:image;base64,' + textureData[pathMap[i].path]
+              );
               child.material.needsUpdate = true;
               break;
             }
@@ -466,7 +468,9 @@ class ModelScene {
         if (child.material.bumpMap) {
           for (let i = 0; i < pathMap.length; i++) {
             if (child.material.name === pathMap[i].matName && pathMap[i].mapType === 1) {
-              child.material.bumpMap = THREE.ImageUtils.loadTexture('data:image;base64,' + textureData[pathMap[i].path]);
+              child.material.bumpMap = THREE.ImageUtils.loadTexture(
+                'data:image;base64,' + textureData[pathMap[i].path]
+              );
               child.material.needsUpdate = true;
               break;
             }

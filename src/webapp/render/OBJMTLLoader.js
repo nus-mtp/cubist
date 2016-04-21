@@ -1,8 +1,5 @@
 import THREE from 'three';
 import MTLLoader from './MTLLoader';
-import _ from 'lodash';
-
-const TEXTURE_SUFFIX = '@4';
 
 class OBJMTLLoader {
   constructor(callback, manager) {
@@ -18,7 +15,13 @@ class OBJMTLLoader {
   }
 
   loadSmall(url, mtlurl, onLoad, onProgress, onError) {
-    const mtlLoader = new MTLLoader(this.manager, true);
+    const mtlLoader = new MTLLoader(
+      (textureArray, pathMapping) => {
+        this.callback(textureArray, pathMapping);
+      },
+      this.manager,
+      true
+    );
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
     mtlLoader.load(mtlurl, materials => {
@@ -28,35 +31,16 @@ class OBJMTLLoader {
       loader.setCrossOrigin(this.crossOrigin);
       loader.load(url, (text) => {
         const object = this.parse(text);
-        const materialArray = [];
-        const pathMapping = [];
         object.traverse(o => {
           if (o instanceof THREE.Mesh) {
             if (o.material.name) {
               const material = materialsCreator.create(o.material.name);
               if (material) {
-                // action to write src of texture and bumpmap image to store
-                if (_.get(material, 'map.image.src')) {
-                  const srcPath = this.modifySuffix(_.get(material, 'map.image.src'), TEXTURE_SUFFIX, '@3');
-                  if (materialArray.indexOf(srcPath) === -1) {
-                    materialArray.push(srcPath);
-                    pathMapping.push({ matName: material.name, mapType: 0, path: srcPath });
-                  }
-                }
-                if (_.get(material, 'bumpMap.image.src')) {
-                  const bumpPath = this.modifySuffix(_.get(material, 'bumpMap.image.src'), TEXTURE_SUFFIX, '@3');
-                  if (materialArray.indexOf(bumpPath) === -1) {
-                    materialArray.push(bumpPath);
-                    pathMapping.push({ matName: material.name, mapType: 1, path: bumpPath });
-                  }
-                }
                 o.material = material;
               }
             }
           }
         });
-        // Return the array of texture image src and mapping
-        this.callback(materialArray, pathMapping);
         onLoad(object);
       }, onProgress, onError);
     }, onProgress, onError);
