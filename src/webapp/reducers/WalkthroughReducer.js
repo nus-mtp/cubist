@@ -81,8 +81,6 @@ export default ReducerHelper.createReducer(initialState, {
     }
 
     const snapshotToken = snapshot;
-
-    const disjointMode = true;
     const quaternion = { x: 0, y: 0, z: 0, w: 0 };
     const animationMode = 'Stationary';
     const duration = 1.00;
@@ -90,8 +88,7 @@ export default ReducerHelper.createReducer(initialState, {
 
     let nextState = state;
     nextState = nextState.update('points', points => {
-      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion,
-                           disjointMode, animationMode, duration, snapshotToken }));
+      return points.insert(targetIndex, Immutable.fromJS({ pos, lookAt, quaternion, animationMode, duration, snapshotToken }));
     });
     return nextState;
   }

@@ -254,9 +254,6 @@ ModelController.promise.updateWalkthrough = function (req) {
   if (error) {
     return Promise.reject(new ClientError(error));
   }
-  if (typeof walkthrough.disjointMode !== 'undefined') {
-    walkthrough.animationMode = 'Stationary';
-  }
 
   return Model.updateWalkthrough(modelId, index, walkthrough);
 };
