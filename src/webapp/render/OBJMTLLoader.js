@@ -47,7 +47,7 @@ class OBJMTLLoader {
   }
 
   load(url, mtlurl, onLoad, onProgress, onError) {
-    const mtlLoader = new MTLLoader(this.manager, false);
+    const mtlLoader = new MTLLoader(null, this.manager, false);
     mtlLoader.setBaseUrl(url.substr(0, url.lastIndexOf('/') + 1));
     mtlLoader.setCrossOrigin(this.crossOrigin);
     mtlLoader.load(mtlurl, materials => {
