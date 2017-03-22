@@ -29,25 +29,28 @@ $ npm install
   + `brew install homebrew/science/vips`
   + `sudo chown -R $(whoami):admin /usr/local`
   + `brew update && brew upgrade`
+* If your system is Ubuntu:
+  + `apt-get install libvips libkrb5-dev`
 * Go to team's Google Drive and download `private.js`. Move the file to `src/api/config/settings`
 * Go to team's Google Drive and download `Models for Database/Models_Set.zip`. 
 * Unzip `Models_Set.zip` file and place the `storage` folder in your local repo folder.
-* Clear MongoDB database for `cubist-api-development` (if necessary)
+* Clear MongoDB database for `cubist-api-development` and `cubist-api-production` (if necessary)
 * Install Gulp globally by running: `npm install gulp -g`
-* Run script: 
+* Run script 
   + For basic set of system-friendly models: 
     `gulp script --path src/api/scripts/createData/index.js`
   + For all available models (including non-system-friendly models): 
     `gulp script --path src/api/scripts/createData/allModels.js`
-
-###For development environment
+  + Replace `script` with `prod-script` for production environment
+  
+### For development environment
 
 ```
 $ npm run api-dev
 $ npm run webapp-dev
 ```
 
-###For production environment
+### For production environment
 
 ```
 $ npm run api-prod
