@@ -31,3 +31,5 @@ node_modules
 /storage
 src/webapp/server/webpack-stats.json
 src/api/config/settings/private.js
+.vagrant
+data/db
