@@ -8,6 +8,9 @@ language: node_js
 # Node Version
 node_js:
   - "5.2.0"
+before_install:
+  - apt-get install libgif-dev
+
 # Addon for building node-gyp successfully
 addons:
   apt:
