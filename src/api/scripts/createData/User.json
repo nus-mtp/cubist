@@ -1,27 +1,27 @@
 [
   {
-    "name": "user_1",
-    "email": "user_1@gmail.com",
+    "name": "johndoe",
+    "email": "john.doe@example.com",
     "password": "cubist"
   },
   {
-    "name": "user_2",
-    "email": "user_2@gmail.com",
+    "name": "ahkow",
+    "email": "ahkow@example.com",
     "password": "cubist"
   },
   {
-    "name": "user_3",
-    "email": "user_3@gmail.com",
+    "name": "marytan",
+    "email": "marytan@example.com",
     "password": "cubist"
   },
   {
-    "name": "user_4",
-    "email": "user_4@gmail.com",
+    "name": "alizhang",
+    "email": "ali@example.com",
     "password": "cubist"
   },
   {
-    "name": "user_5",
-    "email": "user_5@gmail.com",
+    "name": "hualian",
+    "email": "hualian@example.com",
     "password": "cubist"
   }
 ]

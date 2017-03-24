@@ -1,7 +1,7 @@
 [
   {
     "title": "Chair",
-    "uploader": "user_1",
+    "uploader": "hualian",
     "category": "object",
     "urls": ["L9gh2PGI/test.obj", "L9gh2PGI/test.mtl"],
     "imageUrls": ["XXX3AA/snapshot.png", "XXX3AA/chair_2.png", "XXX3AA/chair_3.png"],
@@ -18,7 +18,7 @@
   {
     "highRes": true,
     "title": "Anime Character",
-    "uploader": "user_1",
+    "uploader": "alizhang",
     "category": "character",
     "urls": ["GI7aU0x7/person.obj", "GI7aU0x7/person.mtl"],
     "imageUrls": ["XXX3AB/snapshot.png"],
@@ -34,7 +34,7 @@
   },
   {
     "title": "Dodo",
-    "uploader": "user_1",
+    "uploader": "alizhang",
     "category": "animal",
     "urls": ["s06rbhsD/dodo-edit-base.obj", "s06rbhsD/dodo-edit-base.mtl"],
     "imageUrls": ["yH3n1nu7/Screenshot.jpg"],
@@ -50,7 +50,7 @@
   },
   {
     "title": "Orange Betta",
-    "uploader": "user_1",
+    "uploader": "alizhang",
     "category": "animal",
     "urls": ["WRDeqMdV/model.obj", "WRDeqMdV/model.mtl"],
     "imageUrls": ["XXX3AC/Screenshot.jpg"],
@@ -66,7 +66,7 @@
   },
   {
     "title": "Pigeon",
-    "uploader": "user_1",
+    "uploader": "marytan",
     "category": "animal",
     "urls": ["TE3OWNHb/pigeon3.obj", "TE3OWNHb/pigeon3.mtl"],
     "imageUrls": ["XXX3AD/Screenshot.jpg"],
@@ -83,7 +83,7 @@
   {
   	"highRes": true,
     "title": "Architecture Ornament",
-    "uploader": "user_2",
+    "uploader": "alizhang",
     "category": "architecture",
     "urls": ["lu9WVbCZ/plant-head.obj", "lu9WVbCZ/plant-head.mtl"],
     "imageUrls": ["XXX3AE/Screenshot.jpg"],
@@ -100,7 +100,7 @@
   {
   	"highRes": true,
     "title": "Ireland Clock Tower",
-    "uploader": "user_2",
+    "uploader": "marytan",
     "category": "architecture",
     "urls": ["6cSCneqf/model.obj", "6cSCneqf/model.mtl"],
     "imageUrls": ["XXX3AF/Screenshot.jpg"],
@@ -116,7 +116,7 @@
   },
   {
     "title": "Skeleton Bunny Plush",
-    "uploader": "user_3",
+    "uploader": "ahkow",
     "category": "object",
     "urls": ["TLD2NSeX/conejo_to_sketch.obj", "TLD2NSeX/conejo_to_sketch.mtl"],
     "imageUrls": ["XXX3AG/Screenshot.jpg"],
@@ -133,7 +133,7 @@
   {
   	"highRes": true,
     "title": "Arbor Bench",
-    "uploader": "user_3",
+    "uploader": "ahkow",
     "category": "object",
     "urls": ["rzOZucxm/untitled-scene.obj", "rzOZucxm/untitled-scene.mtl"],
     "imageUrls": ["XXX3AH/snapshot.png"],
@@ -150,7 +150,7 @@
   {
   	"highRes": true,
     "title": "VG Remix - Skyrim",
-    "uploader": "user_3",
+    "uploader": "ahkow",
     "category": "game",
     "urls": ["dSOC5beX/VG Remix - Fus-Ro-Dioramah!.obj", "dSOC5beX/VG Remix - Fus-Ro-Dioramah!.mtl"],
     "imageUrls": ["XXX3AI/Snapshot.png"],
@@ -167,7 +167,7 @@
   {
   	"highRes": true,
     "title": "Papercraft Windmill",
-    "uploader": "user_3",
+    "uploader": "ahkow",
     "category": "scene",
     "urls": ["3MuO2zDu/Papercraft Windmills.obj", "3MuO2zDu/Papercraft Windmills.mtl"],
     "imageUrls": ["XXX3AJ/Snapshot.png"],
@@ -184,7 +184,7 @@
   {
   	"highRes": true,
     "title": "Master Yoda",
-    "uploader": "user_3",
+    "uploader": "ahkow",
     "category": "character",
     "urls": ["7wYsD4gs/Yoda Bust.obj", "7wYsD4gs/Yoda Bust.mtl"],
     "imageUrls": ["XXX3AK/Snapshot.png"],
@@ -201,7 +201,7 @@
    {
    	"highRes": true,
     "title": "Van Gogh Room",
-    "uploader": "user_2",
+    "uploader": "johndoe",
     "category": "architecture",
     "urls": ["Isstoz4f/Enter a title.obj", "Isstoz4f/Enter a title.mtl"],
     "imageUrls": ["XXX3AL/Snapshot.png"],
@@ -218,7 +218,7 @@
    {
    	"highRes": true,
     "title": "3D Scan - Shell",
-    "uploader": "user_2",
+    "uploader": "johndoe",
     "category": "object",
     "urls": ["DzPYQg7s/mesh.obj", "DzPYQg7s/mesh.obj.mtl"],
     "imageUrls": ["XXX3AM/Snapshot.png"],
@@ -234,7 +234,7 @@
    },
    {
     "title": "Car",
-    "uploader": "user_2",
+    "uploader": "johndoe",
     "category": "vehicle",
     "urls": ["mEuJZMJB/car02.obj", "mEuJZMJB/car02.mtl"],
     "imageUrls": ["XXX3AN/Screenshot.png"],
@@ -250,7 +250,7 @@
    },
    {
     "title": "Ori",
-    "uploader": "user_3",
+    "uploader": "hualian",
     "category": "character",
     "urls": ["vLpKZdBC/test.obj", "vLpKZdBC/test.mtl"],
     "imageUrls": ["XXX3AO/Snapshot.png"],
@@ -267,7 +267,7 @@
    {
    	"highRes": true,
     "title": "Space Jame Lola Bunny",
-    "uploader": "user_2",
+    "uploader": "alizhang",
     "category": "character",
     "urls": ["iAMSRzKO/lola_bunny_lowres_model.obj", "iAMSRzKO/lola_bunny_lowres_model.mtl"],
     "imageUrls": ["XXX3AP/Snapshot.png"],
@@ -283,7 +283,7 @@
    },
    {
     "title": "Vi - LoL Fan Art",
-    "uploader": "user_2",
+    "uploader": "johndoe",
     "category": "game",
     "urls": ["3C8satp3/Vi.obj", "3C8satp3/Vi.mtl"],
     "imageUrls": ["XXX3AQ/Screenshot.png"],
@@ -299,7 +299,7 @@
    },
    {
     "title": "Medieval Street Arcade",
-    "uploader": "user_1",
+    "uploader": "ahkow",
     "category": "architecture",
     "urls": ["vCP8txJI/arcades2_v001.obj", "vCP8txJI/arcades2_v001.mtl"],
     "imageUrls": ["XXX3AR/Screenshot.png"],
@@ -315,7 +315,7 @@
    },
    {
     "title": "Bench",
-    "uploader": "user_1",
+    "uploader": "ahkow",
     "category": "object",
     "urls": ["31rnsUYp/bench.obj", "31rnsUYp/bench.mtl"],
     "imageUrls": ["TWBH1/bench_snapshot.png"],
@@ -331,7 +331,7 @@
    },
    {
     "title": "Diarama Restaurant",
-    "uploader": "user_1",
+    "uploader": "ahkow",
     "category": "scene",
     "urls": ["KebGfJyK/DioramaRestaurant(BakedLighting).obj", "KebGfJyK/DioramaRestaurant(BakedLighting).mtl"],
     "imageUrls": ["XXX3AS/Screenshot.png","XXX3AS/restaurant_2.png", "XXX3AS/restaurant_3.png", "XXX3AS/restaurant_4.png"],
@@ -347,7 +347,7 @@
    },
    {
     "title": "Bus Stop",
-    "uploader": "user_3",
+    "uploader": "johndoe",
     "category": "scene",
     "urls": ["xo9L69hi/bus_stop.obj", "xo9L69hi/bus_stop.mtl"],
     "imageUrls": ["XXX3AT/Screenshot.png"],
@@ -363,7 +363,7 @@
    },
    {
     "title": "Cafe Table",
-    "uploader": "user_1",
+    "uploader": "hualian",
     "category": "object",
     "urls": ["CuMNOnuf/cake.mtl.obj", "CuMNOnuf/cake.mtl.mtl"],
     "imageUrls": ["TWBH2/untitled.jpg"],
@@ -379,7 +379,7 @@
    },
    {
     "title": "Flower",
-    "uploader": "user_1",
+    "uploader": "alizhang",
     "category": "object",
     "urls": ["e5ZVpLKC/flower.obj", "e5ZVpLKC/flower.mtl"],
     "imageUrls": ["TWBH3/flower_screenshot.png"],
@@ -395,7 +395,7 @@
    },
    {
     "title": "Water Cooler",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "misc",
     "urls": ["g3kVypCl/waterCooler.obj", "g3kVypCl/waterCooler.mtl"],
     "imageUrls": ["TWBH10/watercooler_screenshot.png"],
@@ -411,7 +411,7 @@
    },
    {
     "title": "Storage Shelf",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "object",
     "urls": ["srLjwmZv/storageShelf.obj", "srLjwmZv/storageShelf.mtl"],
     "imageUrls": ["TWBH4/boxes_screenshot.png"],
@@ -427,7 +427,7 @@
    },
    {
     "title": "Wooden Table",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "object",
     "urls": ["aPUdvLh9/table.obj", "aPUdvLh9/table.mtl"],
     "imageUrls": ["TWBH5/table_screenshot.png"],
@@ -443,7 +443,7 @@
    },
    {
     "title": "Trash Can",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "object",
     "urls": ["Yptxhegi/thrashBin.obj", "Yptxhegi/thrashBin.mtl"],
     "imageUrls": ["TWBH6/trash_screenshot.png"],
@@ -459,7 +459,7 @@
    },
    {
     "title": "Clock Tower",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "architecture",
     "urls": ["SvEdZCEs/tower.obj", "SvEdZCEs/tower.mtl"],
     "imageUrls": ["TWBH7/tower_screenshot.png"],
@@ -475,7 +475,7 @@
    },
    {
     "title": "Train",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "vehicle",
     "urls": ["1o63OKkT/train.obj", "1o63OKkT/train.mtl"],
     "imageUrls": ["TWBH8/train_screenshot.png"],
@@ -491,7 +491,7 @@
    },
    {
     "title": "Vending Machine",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "misc",
     "urls": ["4spkzC7K/vendingMachine.obj", "4spkzC7K/vendingMachine.mtl"],
     "imageUrls": ["TWBH9/vendingmachine_screenshot.png"],
@@ -507,7 +507,7 @@
    },
    {
     "title": "ChunZhen Station",
-    "uploader": "user_1",
+    "uploader": "johndoe",
     "category": "scene",
     "urls": ["vLAUIbTH/scene.obj", "vLAUIbTH/scene.mtl"],
     "imageUrls": ["TWBH11/scene_screenshot.png", "TWBH11/scene_screenshot2.png", "TWBH11/scene_screenshot3.png"],
