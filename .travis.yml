@@ -1,5 +1,5 @@
 # Requirement for root access
-sudo: false
+sudo: required
 # Environment for building node-gyp
 env:
   - CXX=g++-4.8
@@ -9,7 +9,7 @@ language: node_js
 node_js:
   - "5.2.0"
 before_install:
-  - apt-get install libgif-dev
+  - sudo apt-get install libgif-dev
 
 # Addon for building node-gyp successfully
 addons:
