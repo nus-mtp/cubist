@@ -11,7 +11,7 @@ var WEBPACK_HOST = 'localhost';
 var WEBPACK_PORT = parseInt(process.env.PORT, 10) + 1 || 3001;
 
 module.exports = {
-  progress: true,
+  //progress: true,
   devtool: 'cheap-module-eval-source-map',
   entry: {
     main: [
@@ -27,30 +27,48 @@ module.exports = {
     publicPath: 'http://' + WEBPACK_HOST + ':' + WEBPACK_PORT + '/assets/'
   },
   module: {
-    loaders: [
+    rules:[
       {
         test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/,
-        loader: 'url-loader?limit=100000'
+        use: [
+          {
+            loader: 'url-loader?limit=100000'
+          },
+        ]
       },
       {
         test: /\.js$/,
-        loaders: [
-          'react-hot-loader',
-          'babel-loader?' + JSON.stringify({
-            cacheDirectory: true,
-            presets: ['es2015', 'stage-0', 'react'],
-            plugins: ['add-module-exports']
-          })
-        ],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'react-hot-loader',
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              presets: ['es2015', 'stage-0', 'react'],
+              plugins: ['add-module-exports'],
+            }
+          }
+        ]
       },
       {
         test: /\.(scss|sass)$/,
-        loaders: ['style-loader', 'css-loader', 'autoprefixer-loader', 'sass-loader']
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'autoprefixer-loader',
+          },
+          {
+            loader: 'sass-loader',
+          }
+        ]
       }
     ]
   },
@@ -67,10 +85,6 @@ module.exports = {
       }
     }),
 
-    // Optimizations
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-
     // Stats Control
     function () {
       this.plugin('done', notifyStats);
@@ -80,7 +94,7 @@ module.exports = {
     }
   ],
   resolve: {
-    extensions: ['', '.js', '.json', '.jsx', '.es6', '.babel'],
-    modulesDirectories: ['node_modules', 'src']
+    extensions: ['.js', '.json', '.jsx', '.es6', '.babel'],
+    modules: ['node_modules', 'src']
   }
 };

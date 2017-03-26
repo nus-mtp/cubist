@@ -8,7 +8,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var assetsPath = path.join(__dirname, '../public/assets');
 
 module.exports = {
-  progress: true,
+  //progress: true,
   devtool: 'source-map',
   entry: {
     main: './src/webapp/index.js'
@@ -17,29 +17,37 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[hash].js',
     chunkFilename: '[name]-[hash].js',
-    publicPath: '/assets/'
+    publicPath: '/assets/',
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(gif|jpe?g|png|woff|woff2|eot|ttf|otf|svg)$/,
-        loader: 'url-loader?limit=100000'
+        use: [
+          {
+            loader: 'url-loader?limit=100000',
+          }
+        ],
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader?' + JSON.stringify({
-          presets: ['es2015', 'stage-0', 'react'],
-          plugins: ['add-module-exports']
-        }),
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['es2015', 'stage-0', 'react'],
+              plugins: ['add-module-exports'],
+            },
+          },
+		    ],
       },
       {
-        test: /\.json$/,
-        loader: 'json-loader'
-      },
-      {
-        test: /\.(css|scss|sass)$/,
-        loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!sass')
+         test: /\.(css|scss|sass)$/,
+        use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            loader: ['css-loader', 'autoprefixer-loader', 'sass-loader']
+            }),
       }
     ]
   },
@@ -57,14 +65,6 @@ module.exports = {
         BROWSER: JSON.stringify(true)
       }
     }),
-    // Optimizations
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
 
     // Stats Control
     function () {
@@ -72,7 +72,10 @@ module.exports = {
     }
   ],
   resolve: {
-    extensions: ['', '.js', '.json', '.jsx', '.es6', '.babel'],
-    modulesDirectories: ['node_modules', 'src']
-  }
+    extensions: ['.js', '.json', '.jsx', '.es6', '.babel'],
+    modules: ['node_modules', 'src']
+  },
+	stats: {
+	errorDetails: true
+	}
 };
