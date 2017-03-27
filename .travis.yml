@@ -10,7 +10,6 @@ node_js:
   - "5.12.0"
 before_install:
   - sudo apt-get install libgif-dev libvips libkrb5-dev
-  - sudo npm install -g node-gyp
 
 # Addon for building node-gyp successfully
 addons:
